@@ -1,3 +1,7 @@
 .idea
-cmake-build-debug
 build
+cmake-build-debug
+.DS_Store
+*.iml
+a.out
+*.swp

@@ -1,5 +1,5 @@
 cmake_minimum_required(VERSION 3.17)
-project(xcShell)
+project(cpp-foo)
 
 set(CMAKE_CXX_STANDARD 17)
 
@@ -17,3 +17,9 @@ if (NOT "${TEST_SOURCES}" STREQUAL "")
     find_package(GTest REQUIRED)
     target_link_libraries(${PROJECT_NAME}_test GTest::GTest)
 endif ()
+
+add_custom_target(lint COMMAND cpplint --recursive ../)
+
+add_custom_target(format COMMAND find ../ -iname *.h -o -iname *.cpp | xargs clang-format -i -style=file)
+
+add_custom_target(test COMMAND ${CMAKE_BINARY_DIR}/${PROJECT_NAME}_test)

@@ -1,21 +1,26 @@
 # xcShell - build your own wheel
 [KANBAN](https://github.com/users/superxcgm/projects/4)
 
-## Install Dependencies
-```shell
-mkdir build
-cd build
-conan install ..
-```
-
 ## Build
 ```shell
-cd build
-cmake .. && cmake --build .
+./auto/build.sh
 ```
 
-## Run Test
+## Format Your Code
 ```shell
-cd build
-./xcShell_test
+./auto/format.sh
+```
+
+## Run
+1. Build
+2. `./build/cpp_template`
+
+## Check Code Style
+```shell
+./auto/lint.sh
+```
+
+## Test
+```shell
+./auto/test.sh
 ```
