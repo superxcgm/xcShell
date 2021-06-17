@@ -1,19 +1,20 @@
-# C++代码基本架子
+# xcShell - build your own wheel
+[KANBAN](https://github.com/users/superxcgm/projects/4)
 
-## 安装依赖
+## Install Dependencies
 ```shell
 mkdir build
 cd build
 conan install ..
 ```
 
-## 构建
+## Build
 ```shell
 cd build
 cmake .. && cmake --build .
 ```
 
-## 运行测试
+## Run Test
 ```shell
 cd build
 ./xcShell_test
