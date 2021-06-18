@@ -13,7 +13,7 @@
 
 ## Run
 1. Build
-2. `./build/cpp_template`
+2. `./build/xcShell`
 
 ## Check Code Style
 ```shell
