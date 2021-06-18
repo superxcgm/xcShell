@@ -1,9 +1,12 @@
 #include <iostream>
-#include "../include/placeholder.h"
+#include "../include/xc_shell.h"
 
 int main() {
-    int ans = add(1, 1);
+    XcShell xc_shell;
 
-    std::cout << "1 + 1 = " << ans << std::endl;
-    return 0;
+    xc_shell.init();
+
+    xc_shell.process();
+
+    return xc_shell.exit();
 }
