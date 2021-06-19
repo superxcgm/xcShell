@@ -6,9 +6,13 @@ void XcShell::init() {
   // todo: read ~/.xcshellrc config file
 }
 
-void XcShell::process() {
-  // todo: get user input, execute loop just like REPL
-  std::cout << "Hello world" << std::endl;
+void XcShell::process(std::istream &is, std::ostream &os) {
+  while (!is.eof()) {
+    os << "> ";
+    std::string line;
+    getline(is, line);
+    os << line << std::endl;
+  }
 }
 
 int XcShell::exit() {

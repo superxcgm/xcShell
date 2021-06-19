@@ -1,6 +1,0 @@
-#ifndef INCLUDE_PLACEHOLDER_H  // NOLINT
-#define INCLUDE_PLACEHOLDER_H
-
-int add(int a, int b);
-
-#endif  // INCLUDE_PLACEHOLDER_H NOLINT
