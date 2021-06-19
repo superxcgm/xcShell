@@ -6,7 +6,7 @@ int main() {
 
     xc_shell.init();
 
-    xc_shell.process();
+    xc_shell.process(std::cin, std::cout);
 
     return xc_shell.exit();
 }
