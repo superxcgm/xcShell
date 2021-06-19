@@ -5,7 +5,7 @@
 std::istringstream generateIs(size_t len);
 
 TEST(XcShellTest, ShouldPrintWhatUserInput) {
-  std::string expected = "> hello world\n> \n";
+  std::string expected = "> hello world\n> ";
   XcShell xc_shell;
   std::istringstream is("hello world\n");
   std::ostringstream os;
