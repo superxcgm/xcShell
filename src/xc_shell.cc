@@ -1,13 +1,16 @@
 #include "../include/xc_shell.h"
-#include "../include/xc_utils.h"
 
 #include <iostream>
+
+#include "../include/command_executor.h"
+#include "../include/xc_utils.h"
 
 void XcShell::init() {
   // todo: read ~/.xcshellrc config file
 }
 
-void XcShell::process(std::istream &is, std::ostream &os) {
+void XcShell::process(std::istream &is, std::ostream &os,
+                      std::ostream &err_os) {
   while (!is.eof()) {
     os << "> ";
     std::string line;
@@ -16,11 +19,8 @@ void XcShell::process(std::istream &is, std::ostream &os) {
       continue;
     }
     auto [command, args] = parseUserInput(line);
-    os << command << " ";
-    for (const auto &item : args) {
-      os << item;
-    }
-    os << std::endl;
+
+    CommandExecutor::Execute(command, args, err_os);
   }
 }
 
@@ -29,8 +29,8 @@ int XcShell::exit() {
   return 0;
 }
 
-std::tuple<std::string , std::vector<std::string>>
-XcShell::parseUserInput(const std::string &str) {
+std::tuple<std::string, std::vector<std::string>> XcShell::parseUserInput(
+    const std::string &str) {
   auto parts = xc_utils::split(str);
   std::string command = parts[0];
   parts.erase(parts.begin());

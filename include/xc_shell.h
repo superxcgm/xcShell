@@ -9,7 +9,7 @@
 class XcShell {
  public:
   void init();
-  void process(std::istream &is, std::ostream &os);
+  void process(std::istream &is, std::ostream &os, std::ostream &err_os);
   int exit();
 
  private:

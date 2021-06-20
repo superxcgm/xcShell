@@ -7,7 +7,7 @@ std::istringstream generateIs(size_t len);
 TEST(XcShellTest, ShouldPrintWhatUserInput) {
   std::string expected = "> hello world\n> ";
   XcShell xc_shell;
-  std::istringstream is("hello world\n");
+  std::istringstream is("echo hello world\n");
   std::ostringstream os;
 
   xc_shell.process(is, os);
@@ -27,6 +27,7 @@ TEST(XcShellTest, ShouldSupportLongLineLike4096) {
 
 std::istringstream generateIs(size_t len) {
   std::stringstream ss;
+  ss << "echo ";
   for (int i = 0; i < len; i++) {
     ss << "x";
   }
