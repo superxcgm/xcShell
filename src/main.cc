@@ -4,9 +4,9 @@
 int main() {
     XcShell xc_shell;
 
-    xc_shell.init();
+    xc_shell.Init();
 
-    xc_shell.process(std::cin, std::cout, std::cerr);
+    xc_shell.Process(std::cin, std::cout, std::cerr);
 
-    return xc_shell.exit();
+    return xc_shell.Exit();
 }

@@ -5,11 +5,11 @@
 #include "../include/command_executor.h"
 #include "../include/xc_utils.h"
 
-void XcShell::init() {
+void XcShell::Init() {
   // todo: read ~/.xcshellrc config file
 }
 
-void XcShell::process(std::istream &is, std::ostream &os,
+void XcShell::Process(std::istream &is, std::ostream &os,
                       std::ostream &err_os) {
   while (!is.eof()) {
     os << "> ";
@@ -18,20 +18,20 @@ void XcShell::process(std::istream &is, std::ostream &os,
     if (line.empty()) {
       continue;
     }
-    auto [command, args] = parseUserInput(line);
+    auto [command, args] = ParseUserInput(line);
 
     CommandExecutor::Execute(command, args, os, err_os);
   }
 }
 
-int XcShell::exit() {
+int XcShell::Exit() {
   // todo: do necessary clean up
   return 0;
 }
 
-std::tuple<std::string, std::vector<std::string>> XcShell::parseUserInput(
+std::tuple<std::string, std::vector<std::string>> XcShell::ParseUserInput(
     const std::string &str) {
-  auto parts = xc_utils::split(str);
+  auto parts = xc_utils::Split(str);
   std::string command = parts[0];
   parts.erase(parts.begin());
   return {command, parts};
