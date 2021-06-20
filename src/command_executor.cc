@@ -1,17 +1,65 @@
 #include "../include/command_executor.h"
 
-#include <errno.h>
-#include <stdio.h>
+#include <pwd.h>
 #include <unistd.h>
 
+#include <cerrno>
+#include <cstdio>
 #include <iostream>
-#include <string>
+#include <map>
 
 #include "../include/xc_error.h"
+
+#define PrintSystemError(err_os) (err_os << strerror(errno) << std::endl)
+
+std::string GetHome() {
+  auto pw = getpwuid(getuid());
+  return pw->pw_dir;
+}
+
+int XcShellCd(std::vector<std::string> args, std::ostream &err_os) {
+  static std::string pre;
+  if (args.size() > 1) {
+    err_os << "invalid args" << std::endl;
+    return ERROR_CODE_DEFAULT;
+  }
+
+  std::string path = args.empty() ? "~" : args[0];
+  if (path == "~") {
+    path = GetHome();
+  } else if (path == "-") {
+    path = pre;
+    // cover when pre is empty
+    if (path.empty()) {
+      path = ".";
+    }
+  }
+  char buf[BUFSIZ];
+  if (getcwd(buf, BUFSIZ) == nullptr) {
+    PrintSystemError(err_os);
+    return ERROR_CODE_DEFAULT;
+  }
+  pre = buf;
+
+  int ret = chdir(path.c_str());
+  if (ret == ERROR_CODE_SYSTEM) {
+    PrintSystemError(err_os);
+    return ERROR_CODE_DEFAULT;
+  }
+  return 0;
+}
+
+std::map<std::string, int (*)(std::vector<std::string>, std::ostream &)> mp = {
+    {"cd", XcShellCd}};
 
 int CommandExecutor::Execute(const std::string &command,
                              const std::vector<std::string> &args,
                              std::ostream &os, std::ostream &err_os) {
+  if (mp.find(command) != mp.end()) {
+    auto fun = mp[command];
+    return fun(args, err_os);
+  }
+
   int pipe_fd[2];
   if (pipe(pipe_fd) == ERROR_CODE_SYSTEM) {
     PrintSystemError(err_os);
@@ -37,13 +85,8 @@ int CommandExecutor::Execute(const std::string &command,
   return 0;
 }
 
-void CommandExecutor::PrintSystemError(std::ostream &err_os) {
-  std::string err_msg = strerror(errno);
-  err_os << err_msg << std::endl;
-}
-
 std::vector<char *> CommandExecutor::BuildArgv(
-    const std::string command, const std::vector<std::string> &args) {
+    const std::string &command, const std::vector<std::string> &args) {
   std::vector<char *> argv;
   argv.reserve(args.size() + 2);
   argv.push_back(const_cast<char *>(command.c_str()));
