@@ -1,22 +1,14 @@
 #include "../include/command_executor.h"
 
-#include <pwd.h>
 #include <unistd.h>
 
 #include <cerrno>
-#include <cstdio>
 #include <iostream>
 #include <map>
 
 #include "../include/xc_error.h"
+#include "../include/xc_utils.h"
 
-#define PrintSystemError(err_os) (err_os << strerror(errno) << std::endl)
-
-std::string GetHome() {
-  // todo: replace with getpwuid_r
-  auto pw = getpwuid(getuid()); //NOLINT
-  return pw->pw_dir;
-}
 
 int XcShellCd(std::vector<std::string> args, std::ostream &err_os) {
   static std::string pre;
@@ -27,7 +19,7 @@ int XcShellCd(std::vector<std::string> args, std::ostream &err_os) {
 
   std::string path = args.empty() ? "~" : args[0];
   if (path == "~") {
-    path = GetHome();
+    path = xc_utils::GetHomeDir();
   } else if (path == "-") {
     path = pre;
     // cover when pre is empty
@@ -35,12 +27,8 @@ int XcShellCd(std::vector<std::string> args, std::ostream &err_os) {
       path = ".";
     }
   }
-  char buf[BUFSIZ];
-  if (getcwd(buf, BUFSIZ) == nullptr) {
-    PrintSystemError(err_os);
-    return ERROR_CODE_DEFAULT;
-  }
-  pre = buf;
+
+  pre = xc_utils::GetCurrentWorkingDirectory(err_os);
 
   int ret = chdir(path.c_str());
   if (ret == ERROR_CODE_SYSTEM) {

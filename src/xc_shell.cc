@@ -12,7 +12,7 @@ void XcShell::Init() {
 void XcShell::Process(std::istream &is, std::ostream &os,
                       std::ostream &err_os) {
   while (!is.eof()) {
-    os << "> ";
+    os << generatePrompt(err_os);
     std::string line;
     getline(is, line);
     if (line.empty()) {
@@ -35,4 +35,15 @@ std::tuple<std::string, std::vector<std::string>> XcShell::ParseUserInput(
   std::string command = parts[0];
   parts.erase(parts.begin());
   return {command, parts};
+}
+std::string XcShell::generatePrompt(std::ostream &err_os) {
+  auto pwd = xc_utils::GetCurrentWorkingDirectory(err_os);
+  auto home = xc_utils::GetHomeDir();
+  std::string dir;
+  if (home == pwd) {
+    dir = "~";
+  } else {
+    dir = xc_utils::GetLastDir(pwd);
+  }
+  return dir + " > ";
 }
