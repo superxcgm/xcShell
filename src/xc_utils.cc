@@ -2,7 +2,7 @@
 
 #include <sstream>
 
-std::vector<std::string> xc_utils::split(const std::string& str) {
+std::vector<std::string> xc_utils::Split(const std::string& str) {
   std::stringstream ss(str);
   std::vector<std::string> parts;
 
