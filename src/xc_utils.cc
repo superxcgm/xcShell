@@ -1,10 +1,10 @@
 #include "../include/xc_utils.h"
 
 #include <unistd.h>
+#include <pwd.h>
 
 #include <sstream>
 #include <string>
-#include <pwd.h>
 
 std::vector<std::string> xc_utils::Split(const std::string& str) {
   std::stringstream ss(str);
