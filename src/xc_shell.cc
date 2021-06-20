@@ -20,7 +20,7 @@ void XcShell::process(std::istream &is, std::ostream &os,
     }
     auto [command, args] = parseUserInput(line);
 
-    CommandExecutor::Execute(command, args, err_os);
+    CommandExecutor::Execute(command, args, os, err_os);
   }
 }
 

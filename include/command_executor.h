@@ -7,7 +7,7 @@
 class CommandExecutor {
  public:
   static int Execute(const std::string &command,
-                     const std::vector<std::string> &args,
+                     const std::vector<std::string> &args, std::ostream &os,
                      std::ostream &err_os);
 
  private:
@@ -17,7 +17,7 @@ class CommandExecutor {
   static int ProcessChild(const std::string &command,
                           const std::vector<std::string> &args,
                           std::ostream &err_os);
-  static void WaitChildExit(pid_t pid);
+  static void WaitChildExit(pid_t pid, int fd_in, std::ostream &os);
 };
 
 #endif  // INCLUDE_COMMAND_EXECUTOR_H_
