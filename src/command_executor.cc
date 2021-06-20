@@ -53,7 +53,7 @@ int CommandExecutor::ProcessChild(const std::string &command,
   auto argv = BuildArgv(command, args);
 
   auto ret = execvp(command.c_str(), &argv[0]);
-  // should not execute to here is success
+  // should not execute to here if success
   if (ret == ERROR_CODE_SYSTEM) {
     PrintSystemError(err_os);
   }
