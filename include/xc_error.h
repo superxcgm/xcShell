@@ -1,0 +1,7 @@
+#ifndef INCLUDE_XC_ERROR_H_
+#define INCLUDE_XC_ERROR_H_
+
+#define ERROR_CODE_DEFAULT -1
+#define ERROR_CODE_SYSTEM -1
+
+#endif  // INCLUDE_XC_ERROR_H_
