@@ -16,3 +16,27 @@ TEST(XcUtilsTest, ShouldSplitCorrectlyFor3part) {
 
   EXPECT_EQ(parts, expected);
 }
+
+TEST(XcUtilsTest, ShouldReturnLastDirectory) {
+  auto parts = xc_utils::GetLastDir("/usr/bin");
+
+  EXPECT_EQ(parts, "bin");
+}
+
+TEST(XcUtilsTest, ShouldReturnLastDirectoryIgnoreLastSlash) {
+  auto parts = xc_utils::GetLastDir("/usr/bin/");
+
+  EXPECT_EQ(parts, "bin");
+}
+
+TEST(XcUtilsTest, ShouldReturnLastDirectoryForRoot) {
+  auto parts = xc_utils::GetLastDir("/");
+
+  EXPECT_EQ(parts, "/");
+}
+
+TEST(XcUtilsTest, ShouldReturnLastDirectoryUnchange) {
+  auto parts = xc_utils::GetLastDir("bin");
+
+  EXPECT_EQ(parts, "bin");
+}
