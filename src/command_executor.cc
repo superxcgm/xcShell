@@ -13,7 +13,8 @@
 #define PrintSystemError(err_os) (err_os << strerror(errno) << std::endl)
 
 std::string GetHome() {
-  auto pw = getpwuid(getuid());
+  // todo: replace with getpwuid_r
+  auto pw = getpwuid(getuid()); //NOLINT
   return pw->pw_dir;
 }
 
@@ -60,12 +61,6 @@ int CommandExecutor::Execute(const std::string &command,
     return fun(args, err_os);
   }
 
-  int pipe_fd[2];
-  if (pipe(pipe_fd) == ERROR_CODE_SYSTEM) {
-    PrintSystemError(err_os);
-    return ERROR_CODE_DEFAULT;
-  }
-
   pid_t pid = fork();
   if (pid == ERROR_CODE_SYSTEM) {
     // error
@@ -74,12 +69,9 @@ int CommandExecutor::Execute(const std::string &command,
   }
 
   if (pid == 0) {
-    close(pipe_fd[0]);    // close read fd
-    dup2(pipe_fd[1], 1);  // redirect stdout to pipe
     return ProcessChild(command, args, err_os);
   } else {
-    close(pipe_fd[1]);  // close write fd
-    WaitChildExit(pid, pipe_fd[0], os);
+    WaitChildExit(pid);
   }
 
   return 0;
@@ -111,18 +103,7 @@ int CommandExecutor::ProcessChild(const std::string &command,
   return ERROR_CODE_DEFAULT;
 }
 
-void CommandExecutor::WaitChildExit(pid_t pid, int fd_in, std::ostream &os) {
-  char buf[BUFSIZ];
-
-  // forward output of sub process to shell
-  while (true) {
-    int len = read(fd_in, buf, BUFSIZ);
-    if (len == 0) {
-      break;
-    }
-    os << buf;
-  }
-
+void CommandExecutor::WaitChildExit(pid_t pid) {
   int status;
   do {
     waitpid(pid, &status, WUNTRACED);

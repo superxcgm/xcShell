@@ -16,7 +16,7 @@ class CommandExecutor {
   static int ProcessChild(const std::string &command,
                           const std::vector<std::string> &args,
                           std::ostream &err_os);
-  static void WaitChildExit(pid_t pid, int fd_in, std::ostream &os);
+  static void WaitChildExit(pid_t pid);
 };
 
 #endif  // INCLUDE_COMMAND_EXECUTOR_H_
