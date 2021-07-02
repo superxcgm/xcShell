@@ -1,6 +1,6 @@
 #include "../include/xc_shell.h"
 
-#include <iostream>
+#include <editline/readline.h>
 
 #include "../include/command_executor.h"
 #include "../include/xc_utils.h"
@@ -11,10 +11,15 @@ void XcShell::Init() {
 
 void XcShell::Process(std::istream &is, std::ostream &os,
                       std::ostream &err_os) {
-  while (!is.eof()) {
-    os << generatePrompt(err_os);
-    std::string line;
-    getline(is, line);
+  while (true) {
+    char *line_ptr;
+    line_ptr = readline(generatePrompt(err_os).c_str());
+    if (line_ptr == nullptr) {
+      break;
+    }
+    add_history(line_ptr);
+    std::string line = line_ptr;
+    free(line_ptr);
     if (line.empty()) {
       continue;
     }
