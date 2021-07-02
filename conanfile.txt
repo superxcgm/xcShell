@@ -1,5 +1,6 @@
 [requires]
 gtest/1.10.0
+readline/8.0
 
 [generators]
 cmake_find_package
