@@ -1,15 +1,14 @@
-#include "../include/xc_shell.h"
-
 #include <editline/readline.h>
 
-#include "../include/command_executor.h"
-#include "../include/xc_utils.h"
+#include "../include/xcshell/command_executor.h"
+#include "../include/xcshell/shell.h"
+#include "../include/xcshell/utils.h"
 
-void XcShell::Init() {
+void Shell::Init() {
   // todo: read ~/.xcshellrc config file
 }
 
-void XcShell::Process(std::istream &is, std::ostream &os,
+void Shell::Process(std::istream &is, std::ostream &os,
                       std::ostream &err_os) {
   while (true) {
     char *line_ptr;
@@ -29,26 +28,26 @@ void XcShell::Process(std::istream &is, std::ostream &os,
   }
 }
 
-int XcShell::Exit() {
+int Shell::Exit() {
   // todo: do necessary clean up
   return 0;
 }
 
-std::tuple<std::string, std::vector<std::string>> XcShell::ParseUserInput(
+std::tuple<std::string, std::vector<std::string>> Shell::ParseUserInput(
     const std::string &str) {
-  auto parts = xc_utils::Split(str);
+  auto parts = utils::Split(str);
   std::string command = parts[0];
   parts.erase(parts.begin());
   return {command, parts};
 }
-std::string XcShell::generatePrompt(std::ostream &err_os) {
-  auto pwd = xc_utils::GetCurrentWorkingDirectory(err_os);
-  auto home = xc_utils::GetHomeDir();
+std::string Shell::generatePrompt(std::ostream &err_os) {
+  auto pwd = utils::GetCurrentWorkingDirectory(err_os);
+  auto home = utils::GetHomeDir();
   std::string dir;
   if (home == pwd) {
     dir = "~";
   } else {
-    dir = xc_utils::GetLastDir(pwd);
+    dir = utils::GetLastDir(pwd);
   }
   return dir + " > ";
 }

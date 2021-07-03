@@ -1,5 +1,5 @@
-#ifndef INCLUDE_COMMAND_EXECUTOR_H_
-#define INCLUDE_COMMAND_EXECUTOR_H_
+#ifndef INCLUDE_XCSHELL_COMMAND_EXECUTOR_H_
+#define INCLUDE_XCSHELL_COMMAND_EXECUTOR_H_
 
 #include <string>
 #include <vector>
@@ -19,4 +19,4 @@ class CommandExecutor {
   static void WaitChildExit(pid_t pid);
 };
 
-#endif  // INCLUDE_COMMAND_EXECUTOR_H_
+#endif  // INCLUDE_XCSHELL_COMMAND_EXECUTOR_H_

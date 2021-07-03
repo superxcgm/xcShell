@@ -1,12 +1,12 @@
-#ifndef INCLUDE_XC_SHELL_H_
-#define INCLUDE_XC_SHELL_H_
+#ifndef INCLUDE_XCSHELL_SHELL_H_
+#define INCLUDE_XCSHELL_SHELL_H_
 
 #include <iostream>
 #include <string>
 #include <tuple>
 #include <vector>
 
-class XcShell {
+class Shell {
  public:
   void Init();
   void Process(std::istream &is, std::ostream &os, std::ostream &err_os);
@@ -20,4 +20,4 @@ class XcShell {
   static std::string generatePrompt(std::ostream &err_os);
 };
 
-#endif  // INCLUDE_XC_SHELL_H_
+#endif  // INCLUDE_XCSHELL_SHELL_H_
