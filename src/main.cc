@@ -1,4 +1,3 @@
-#include <iostream>
 
 #include "../include/xcshell/shell.h"
 
@@ -7,7 +6,7 @@ int main() {
 
   shell.Init();
 
-  shell.Process(std::cin, std::cout, std::cerr);
+  shell.Process();
 
     return shell.Exit();
 }

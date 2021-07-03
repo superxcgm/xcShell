@@ -1,7 +1,6 @@
 #ifndef INCLUDE_XCSHELL_SHELL_H_
 #define INCLUDE_XCSHELL_SHELL_H_
 
-#include <iostream>
 #include <string>
 #include <tuple>
 #include <vector>
@@ -9,7 +8,7 @@
 class Shell {
  public:
   void Init();
-  void Process(std::istream &is, std::ostream &os, std::ostream &err_os);
+  void Process();
   int Exit();
 
  private:
@@ -17,7 +16,7 @@ class Shell {
   static std::tuple<std::string, std::vector<std::string>> ParseUserInput(
       const std::string &str);
 
-  static std::string generatePrompt(std::ostream &err_os);
+  static std::string generatePrompt();
 };
 
 #endif  // INCLUDE_XCSHELL_SHELL_H_
