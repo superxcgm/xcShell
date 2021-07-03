@@ -1,4 +1,4 @@
-#include "../include/command_executor.h"
+#include "../include/xcshell/command_executor.h"
 
 #include <unistd.h>
 
@@ -6,11 +6,10 @@
 #include <iostream>
 #include <map>
 
-#include "../include/xc_error.h"
-#include "../include/xc_utils.h"
+#include "../include/xcshell/error.h"
+#include "../include/xcshell/utils.h"
 
-
-int XcShellCd(std::vector<std::string> args, std::ostream &err_os) {
+int ShellCd(std::vector<std::string> args, std::ostream &err_os) {
   static std::string pre;
   if (args.size() > 1) {
     err_os << "invalid args" << std::endl;
@@ -19,7 +18,7 @@ int XcShellCd(std::vector<std::string> args, std::ostream &err_os) {
 
   std::string path = args.empty() ? "~" : args[0];
   if (path == "~") {
-    path = xc_utils::GetHomeDir();
+    path = utils::GetHomeDir();
   } else if (path == "-") {
     path = pre;
     // cover when pre is empty
@@ -28,7 +27,7 @@ int XcShellCd(std::vector<std::string> args, std::ostream &err_os) {
     }
   }
 
-  pre = xc_utils::GetCurrentWorkingDirectory(err_os);
+  pre = utils::GetCurrentWorkingDirectory(err_os);
 
   int ret = chdir(path.c_str());
   if (ret == ERROR_CODE_SYSTEM) {
@@ -39,7 +38,7 @@ int XcShellCd(std::vector<std::string> args, std::ostream &err_os) {
 }
 
 std::map<std::string, int (*)(std::vector<std::string>, std::ostream &)> mp = {
-    {"cd", XcShellCd}};
+    {"cd", ShellCd}};
 
 int CommandExecutor::Execute(const std::string &command,
                              const std::vector<std::string> &args,

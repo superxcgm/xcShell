@@ -1,12 +1,12 @@
-#include "../include/xc_utils.h"
-
-#include <unistd.h>
 #include <pwd.h>
+#include <unistd.h>
 
 #include <sstream>
 #include <string>
 
-std::vector<std::string> xc_utils::Split(const std::string& str) {
+#include "../include/xcshell/utils.h"
+
+std::vector<std::string> utils::Split(const std::string& str) {
   std::stringstream ss(str);
   std::vector<std::string> parts;
 
@@ -22,7 +22,7 @@ std::vector<std::string> xc_utils::Split(const std::string& str) {
 
   return parts;
 }
-std::string xc_utils::GetCurrentWorkingDirectory(std::ostream& err_os) {
+std::string utils::GetCurrentWorkingDirectory(std::ostream& err_os) {
   char buf[BUFSIZ];
   if (getcwd(buf, BUFSIZ) == nullptr) {
     PrintSystemError(err_os);
@@ -30,7 +30,7 @@ std::string xc_utils::GetCurrentWorkingDirectory(std::ostream& err_os) {
   }
   return buf;
 }
-std::string xc_utils::GetLastDir(const std::string& path) {
+std::string utils::GetLastDir(const std::string& path) {
   if (path == "/") {
     return "/";
   }
@@ -39,7 +39,7 @@ std::string xc_utils::GetLastDir(const std::string& path) {
   auto idx = path_std.rfind('/');
   return path_std.substr(idx + 1);
 }
-std::string xc_utils::GetHomeDir() {
+std::string utils::GetHomeDir() {
   static std::string home_dir;
   if (!home_dir.empty()) {
     return home_dir;

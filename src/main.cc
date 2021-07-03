@@ -1,12 +1,13 @@
 #include <iostream>
-#include "../include/xc_shell.h"
+
+#include "../include/xcshell/shell.h"
 
 int main() {
-    XcShell xc_shell;
+  Shell shell;
 
-    xc_shell.Init();
+  shell.Init();
 
-    xc_shell.Process(std::cin, std::cout, std::cerr);
+  shell.Process(std::cin, std::cout, std::cerr);
 
-    return xc_shell.Exit();
+    return shell.Exit();
 }
