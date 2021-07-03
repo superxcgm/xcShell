@@ -8,11 +8,11 @@ void Shell::Init() {
   // todo: read ~/.xcshellrc config file
 }
 
-void Shell::Process(std::istream &is, std::ostream &os,
-                      std::ostream &err_os) {
+void Shell::Process() {
+  CommandExecutor command_executor;
   while (true) {
     char *line_ptr;
-    line_ptr = readline(generatePrompt(err_os).c_str());
+    line_ptr = readline(generatePrompt().c_str());
     if (line_ptr == nullptr) {
       break;
     }
@@ -24,7 +24,7 @@ void Shell::Process(std::istream &is, std::ostream &os,
     }
     auto [command, args] = ParseUserInput(line);
 
-    CommandExecutor::Execute(command, args, os, err_os);
+    command_executor.Execute(command, args);
   }
 }
 
@@ -40,8 +40,8 @@ std::tuple<std::string, std::vector<std::string>> Shell::ParseUserInput(
   parts.erase(parts.begin());
   return {command, parts};
 }
-std::string Shell::generatePrompt(std::ostream &err_os) {
-  auto pwd = utils::GetCurrentWorkingDirectory(err_os);
+std::string Shell::generatePrompt() {
+  auto pwd = utils::GetCurrentWorkingDirectory();
   auto home = utils::GetHomeDir();
   std::string dir;
   if (home == pwd) {

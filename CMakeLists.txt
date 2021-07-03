@@ -5,6 +5,9 @@ set(CMAKE_CXX_STANDARD 17)
 
 include(${CMAKE_BINARY_DIR}/conan_paths.cmake)
 aux_source_directory(src EXE_SOURCES)
+aux_source_directory(src/build_in BUILD_IN_SOURCES)
+list(APPEND EXE_SOURCES ${BUILD_IN_SOURCES})
+
 list(FILTER EXE_SOURCES INCLUDE REGEX "^.*.cc$")
 add_executable(${PROJECT_NAME} ${EXE_SOURCES})
 

@@ -2,6 +2,7 @@
 #include <unistd.h>
 
 #include <sstream>
+#include <iostream>
 #include <string>
 
 #include "../include/xcshell/utils.h"
@@ -22,10 +23,10 @@ std::vector<std::string> utils::Split(const std::string& str) {
 
   return parts;
 }
-std::string utils::GetCurrentWorkingDirectory(std::ostream& err_os) {
+std::string utils::GetCurrentWorkingDirectory() {
   char buf[BUFSIZ];
   if (getcwd(buf, BUFSIZ) == nullptr) {
-    PrintSystemError(err_os);
+    utils::PrintSystemError();
     return "";
   }
   return buf;
@@ -49,4 +50,7 @@ std::string utils::GetHomeDir() {
   auto pw = getpwuid(getuid()); //NOLINT
   home_dir = pw->pw_dir;
   return home_dir;
+}
+void utils::PrintSystemError() {
+  std::cerr << strerror(errno) << std::endl;
 }
