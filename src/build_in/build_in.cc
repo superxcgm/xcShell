@@ -13,5 +13,5 @@ bool BuildIn::Exist(const std::string& cmd) {
 
 int BuildIn::Execute(const std::string& cmd,
                      const std::vector<std::string>& args) {
-  return commands_[cmd]->Execute(args);
+  return commands_[cmd]->Execute(args, std::cout, std::cerr);
 }

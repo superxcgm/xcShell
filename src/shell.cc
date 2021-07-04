@@ -41,7 +41,7 @@ std::tuple<std::string, std::vector<std::string>> Shell::ParseUserInput(
   return {command, parts};
 }
 std::string Shell::generatePrompt() {
-  auto pwd = utils::GetCurrentWorkingDirectory();
+  auto pwd = utils::GetCurrentWorkingDirectory(std::cerr);
   auto home = utils::GetHomeDir();
   std::string dir;
   if (home == pwd) {

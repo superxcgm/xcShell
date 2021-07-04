@@ -23,10 +23,10 @@ std::vector<std::string> utils::Split(const std::string& str) {
 
   return parts;
 }
-std::string utils::GetCurrentWorkingDirectory() {
+std::string utils::GetCurrentWorkingDirectory(std::ostream &os_err) {
   char buf[BUFSIZ];
   if (getcwd(buf, BUFSIZ) == nullptr) {
-    utils::PrintSystemError();
+    utils::PrintSystemError(os_err);
     return "";
   }
   return buf;
@@ -51,6 +51,6 @@ std::string utils::GetHomeDir() {
   home_dir = pw->pw_dir;
   return home_dir;
 }
-void utils::PrintSystemError() {
-  std::cerr << strerror(errno) << std::endl;
+void utils::PrintSystemError(std::ostream &os_err) {
+  os_err << strerror(errno) << std::endl;
 }
