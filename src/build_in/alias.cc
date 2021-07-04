@@ -1,17 +1,18 @@
 #include "../../include/xcshell/build_in/alias.h"
+
 #include "../../include/xcshell/constants.h"
 
 int Alias::Execute(const std::vector<std::string> &args, std::ostream &os,
-                   std::ostream &os_err){
+                   std::ostream &os_err) {
   if (args.empty()) {
     return PrintAllAlias(os);
   }
   std::string definition = args[0];
   auto pos = definition.find('=');
-  if (pos == std::string::npos){
+  if (pos == std::string::npos) {
     return PrintSingleAlias(definition, os);
   }
-  auto name = definition.substr(0, pos );
+  auto name = definition.substr(0, pos);
   auto value = definition.substr(pos + 1);
   alias_[name] = value;
 

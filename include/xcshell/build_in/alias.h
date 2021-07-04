@@ -8,10 +8,8 @@
 
 #include "./build_in_command.h"
 
-class Alias: public BuildInCommand {
+class Alias : public BuildInCommand {
  public:
-
-
   int Execute(const std::vector<std::string> &args, std::ostream &os,
               std::ostream &os_err);
 
