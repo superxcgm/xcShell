@@ -35,7 +35,7 @@ int Shell::Exit() {
 
 std::tuple<std::string, std::vector<std::string>> Shell::ParseUserInput(
     const std::string &str) {
-  auto parts = utils::Split(str);
+  auto parts = utils::SplitArgs(str);
   std::string command = parts[0];
   parts.erase(parts.begin());
   return {command, parts};

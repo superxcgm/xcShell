@@ -2,11 +2,10 @@
 
 #include <unistd.h>
 
-#include <cerrno>
 #include <iostream>
 #include <map>
 
-#include "../include/xcshell/error.h"
+#include "../include/xcshell/constants.h"
 #include "../include/xcshell/utils.h"
 
 int CommandExecutor::Execute(const std::string &command,
