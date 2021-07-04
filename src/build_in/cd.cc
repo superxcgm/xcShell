@@ -7,10 +7,11 @@
 #include "../../include/xcshell/error.h"
 #include "../../include/xcshell/utils.h"
 
-int Cd::Execute(const std::vector<std::string> &args) {
+int Cd::Execute(const std::vector<std::string> &args, std::ostream &os,
+                std::ostream &os_err) {
   static std::string pre;
   if (args.size() > 1) {
-    std::cerr << "invalid args" << std::endl;
+    os_err << "invalid args" << std::endl;
     return ERROR_CODE_DEFAULT;
   }
 
@@ -25,11 +26,11 @@ int Cd::Execute(const std::vector<std::string> &args) {
     }
   }
 
-  pre = utils::GetCurrentWorkingDirectory();
+  pre = utils::GetCurrentWorkingDirectory(os_err);
 
   int ret = chdir(path.c_str());
   if (ret == ERROR_CODE_SYSTEM) {
-    utils::PrintSystemError();
+    utils::PrintSystemError(os_err);
     return ERROR_CODE_DEFAULT;
   }
   return 0;

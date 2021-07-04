@@ -8,5 +8,5 @@ int main() {
 
   shell.Process();
 
-    return shell.Exit();
+  return shell.Exit();
 }

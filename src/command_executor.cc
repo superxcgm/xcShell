@@ -18,7 +18,7 @@ int CommandExecutor::Execute(const std::string &command,
   pid_t pid = fork();
   if (pid == ERROR_CODE_SYSTEM) {
     // error
-    utils::PrintSystemError();
+    utils::PrintSystemError(std::cerr);
     return ERROR_CODE_DEFAULT;
   }
 
@@ -51,7 +51,7 @@ int CommandExecutor::ProcessChild(const std::string &command,
   auto ret = execvp(command.c_str(), &argv[0]);
   // should not execute to here if success
   if (ret == ERROR_CODE_SYSTEM) {
-    utils::PrintSystemError();
+    utils::PrintSystemError(std::cerr);
   }
   return ERROR_CODE_DEFAULT;
 }
