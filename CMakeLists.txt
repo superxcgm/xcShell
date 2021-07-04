@@ -12,6 +12,8 @@ list(FILTER EXE_SOURCES INCLUDE REGEX "^.*.cc$")
 add_executable(${PROJECT_NAME} ${EXE_SOURCES})
 
 aux_source_directory(test TEST_SOURCES)
+aux_source_directory(test/build_in BUILD_IN_TEST_SOURCES)
+list(APPEND TEST_SOURCES ${BUILD_IN_TEST_SOURCES})
 list(FILTER TEST_SOURCES INCLUDE REGEX "^.*_test.cc$")
 
 find_package(readline REQUIRED)

@@ -4,7 +4,7 @@
 
 #include <iostream>
 
-#include "../../include/xcshell/error.h"
+#include "../../include/xcshell/constants.h"
 #include "../../include/xcshell/utils.h"
 
 int Cd::Execute(const std::vector<std::string> &args, std::ostream &os,

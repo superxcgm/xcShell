@@ -1,11 +1,10 @@
+#include "../include/xcshell/utils.h"
+
 #include <pwd.h>
 #include <unistd.h>
 
 #include <sstream>
-#include <iostream>
 #include <string>
-
-#include "../include/xcshell/utils.h"
 
 std::vector<std::string> utils::Split(const std::string& str) {
   std::stringstream ss(str);
@@ -17,13 +16,13 @@ std::vector<std::string> utils::Split(const std::string& str) {
     parts.push_back(part);
   }
 
-  if (parts[parts.size() - 1] == "") {
+  if (parts[parts.size() - 1].empty()) {
     parts.pop_back();
   }
 
   return parts;
 }
-std::string utils::GetCurrentWorkingDirectory(std::ostream &os_err) {
+std::string utils::GetCurrentWorkingDirectory(std::ostream& os_err) {
   char buf[BUFSIZ];
   if (getcwd(buf, BUFSIZ) == nullptr) {
     utils::PrintSystemError(os_err);
@@ -47,10 +46,65 @@ std::string utils::GetHomeDir() {
   }
 
   // todo: replace with getpwuid_r
-  auto pw = getpwuid(getuid()); //NOLINT
+  auto pw = getpwuid(getuid());  // NOLINT
   home_dir = pw->pw_dir;
   return home_dir;
 }
-void utils::PrintSystemError(std::ostream &os_err) {
+void utils::PrintSystemError(std::ostream& os_err) {
   os_err << strerror(errno) << std::endl;
+}
+
+int NextNonSpacePos(int start, const std::string& str) {
+  int i = start;
+  while (i < str.length() && str[i] == ' ')
+    i++;
+  return i;
+}
+
+std::string ExtractQuoteString(int start, char quotation_mark, const std::string & str) {
+  int i;
+  for (i = start; i < str.length(); i++ ){
+    if (str[i] == quotation_mark) {
+      break;
+    }
+  }
+  return str.substr(start, i - start);
+}
+
+std::string ExtractStringWithoutQuote(int start, const std::string &str) {
+  int i = start;
+  for (; i < str.length(); i++ ){
+    if (str[i] == ' ') {
+      break;
+    }
+    if (str[i - 1] == '=' && (str[i] == '\'' || str[i] == '"')) {
+      return str.substr(start, i - start + 1) + ExtractQuoteString(i + 1, str[i], str) + str[i];
+    }
+  }
+  return str.substr(start, i - start);
+}
+
+std::vector<std::string> utils::SplitArgs(const std::string& str) {
+  if (str.empty()) {
+    return {};
+  }
+  std::vector<std::string> parts;
+  int i = NextNonSpacePos(0, str);
+  std::vector<char> quotation_marks = {'\'', '"'} ;
+  for (; i < str.length(); ) {
+    std::string fragment;
+    if (str[i] == quotation_marks[0] || str[i] == quotation_marks[1]) {
+      fragment = std::move(ExtractQuoteString(i + 1, str[i], str));
+      i += 2; // ignore quotation mark
+    } else {
+      fragment = std::move(ExtractStringWithoutQuote(i, str));
+    }
+    parts.push_back(fragment);
+    i = NextNonSpacePos(i + fragment.size(), str);
+  }
+  if (i < str.length()) {
+    parts.push_back(str.substr(i));
+  }
+
+  return parts;
 }
