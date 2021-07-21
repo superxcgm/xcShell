@@ -22,9 +22,8 @@ void Shell::Process() {
     if (line.empty()) {
       continue;
     }
-    auto [command, args] = ParseUserInput(line);
 
-    command_executor.Execute(command, args);
+    command_executor.Execute(line);
   }
 }
 
@@ -33,13 +32,6 @@ int Shell::Exit() {
   return 0;
 }
 
-std::tuple<std::string, std::vector<std::string>> Shell::ParseUserInput(
-    const std::string &str) {
-  auto parts = utils::SplitArgs(str);
-  std::string command = parts[0];
-  parts.erase(parts.begin());
-  return {command, parts};
-}
 std::string Shell::generatePrompt() {
   auto pwd = utils::GetCurrentWorkingDirectory(std::cerr);
   auto home = utils::GetHomeDir();

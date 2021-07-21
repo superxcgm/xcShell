@@ -10,6 +10,7 @@ namespace utils {
   std::string GetCurrentWorkingDirectory(std::ostream &os_err);
   std::string GetLastDir(const std::string& path);
   std::string GetHomeDir();
+  std::string RemoveQuote(const std::string& str);
   void PrintSystemError(std::ostream &os_err);
 }
 

@@ -8,28 +8,6 @@
 #include "../include/xcshell/constants.h"
 #include "../include/xcshell/utils.h"
 
-int CommandExecutor::Execute(const std::string &command,
-                             const std::vector<std::string> &args) {
-  if (build_in_.Exist(command)) {
-    return build_in_.Execute(command, args);
-  }
-
-  pid_t pid = fork();
-  if (pid == ERROR_CODE_SYSTEM) {
-    // error
-    utils::PrintSystemError(std::cerr);
-    return ERROR_CODE_DEFAULT;
-  }
-
-  if (pid == 0) {
-    return ProcessChild(command, args);
-  } else {
-    WaitChildExit(pid);
-  }
-
-  return 0;
-}
-
 std::vector<char *> CommandExecutor::BuildArgv(
     const std::string &command, const std::vector<std::string> &args) {
   std::vector<char *> argv;
@@ -60,4 +38,41 @@ void CommandExecutor::WaitChildExit(pid_t pid) {
   do {
     waitpid(pid, &status, WUNTRACED);
   } while (!WIFEXITED(status) && !WIFSIGNALED(status));
+}
+
+int CommandExecutor::Execute(const std::string &line) {
+  auto [cmd, args] = ParseUserInput(line);
+  if (build_in_.Exist(cmd)) {
+    return build_in_.Execute(cmd, args);
+  }
+
+  pid_t pid = fork();
+  if (pid == ERROR_CODE_SYSTEM) {
+    // error
+    utils::PrintSystemError(std::cerr);
+    return ERROR_CODE_DEFAULT;
+  }
+
+  if (pid == 0) {
+    return ProcessChild(cmd, args);
+  } else {
+    WaitChildExit(pid);
+  }
+
+  return 0;
+}
+
+// Todo: test
+std::tuple<std::string, std::vector<std::string>>
+CommandExecutor::ParseUserInput(const std::string &input_line) {
+  auto parts = utils::SplitArgs(input_line);
+  const std::string init_command = parts[0];
+  auto command_with_args_str = build_in_.GetAlias()->Replace(init_command);
+  auto command_with_args = utils::SplitArgs(command_with_args_str);
+  auto command = command_with_args[0];
+  parts.erase(parts.begin());
+  for (size_t i = command_with_args.size() - 1; i > 0; i--) {
+    parts.insert(parts.begin(), command_with_args[i]);
+  }
+  return {command, parts};
 }

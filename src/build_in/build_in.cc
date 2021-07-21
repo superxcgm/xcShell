@@ -1,13 +1,11 @@
 #include "../../include/xcshell/build_in/build_in.h"
 
-#include "../../include/xcshell/build_in/alias.h"
 #include "../../include/xcshell/build_in/cd.h"
 
-BuildIn::BuildIn() {
+BuildIn::BuildIn(): alias_(new Alias) {
   std::shared_ptr<Cd> cd(new Cd);
-  std::shared_ptr<Alias> alias(new Alias);
   commands_[cd->GetName()] = cd;
-  commands_[alias->GetName()] = alias;
+  commands_[alias_->GetName()] = alias_;
 }
 
 bool BuildIn::Exist(const std::string& cmd) {
@@ -17,4 +15,7 @@ bool BuildIn::Exist(const std::string& cmd) {
 int BuildIn::Execute(const std::string& cmd,
                      const std::vector<std::string>& args) {
   return commands_[cmd]->Execute(args, std::cout, std::cerr);
+}
+std::shared_ptr<Alias> BuildIn::GetAlias() {
+  return alias_;
 }

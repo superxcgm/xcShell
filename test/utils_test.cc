@@ -102,3 +102,11 @@ TEST(UtilsTest, SplitArgs_ShouldReturnCorrectlyForArgWithEquationAndQuotetion) {
 
   EXPECT_EQ(parts, expected);
 }
+
+TEST(UtilsTest, RemoveQuote_ShouldReturnOriginStrIfNoQuote) {
+  EXPECT_EQ(utils::RemoveQuote("hehe"), "hehe");
+}
+
+TEST(UtilsTest, RemoveQuote_ShouldReturnStringInsideSingleQuote) {
+  EXPECT_EQ(utils::RemoveQuote("'hehe'"), "hehe");
+}
