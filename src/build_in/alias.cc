@@ -1,6 +1,7 @@
 #include "../../include/xcshell/build_in/alias.h"
 
 #include "../../include/xcshell/constants.h"
+#include "../../include/xcshell/utils.h"
 
 int Alias::Execute(const std::vector<std::string> &args, std::ostream &os,
                    std::ostream &os_err) {
@@ -35,4 +36,9 @@ int Alias::PrintSingleAlias(const std::string &name, std::ostream &os) {
   }
   os << name << "=" << it->second << std::endl;
   return SUCCESS;
+}
+
+std::string Alias::Replace(const std::string &cmd) {
+  return alias_.find(cmd) != alias_.end() ? utils::RemoveQuote(alias_[cmd])
+                                          : cmd;
 }

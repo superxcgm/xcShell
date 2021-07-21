@@ -2,7 +2,7 @@
 
 #include "../../include/xcshell/build_in/alias.h"
 
-TEST(AliasTest, ShouldPrintEmptyLineForNoAlias) {
+TEST(AliasTest, Execute_ShouldPrintEmptyLineForNoAlias) {
   Alias alias;
   std::vector<std::string> no_args;
   std::ostringstream os;
@@ -14,7 +14,7 @@ TEST(AliasTest, ShouldPrintEmptyLineForNoAlias) {
   EXPECT_EQ(os.str(), "");
 }
 
-TEST(AliasTest, ShouldPrintSingleAlias) {
+TEST(AliasTest, Execute_ShouldPrintSingleAlias) {
   Alias alias;
   std::ostringstream os;
   std::ostringstream os_err;
@@ -35,7 +35,7 @@ TEST(AliasTest, ShouldPrintSingleAlias) {
   EXPECT_EQ(os.str(), "ls='ls -G'\n");
 }
 
-TEST(AliasTest, ShouldPrintAlias) {
+TEST(AliasTest, Execute_ShouldPrintAlias) {
   Alias alias;
   std::vector<std::string> no_args;
   std::ostringstream os;
@@ -60,4 +60,22 @@ TEST(AliasTest, ShouldPrintAlias) {
 
   EXPECT_EQ(rtn, 0);
   EXPECT_EQ(os.str(), "ll='ls -lh'\nls='ls -G'\n");
+}
+
+TEST(AliasTest, Replace_ShouldRepleaseIfAliasFound) {
+  Alias alias;
+  std::vector<std::string> no_args;
+  std::ostringstream os;
+  std::ostringstream os_err;
+  std::vector<std::string> create_alias = {
+      "ls='ls -G'"
+  };
+
+  alias.Execute(create_alias, os, os_err);
+  EXPECT_EQ(alias.Replace("ls"), "ls -G");
+}
+
+TEST(AliasTest, Replace_ShouldNotRepleaseIfAliasNotFound) {
+  Alias alias;
+  EXPECT_EQ(alias.Replace("ls"), "ls");
 }

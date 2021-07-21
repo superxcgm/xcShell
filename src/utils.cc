@@ -109,3 +109,10 @@ std::vector<std::string> utils::SplitArgs(const std::string& str) {
 
   return parts;
 }
+
+std::string utils::RemoveQuote(const std::string& str) {
+  if (str[0] == '\'' && str[str.length() - 1] == '\'') {
+    return str.substr(1, str.length() - 2);
+  }
+  return str;
+}
