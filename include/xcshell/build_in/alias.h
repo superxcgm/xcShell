@@ -13,6 +13,8 @@ class Alias : public BuildInCommand {
   int Execute(const std::vector<std::string> &args, std::ostream &os,
               std::ostream &os_err);
 
+  std::string Replace(const std::string& cmd);
+
   std::string GetName() { return "alias"; }
 
   ~Alias();
