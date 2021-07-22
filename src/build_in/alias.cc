@@ -39,6 +39,33 @@ int Alias::PrintSingleAlias(const std::string &name, std::ostream &os) {
 }
 
 std::string Alias::Replace(const std::string &cmd) {
-  return alias_.find(cmd) != alias_.end() ? utils::RemoveQuote(alias_[cmd])
-                                          : cmd;
+  std::string cur_command = cmd;
+  std::string tail_str;
+  while (alias_.find(cur_command) != alias_.end()) {
+    auto v = utils::RemoveQuote(alias_[cur_command]);
+    auto tmp_str = cur_command + " ";
+    if (tmp_str.append(tail_str).find(v) == 0) {
+      break;
+    }
+    auto pos = v.find(' ');
+    if (pos == std::string::npos) {
+      AppendString(v, tail_str);
+      return v;
+    }
+    cur_command = v.substr(0, pos);
+    auto pre_tail = tail_str;
+    tail_str = v.substr(pos + 1);
+    AppendString(tail_str, pre_tail);
+  }
+  AppendString(cur_command, tail_str);
+  return cur_command;
 }
+
+void Alias::AppendString(std::string &str, const std::string &added_str) {
+  if (added_str.empty()) {
+    return;
+  }
+  str.append(" ");
+  str.append(added_str);
+}
+

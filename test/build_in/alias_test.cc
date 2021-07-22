@@ -75,6 +75,24 @@ TEST(AliasTest, Replace_ShouldRepleaseIfAliasFound) {
   EXPECT_EQ(alias.Replace("ls"), "ls -G");
 }
 
+TEST(AliasTest, Replace_ShouldRepleaseMultiTimesIfAliasFound) {
+  Alias alias;
+  std::vector<std::string> no_args;
+  std::ostringstream os;
+  std::ostringstream os_err;
+  std::vector<std::string> create_alias = {
+      "ls='ls -G'"
+  };
+
+  alias.Execute(create_alias, os, os_err);
+  create_alias = {
+      "ll='ls -lh'"
+  };
+  alias.Execute(create_alias, os, os_err);
+
+  EXPECT_EQ(alias.Replace("ll"), "ls -G -lh");
+}
+
 TEST(AliasTest, Replace_ShouldNotRepleaseIfAliasNotFound) {
   Alias alias;
   EXPECT_EQ(alias.Replace("ls"), "ls");
