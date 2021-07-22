@@ -24,6 +24,8 @@ class Alias : public BuildInCommand {
 
   int PrintAllAlias(std::ostream &os);
 
+  void AppendString(std::string &str, const std::string &added_str); //NOLINT
+
   std::map<std::string, std::string> alias_;
 };
 
