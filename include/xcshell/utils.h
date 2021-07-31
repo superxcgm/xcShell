@@ -14,6 +14,6 @@ namespace utils {
   std::string RemoveQuote(const std::string& str);
   void PrintSystemError(std::ostream &os_err);
   std::string ReadFileText(const std::string &file_name);
-}
+}  // namespace utils
 
 #endif  // INCLUDE_XCSHELL_UTILS_H_

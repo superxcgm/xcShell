@@ -56,7 +56,7 @@ void Shell::ExecuteConfig(const std::string &config_string) {
 
   while (!ss.eof()) {
     std::string line;
-    getline(ss,line);
+    getline(ss, line);
     if (line.empty()) {
       continue;
     }
