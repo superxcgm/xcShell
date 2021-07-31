@@ -1,6 +1,6 @@
 #include <gtest/gtest.h>
 
-#include "../../include/xcshell/build_in/alias.h"
+#include "xcshell/build_in/alias.h"
 
 TEST(AliasTest, Execute_ShouldPrintEmptyLineForNoAlias) {
   Alias alias;

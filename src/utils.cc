@@ -3,8 +3,27 @@
 #include <pwd.h>
 #include <unistd.h>
 
+#include <fstream>
 #include <sstream>
 #include <string>
+
+std::string utils::ExpandPath(const std::string& path) {
+  if (path[0] == '~') {
+    return GetHomeDir() + path.substr(1);
+  }
+  return path;
+}
+
+std::string utils::ReadFileText(const std::string& file_name) {
+  std::ifstream ifs(file_name);
+  if (ifs) {
+    std::string content((std::istreambuf_iterator<char>(ifs)),
+                        (std::istreambuf_iterator<char>()));
+    return content;
+  } else {
+    return "";
+  }
+}
 
 std::vector<std::string> utils::Split(const std::string& str) {
   std::stringstream ss(str);
