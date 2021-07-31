@@ -1,8 +1,8 @@
 #include <editline/readline.h>
 
-#include "../include/xcshell/command_executor.h"
-#include "../include/xcshell/shell.h"
-#include "../include/xcshell/utils.h"
+#include "xcshell/command_executor.h"
+#include "xcshell/shell.h"
+#include "xcshell/utils.h"
 
 void Shell::Init() {
   // todo: read ~/.xcshellrc config file

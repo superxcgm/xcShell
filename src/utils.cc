@@ -1,4 +1,4 @@
-#include "../include/xcshell/utils.h"
+#include "xcshell/utils.h"
 
 #include <pwd.h>
 #include <unistd.h>

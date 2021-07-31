@@ -1,7 +1,7 @@
-#include "../../include/xcshell/build_in/alias.h"
+#include "xcshell/build_in/alias.h"
 
-#include "../../include/xcshell/constants.h"
-#include "../../include/xcshell/utils.h"
+#include "xcshell/constants.h"
+#include "xcshell/utils.h"
 
 int Alias::Execute(const std::vector<std::string> &args, std::ostream &os,
                    std::ostream &os_err) {

@@ -1,5 +1,5 @@
 
-#include "../include/xcshell/shell.h"
+#include "xcshell/shell.h"
 
 int main() {
   Shell shell;

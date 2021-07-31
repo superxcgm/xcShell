@@ -3,6 +3,7 @@ project(xcShell)
 
 set(CMAKE_CXX_STANDARD 17)
 
+include_directories(include)
 include(${CMAKE_BINARY_DIR}/conan_paths.cmake)
 aux_source_directory(src EXE_SOURCES)
 aux_source_directory(src/build_in BUILD_IN_SOURCES)
