@@ -1,12 +1,12 @@
-#include "../include/xcshell/command_executor.h"
+#include "xcshell/command_executor.h"
 
 #include <unistd.h>
 
 #include <iostream>
 #include <map>
 
-#include "../include/xcshell/constants.h"
-#include "../include/xcshell/utils.h"
+#include "xcshell/constants.h"
+#include "xcshell/utils.h"
 
 std::vector<char *> CommandExecutor::BuildArgv(
     const std::string &command, const std::vector<std::string> &args) {

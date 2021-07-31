@@ -1,6 +1,6 @@
-#include "../../include/xcshell/build_in/build_in.h"
+#include "xcshell/build_in/build_in.h"
 
-#include "../../include/xcshell/build_in/cd.h"
+#include "xcshell/build_in/cd.h"
 
 BuildIn::BuildIn(): alias_(new Alias) {
   std::shared_ptr<Cd> cd(new Cd);
