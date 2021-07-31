@@ -1,0 +1,7 @@
+
+alias ls='ls -G'
+alias ll='ls -lh'
+alias gst='git status'
+alias gup='git pull --rebase'
+alias gcm='git checkout $(git_main_branch)'
+alias gco='git checkout'

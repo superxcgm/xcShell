@@ -1,6 +1,6 @@
 #include <gtest/gtest.h>
 
-#include "../include/xcshell/utils.h"
+#include "xcshell/utils.h"
 
 TEST(UtilsTest, Split_ShouldSplitCorrectlyFor1part) {
   auto parts = utils::Split("hello");
@@ -109,4 +109,13 @@ TEST(UtilsTest, RemoveQuote_ShouldReturnOriginStrIfNoQuote) {
 
 TEST(UtilsTest, RemoveQuote_ShouldReturnStringInsideSingleQuote) {
   EXPECT_EQ(utils::RemoveQuote("'hehe'"), "hehe");
+}
+
+TEST(UtilsTest, ExpandPath_ShouldReturnOriginPathIfNotStartWithTilde) {
+  EXPECT_EQ(utils::ExpandPath("a.txt"), "a.txt");
+}
+
+TEST(UtilsTest, ExpandPath_ShouldReturnReplacedPathIfStartWithTilde) {
+  auto replaced = utils::ExpandPath("~/a.txt");
+  EXPECT_TRUE(replaced.find("~") == std::string::npos);
 }
