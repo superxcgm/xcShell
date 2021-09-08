@@ -1,6 +1,7 @@
 #include "xcshell/command_executor.h"
 
 #include <unistd.h>
+#include <sys/wait.h>
 
 #include <iostream>
 #include <map>

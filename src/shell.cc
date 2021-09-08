@@ -1,5 +1,12 @@
 #include "xcshell/shell.h"
+
+
+#if defined(__linux__)
+#include <readline/readline.h>
+#include <readline/history.h>
+#elif defined(__APPLE__)
 #include <editline/readline.h>
+#endif
 
 #include <sstream>
 

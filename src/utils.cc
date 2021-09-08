@@ -3,6 +3,7 @@
 #include <pwd.h>
 #include <unistd.h>
 
+#include <cstring>
 #include <fstream>
 #include <sstream>
 #include <string>
