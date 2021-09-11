@@ -30,6 +30,7 @@ int CommandExecutor::ProcessChild(const std::string &command,
   // should not execute to here if success
   if (ret == ERROR_CODE_SYSTEM) {
     utils::PrintSystemError(std::cerr);
+    exit(ERROR_CODE_DEFAULT);
   }
   return ERROR_CODE_DEFAULT;
 }

@@ -28,7 +28,9 @@ void Shell::Process() {
     if (line_ptr == nullptr) {
       break;
     }
-    add_history(line_ptr);
+    if (strlen(line_ptr) > 0) {
+      add_history(line_ptr);
+    }
     std::string line = line_ptr;
     free(line_ptr);
     if (line.empty()) {
