@@ -9,6 +9,7 @@
 #endif
 
 #include <sstream>
+#include <csignal>
 
 #include "xcshell/utils.h"
 #include "xcshell/constants.h"
@@ -19,6 +20,8 @@ void Shell::Init() {
 
   auto user_config = utils::ReadFileText(utils::ExpandPath(USER_CONFIG_FILE));
   ExecuteConfig(user_config);
+
+  IgnoreSignalInterrupt();
 }
 
 void Shell::Process() {
@@ -71,5 +74,14 @@ void Shell::ExecuteConfig(const std::string &config_string) {
     }
 
     command_executor_.Execute(line);
+  }
+}
+
+void Shell::IgnoreSignalInterrupt() {
+  struct sigaction new_action {};
+  new_action.sa_handler = SIG_IGN;
+  int result = sigaction(SIGINT, &new_action, nullptr);
+  if (result) {
+    utils::PrintSystemError(std::cerr);
   }
 }

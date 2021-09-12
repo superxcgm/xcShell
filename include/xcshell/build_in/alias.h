@@ -13,7 +13,7 @@ class Alias : public BuildInCommand {
   int Execute(const std::vector<std::string> &args, std::ostream &os,
               std::ostream &os_err);
 
-  std::string Replace(const std::string& cmd);
+  std::string Replace(const std::string &cmd);
 
   std::string GetName() { return "alias"; }
 
@@ -24,7 +24,7 @@ class Alias : public BuildInCommand {
 
   int PrintAllAlias(std::ostream &os);
 
-  void AppendString(std::string &str, const std::string &added_str); //NOLINT
+  void AppendString(std::string &str, const std::string &added_str);  // NOLINT
 
   std::map<std::string, std::string> alias_;
 };
