@@ -1,5 +1,6 @@
 #include "xcshell/command_executor.h"
 
+#include <csignal>
 #include <unistd.h>
 #include <sys/wait.h>
 
