@@ -1,8 +1,8 @@
 #ifndef INCLUDE_XCSHELL_BUILD_IN_CD_H_
 #define INCLUDE_XCSHELL_BUILD_IN_CD_H_
 
-#include <vector>
 #include <string>
+#include <vector>
 
 #include "./build_in_command.h"
 

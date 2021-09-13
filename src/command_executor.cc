@@ -2,6 +2,7 @@
 
 #include <unistd.h>
 #include <sys/wait.h>
+#include <csignal>
 
 #include <iostream>
 #include <map>
@@ -24,6 +25,13 @@ std::vector<char *> CommandExecutor::BuildArgv(
 int CommandExecutor::ProcessChild(const std::string &command,
                                   const std::vector<std::string> &args) {
   // child
+  struct sigaction new_action {};
+  new_action.sa_handler = SIG_DFL;
+  int result = sigaction(SIGINT, &new_action, nullptr);
+  if (result) {
+    utils::PrintSystemError(std::cerr);
+  }
+
   auto argv = BuildArgv(command, args);
 
   auto ret = execvp(command.c_str(), &argv[0]);

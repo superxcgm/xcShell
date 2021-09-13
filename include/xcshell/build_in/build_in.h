@@ -6,21 +6,21 @@
 #include <string>
 #include <vector>
 
-#include "./build_in_command.h"
 #include "./alias.h"
+#include "./build_in_command.h"
 
-class BuildIn{
+class BuildIn {
  public:
   BuildIn();
 
   bool Exist(const std::string &cmd);
 
-  int Execute(const std::string& cmd, const std::vector<std::string> &args);
+  int Execute(const std::string &cmd, const std::vector<std::string> &args);
 
   std::shared_ptr<Alias> GetAlias();
 
  private:
-  std::map<std::string , std::shared_ptr<BuildInCommand>> commands_;
+  std::map<std::string, std::shared_ptr<BuildInCommand>> commands_;
   std::shared_ptr<Alias> alias_;
 };
 
