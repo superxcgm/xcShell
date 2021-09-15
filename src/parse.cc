@@ -26,11 +26,11 @@ std::vector<std::string> getArgs(std::vector<std::string> &command_with_args) {
 
 std::string getName(std::vector<std::string> &command_with_args) {
   std::vector<std::string> args;
-  for (auto it = 0; it < command_with_args.size();it++) {
+  for (auto it = 0; it < command_with_args.size(); it++) {
     if (command_with_args[it] == ">" || command_with_args[it] == "<" ||
         command_with_args[it] == ">>") {
       int index = ++it;
-      if(index < command_with_args.size()) {
+      if (index < command_with_args.size()) {
         return command_with_args[index];
       }
     }
@@ -62,18 +62,18 @@ ParseTypeElement Parse::parseUserInputLine(const std::string &input_line) {
     parts.insert(parts.begin(), command_with_args[i]);
   }
   std::vector<std::string> args;
-//  std::string fileName = "a.c";
+  std::string fileName = nullptr;
   if (!parts.empty()) {
     args = getArgs(parts);
-//    fileName = getName(parts);
+    fileName = getName(parts);
   }
 
-  //  int flag = getFlag(parts);
+  int flag = getFlag(parts);
   std::cout << command << std::endl;
   for (auto it = args.begin(); it != args.end(); it++) {
     std::cout << *it << std::endl;
   }
-//  std::cout << fileName << std::endl;
-  //return ParseTypeElement(command, args, fileName);
-  return ParseTypeElement(command, args);
+  //  std::cout << fileName << std::endl;
+  // return ParseTypeElement(command, args, fileName);
+  return ParseTypeElement(command, args, fileName, flag);
 }

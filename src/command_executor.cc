@@ -54,7 +54,7 @@ void CommandExecutor::WaitChildExit(pid_t pid) {
 
 int CommandExecutor::Execute(const std::string &line) {
   Parse parse;
-  const auto [cmd, args] = parse.parseUserInputLine(line);
+  const auto [cmd, args, filename, flag] = parse.parseUserInputLine(line);
   if (build_in_.Exist(cmd)) {
     return build_in_.Execute(cmd, args);
   }
