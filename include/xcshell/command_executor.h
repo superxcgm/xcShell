@@ -17,9 +17,7 @@ class CommandExecutor {
   static int ProcessChild(const std::string &command,
                           const std::vector<std::string> &args);
   static void WaitChildExit(pid_t pid);
-  // todo: remove basic type below using typedef or something else
-  std::tuple<std::string, std::vector<std::string>> ParseUserInput(
-      const std::string &input_line);
+
   BuildIn build_in_;
 };
 

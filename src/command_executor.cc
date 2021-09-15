@@ -1,13 +1,15 @@
 #include "xcshell/command_executor.h"
 
-#include <unistd.h>
 #include <sys/wait.h>
-#include <csignal>
+#include <unistd.h>
 
+#include <csignal>
 #include <iostream>
 #include <map>
 
 #include "xcshell/constants.h"
+#include "xcshell/parse.h"
+#include "xcshell/parseTypeElement.h"
 #include "xcshell/utils.h"
 
 std::vector<char *> CommandExecutor::BuildArgv(
@@ -51,7 +53,8 @@ void CommandExecutor::WaitChildExit(pid_t pid) {
 }
 
 int CommandExecutor::Execute(const std::string &line) {
-  auto [cmd, args] = ParseUserInput(line);
+  Parse parse;
+  const auto [cmd, args] = parse.parseUserInputLine(line);
   if (build_in_.Exist(cmd)) {
     return build_in_.Execute(cmd, args);
   }
@@ -70,19 +73,4 @@ int CommandExecutor::Execute(const std::string &line) {
   }
 
   return 0;
-}
-
-// Todo: test
-std::tuple<std::string, std::vector<std::string>>
-CommandExecutor::ParseUserInput(const std::string &input_line) {
-  auto parts = utils::SplitArgs(input_line);
-  const std::string init_command = parts[0];
-  auto command_with_args_str = build_in_.GetAlias()->Replace(init_command);
-  auto command_with_args = utils::SplitArgs(command_with_args_str);
-  auto command = command_with_args[0];
-  parts.erase(parts.begin());
-  for (size_t i = command_with_args.size() - 1; i > 0; i--) {
-    parts.insert(parts.begin(), command_with_args[i]);
-  }
-  return {command, parts};
 }
