@@ -57,13 +57,14 @@ TEST(ParseTest, should_prase_input_redirection_correctly) {
   std::string inputfilename = redirectElement.input_redirect_file;
   int output_mode = redirectElement.output_mode;
   int cmd_type = redirectElement.cmd_type;
-
+  int overwrite = redirectElement.output_mode::overwrite;
+  int direct = redirectElement.cmd_type::direct;
   EXPECT_EQ(command, "bc");
   EXPECT_EQ(args, vec);
   EXPECT_EQ(outputfilename, "");
   EXPECT_EQ(inputfilename, "a.input");
-  EXPECT_EQ(output_mode, 0);
-  EXPECT_EQ(cmd_type, 1);
+  EXPECT_EQ(output_mode, overwrite);
+  EXPECT_EQ(cmd_type, direct);
 }
 
 TEST(ParseTest, should_prase_input_and_output_redirection_correctly) {
