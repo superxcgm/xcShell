@@ -6,6 +6,7 @@
 #include <vector>
 
 #include "build_in/build_in.h"
+#include "xcshell/parser.h"
 
 class CommandExecutor {
  public:
@@ -14,11 +15,12 @@ class CommandExecutor {
  private:
   static std::vector<char *> BuildArgv(const std::string &command,
                                        const std::vector<std::string> &args);
-  static int ProcessChild(const std::string &command,
-                          const std::vector<std::string> &args);
+  static int ProcessChild(RedirectElement &redirectElement);
   static void WaitChildExit(pid_t pid);
 
   BuildIn build_in_;
+
+  Parser parser;
 };
 
 #endif  // INCLUDE_XCSHELL_COMMAND_EXECUTOR_H_
