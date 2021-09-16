@@ -6,12 +6,14 @@
 #include <vector>
 
 #include "build_in/build_in.h"
-#include "xcshell/redirectelement.h"
+#include "xcshell/CommandParseResult.h"
 
 class Parser {
  public:
   Parser() = default;
-  RedirectElement parseUserInputLine(const std::string &input_line);
+  CommandParseResult ParseUserInputLine(const std::string &input_line);
+  static std::vector<char *> BuildArgv(const std::string &command,
+                                       const std::vector<std::string> &args);
 
  private:
   BuildIn build_in_;

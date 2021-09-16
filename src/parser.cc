@@ -3,7 +3,7 @@
 #include <string>
 #include <vector>
 
-#include "xcshell/redirectelement.h"
+#include "xcshell/CommandParseResult.h"
 #include "xcshell/utils.h"
 
 std::vector<std::string> getArgs(
@@ -55,37 +55,44 @@ std::string getInputName(const std::vector<std::string> &commandSuffix) {
   return "";
 }
 
-void redirectOutputMode(const std::vector<std::string> &commandSuffix,
-                        RedirectElement redirectElement) {
-  for (auto &it : commandSuffix) {
-    if (it == ">") {
-      redirectElement.output_mode = redirectElement.output_mode::overwrite;
-    } else if (it == ">>") {
-      redirectElement.output_mode = redirectElement.output_mode::append;
-    }
+bool redirectOutputMode(const std::vector<std::string> &commandSuffix) {
+  auto it = std::find(commandSuffix.begin(), commandSuffix.end(), ">>");
+  if (it != commandSuffix.end()) {
+    return true;
   }
+  return false;
 }
-void getCmdType(const std::vector<std::string> &commandSuffix,
-                RedirectElement redirectElement) {
-  for (auto &it : commandSuffix) {
-    if (it == ">" || it == ">>" || it == "<") {
-      redirectElement.cmd_type = redirectElement.cmd_type::direct;
-    }
-  }
-}
-RedirectElement Parser::parseUserInputLine(const std::string &input_line) {
-  RedirectElement redirectElement;
+CommandParseResult Parser::ParseUserInputLine(const std::string &input_line) {
+  CommandParseResult commandParseResult;
   auto [command, commandSuffix] = getCommandAndSuffix(input_line, build_in_);
 
-  redirectElement.command = command;
+  commandParseResult.command = command;
   if (!commandSuffix.empty()) {
-    redirectElement.args = getArgs(commandSuffix);
-    redirectElement.output_redirect_file = getOutputName(commandSuffix);
-    redirectElement.input_redirect_file = getInputName(commandSuffix);
-    redirectElement.cmd_type = redirectElement.cmd_type::normal;
-    redirectOutputMode(commandSuffix, redirectElement);
-    getCmdType(commandSuffix, redirectElement);
+    commandParseResult.args = getArgs(commandSuffix);
+    commandParseResult.output_redirect_file = getOutputName(commandSuffix);
+    commandParseResult.input_redirect_file = getInputName(commandSuffix);
+    commandParseResult.output_is_append = redirectOutputMode(commandSuffix);
   }
 
-  return redirectElement;
+  std::cout << commandParseResult.command << std::endl;
+  for (auto &arg : commandParseResult.args) {
+    std::cout << arg << std::endl;
+  }
+  std::cout << commandParseResult.output_redirect_file << 123 << std::endl;
+  std::cout << commandParseResult.input_redirect_file << 456 << std::endl;
+
+  std::cout << commandParseResult.output_is_append << std::endl;
+
+  return commandParseResult;
+}
+std::vector<char *> Parser::BuildArgv(const std::string &command,
+                                      const std::vector<std::string> &args) {
+  std::vector<char *> argv;
+  argv.reserve(args.size() + 2);
+  argv.push_back(const_cast<char *>(command.c_str()));
+  for (const auto &arg : args) {
+    argv.push_back(const_cast<char *>(arg.c_str()));
+  }
+  argv.push_back(nullptr);
+  return argv;
 }
