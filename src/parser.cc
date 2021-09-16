@@ -6,7 +6,8 @@
 #include "xcshell/redirectelement.h"
 #include "xcshell/utils.h"
 
-std::vector<std::string> getArgs(std::vector<std::string> &command_with_args) {
+std::vector<std::string> getArgs(
+    const std::vector<std::string> &command_with_args) {
   std::vector<std::string> args;
   for (auto &command_with_arg : command_with_args) {
     if (command_with_arg == ">" || command_with_arg == "<" ||
@@ -19,7 +20,7 @@ std::vector<std::string> getArgs(std::vector<std::string> &command_with_args) {
 }
 
 std::tuple<std::string, std::vector<std::string>> getCommandAndSuffix(
-    const std::string &input_line, BuildIn &build_in) {
+    const std::string &input_line, BuildIn build_in) {
   auto parts = utils::SplitArgs(input_line);
   const std::string init_command = parts[0];
   auto command_with_args_str = build_in.GetAlias()->Replace(init_command);
@@ -31,7 +32,7 @@ std::tuple<std::string, std::vector<std::string>> getCommandAndSuffix(
   }
   return {command, parts};
 }
-std::string getOutputName(std::vector<std::string> &commandSuffix) {
+std::string getOutputName(const std::vector<std::string> &commandSuffix) {
   for (auto it = 0; it < commandSuffix.size(); it++) {
     if (commandSuffix[it] == ">" || commandSuffix[it] == ">>") {
       int index = ++it;
@@ -42,7 +43,7 @@ std::string getOutputName(std::vector<std::string> &commandSuffix) {
   }
   return "";
 }
-std::string getInputName(std::vector<std::string> &commandSuffix) {
+std::string getInputName(const std::vector<std::string> &commandSuffix) {
   for (auto it = 0; it < commandSuffix.size(); it++) {
     if (commandSuffix[it] == "<") {
       int index = ++it;
@@ -54,8 +55,8 @@ std::string getInputName(std::vector<std::string> &commandSuffix) {
   return "";
 }
 
-void redirectOutputMode(std::vector<std::string> &commandSuffix,
-                        RedirectElement &redirectElement) {
+void redirectOutputMode(const std::vector<std::string> &commandSuffix,
+                        RedirectElement redirectElement) {
   for (auto &it : commandSuffix) {
     if (it == ">") {
       redirectElement.output_mode = redirectElement.output_mode::overwrite;
@@ -64,8 +65,8 @@ void redirectOutputMode(std::vector<std::string> &commandSuffix,
     }
   }
 }
-void getCmdType(std::vector<std::string> &commandSuffix,
-                RedirectElement &redirectElement) {
+void getCmdType(const std::vector<std::string> &commandSuffix,
+                RedirectElement redirectElement) {
   for (auto &it : commandSuffix) {
     if (it == ">" || it == ">>" || it == "<") {
       redirectElement.cmd_type = redirectElement.cmd_type::direct;

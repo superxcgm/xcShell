@@ -1,5 +1,5 @@
-#ifndef XCSHELL_PARSER_H
-#define XCSHELL_PARSER_H
+#ifndef INCLUDE_XCSHELL_PARSER_H_
+#define INCLUDE_XCSHELL_PARSER_H_
 
 #include <string>
 #include <utility>
@@ -17,4 +17,4 @@ class Parser {
   BuildIn build_in_;
 };
 
-#endif  // XCSHELL_PARSER_H
+#endif  // INCLUDE_XCSHELL_PARSER_H_

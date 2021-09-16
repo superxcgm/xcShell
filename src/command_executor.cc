@@ -24,7 +24,7 @@ std::vector<char *> CommandExecutor::BuildArgv(
   return argv;
 }
 
-void output_redirect(RedirectElement &redirectElement) {
+void output_redirect(const RedirectElement &redirectElement) {
   if (redirectElement.output_mode == redirectElement.output_mode::overwrite) {
     int fdout = open(redirectElement.output_redirect_file.c_str(),
                      O_WRONLY | O_TRUNC | O_CREAT, 0666);
@@ -38,7 +38,7 @@ void output_redirect(RedirectElement &redirectElement) {
     close(fdout);
   }
 }
-int CommandExecutor::ProcessChild(RedirectElement &redirectElement) {
+int CommandExecutor::ProcessChild(const RedirectElement &redirectElement) {
   // child
   struct sigaction new_action {};
   new_action.sa_handler = SIG_DFL;
@@ -96,3 +96,4 @@ int CommandExecutor::Execute(const std::string &line) {
 
   return 0;
 }
+

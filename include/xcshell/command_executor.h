@@ -15,7 +15,7 @@ class CommandExecutor {
  private:
   static std::vector<char *> BuildArgv(const std::string &command,
                                        const std::vector<std::string> &args);
-  static int ProcessChild(RedirectElement &redirectElement);
+  static int ProcessChild(const RedirectElement &redirectElement);
   static void WaitChildExit(pid_t pid);
 
   BuildIn build_in_;
