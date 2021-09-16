@@ -1,8 +1,8 @@
 #include "xcshell/parser.h"
 
+#include <algorithm>
 #include <string>
 #include <vector>
-#include <algorithm>
 
 #include "xcshell/CommandParseResult.h"
 #include "xcshell/utils.h"
@@ -33,6 +33,7 @@ std::tuple<std::string, std::vector<std::string>> getCommandAndSuffix(
   }
   return {command, parts};
 }
+
 std::string getOutputName(const std::vector<std::string> &commandSuffix) {
   for (auto it = 0; it < commandSuffix.size(); it++) {
     if (commandSuffix[it] == ">" || commandSuffix[it] == ">>") {
@@ -44,6 +45,7 @@ std::string getOutputName(const std::vector<std::string> &commandSuffix) {
   }
   return "";
 }
+
 std::string getInputName(const std::vector<std::string> &commandSuffix) {
   for (auto it = 0; it < commandSuffix.size(); it++) {
     if (commandSuffix[it] == "<") {
