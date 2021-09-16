@@ -56,8 +56,8 @@ std::string getInputName(const std::vector<std::string> &commandSuffix) {
 }
 
 bool redirectOutputMode(const std::vector<std::string> &commandSuffix) {
-  auto it = std::find(commandSuffix.begin(), commandSuffix.end(), ">>");
-  if (it != commandSuffix.end()) {
+  if (std::any_of(commandSuffix.begin(), commandSuffix.end(),
+                  [](const std::string &symbol) { return symbol == ">>"; })) {
     return true;
   }
   return false;
@@ -73,16 +73,6 @@ CommandParseResult Parser::ParseUserInputLine(const std::string &input_line) {
     commandParseResult.input_redirect_file = getInputName(commandSuffix);
     commandParseResult.output_is_append = redirectOutputMode(commandSuffix);
   }
-
-  std::cout << commandParseResult.command << std::endl;
-  for (auto &arg : commandParseResult.args) {
-    std::cout << arg << std::endl;
-  }
-  std::cout << commandParseResult.output_redirect_file << 123 << std::endl;
-  std::cout << commandParseResult.input_redirect_file << 456 << std::endl;
-
-  std::cout << commandParseResult.output_is_append << std::endl;
-
   return commandParseResult;
 }
 std::vector<char *> Parser::BuildArgv(const std::string &command,

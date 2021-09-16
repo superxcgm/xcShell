@@ -17,6 +17,7 @@ TEST(ParseTest, should_prase_output_redirection_correctly_with_overwrite) {
   EXPECT_EQ(commandParseResult.input_redirect_file, "");
   EXPECT_EQ(commandParseResult.output_is_append, false);
 }
+
 TEST(ParseTest, should_prase_output_redirection_correctly_with_append) {
   Parser parser;
   std::string str = "ls -l >> a.txt";
