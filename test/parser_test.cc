@@ -4,7 +4,7 @@
 #include "xcshell/parser.h"
 
 
-TEST(ParseTest, should_prase_output_redirection_correctly_with_overwrite) {
+TEST(ParseTest, Parse_PraseOutputRedirectionCorrectlyWithOverwrite) {
   Parser parser;
   std::string str = "ls > a.txt";
   std::vector<std::string> vec;
@@ -17,7 +17,7 @@ TEST(ParseTest, should_prase_output_redirection_correctly_with_overwrite) {
   EXPECT_EQ(command_parse_result.output_is_append, false);
 }
 
-TEST(ParseTest, should_prase_output_redirection_correctly_with_append) {
+TEST(ParseTest, Parse_PraseOutputRedirectionCorrectlyWithAppend) {
   Parser parser;
   std::string str = "ls -l >> a.txt";
   std::vector<std::string> vec;
@@ -31,7 +31,7 @@ TEST(ParseTest, should_prase_output_redirection_correctly_with_append) {
   EXPECT_EQ(command_parse_result.output_is_append, true);
 }
 
-TEST(ParseTest, should_prase_input_redirection_correctly) {
+TEST(ParseTest, Parse_PraseInputRedirectionCorrectly) {
   Parser parser;
   std::string str = "bc < a.input";
   std::vector<std::string> vec;
@@ -43,7 +43,7 @@ TEST(ParseTest, should_prase_input_redirection_correctly) {
   EXPECT_EQ(command_parse_result.input_redirect_file, "a.input");
 }
 
-TEST(ParseTest, should_prase_input_and_output_redirection_correctly) {
+TEST(ParseTest, Parse_PraseInputAndOutputRedirectionCorrectly) {
   Parser parser;
   std::string str = "bc < a.input > a.txt";
   std::vector<std::string> vec;
@@ -56,7 +56,7 @@ TEST(ParseTest, should_prase_input_and_output_redirection_correctly) {
   EXPECT_EQ(command_parse_result.output_is_append, false);
 }
 
-TEST(ParseTest, should_prase_output_correctly_not_contain_any_redirect) {
+TEST(ParseTest, Parse_OutputCorrectlyNotContainAnyRedirection) {
   Parser parser;
   std::string str = "ls -a";
   std::vector<std::string> vec;
