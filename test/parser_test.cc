@@ -4,10 +4,9 @@
 
 #include <vector>
 
-BuildIn build_in_;
-
 TEST(ParseTest, Parse_PraseOutputRedirectionCorrectlyWithOverwrite) {
   Parser parser;
+  BuildIn build_in_;
   std::string str = "ls > a.txt";
   std::vector<std::string> vec;
   CommandParseResult command_parse_result =
@@ -22,6 +21,7 @@ TEST(ParseTest, Parse_PraseOutputRedirectionCorrectlyWithOverwrite) {
 
 TEST(ParseTest, Parse_PraseOutputRedirectionCorrectlyWithAppend) {
   Parser parser;
+  BuildIn build_in_;
   std::string str = "ls -l >> a.txt";
   std::vector<std::string> vec;
   vec.emplace_back("-l");
@@ -37,6 +37,7 @@ TEST(ParseTest, Parse_PraseOutputRedirectionCorrectlyWithAppend) {
 
 TEST(ParseTest, Parse_PraseInputRedirectionCorrectly) {
   Parser parser;
+  BuildIn build_in_;
   std::string str = "bc < a.input";
   std::vector<std::string> vec;
   CommandParseResult command_parse_result =
@@ -50,6 +51,7 @@ TEST(ParseTest, Parse_PraseInputRedirectionCorrectly) {
 
 TEST(ParseTest, Parse_PraseInputAndOutputRedirectionCorrectly) {
   Parser parser;
+  BuildIn build_in_;
   std::string str = "bc < a.input > a.txt";
   std::vector<std::string> vec;
   CommandParseResult command_parse_result =
@@ -64,6 +66,7 @@ TEST(ParseTest, Parse_PraseInputAndOutputRedirectionCorrectly) {
 
 TEST(ParseTest, Parse_OutputCorrectlyNotContainAnyRedirection) {
   Parser parser;
+  BuildIn build_in_;
   std::string str = "ls -a";
   std::vector<std::string> vec;
   vec.emplace_back("-a");
