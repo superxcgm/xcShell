@@ -13,8 +13,10 @@ class CommandExecutor {
   int Execute(const std::string &line);
 
  private:
-  static int ProcessChild(const CommandParseResult &commandParseResult);
+  static int ProcessChild(const CommandParseResult &command_parse_result);
   static void WaitChildExit(pid_t pid);
+  static void output_redirect(const CommandParseResult &command_parse_result);
+  static void input_redirect(const CommandParseResult &command_parse_result);
 
   BuildIn build_in_;
 
