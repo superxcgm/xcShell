@@ -65,7 +65,8 @@ bool redirectOutputMode(const std::vector<std::string> &commandSuffix) {
   }
   return false;
 }
-CommandParseResult Parser::ParseUserInputLine(const std::string &input_line) {
+CommandParseResult Parser::ParseUserInputLine(const std::string &input_line,
+                                              BuildIn build_in_) {
   CommandParseResult command_parse_result;
   auto [command, commandSuffix] = getCommandAndSuffix(input_line, build_in_);
 

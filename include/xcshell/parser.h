@@ -11,12 +11,11 @@
 class Parser {
  public:
   Parser() = default;
-  CommandParseResult ParseUserInputLine(const std::string &input_line);
+  CommandParseResult ParseUserInputLine(const std::string &input_line,
+                                        BuildIn build_in_);
   static std::vector<char *> BuildArgv(const std::string &command,
                                        const std::vector<std::string> &args);
 
- private:
-  BuildIn build_in_;
 };
 
 #endif  // INCLUDE_XCSHELL_PARSER_H_

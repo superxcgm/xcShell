@@ -70,7 +70,8 @@ void CommandExecutor::WaitChildExit(pid_t pid) {
 }
 
 int CommandExecutor::Execute(const std::string &line) {
-  CommandParseResult command_parse_result = parser_.ParseUserInputLine(line);
+  CommandParseResult command_parse_result =
+      parser_.ParseUserInputLine(line, build_in_);
   if (build_in_.Exist(command_parse_result.command)) {
     return build_in_.Execute(command_parse_result.command,
                              command_parse_result.args);
