@@ -1,46 +1,70 @@
 #include "xcshell/command_executor.h"
 
-#include <unistd.h>
+#include <fcntl.h>
 #include <sys/wait.h>
+#include <unistd.h>
 #include <csignal>
 
+#include <algorithm>
 #include <iostream>
-#include <map>
+#include <string>
+#include <vector>
 
+#include "xcshell/CommandParseResult.h"
 #include "xcshell/constants.h"
 #include "xcshell/utils.h"
 
-std::vector<char *> CommandExecutor::BuildArgv(
-    const std::string &command, const std::vector<std::string> &args) {
-  std::vector<char *> argv;
-  argv.reserve(args.size() + 2);
-  argv.push_back(const_cast<char *>(command.c_str()));
-  for (const auto &arg : args) {
-    argv.push_back(const_cast<char *>(arg.c_str()));
+void CommandExecutor::output_redirect(
+    const CommandParseResult &command_parse_result) {
+  if (command_parse_result.output_is_append) {
+    int fd_out = open(command_parse_result.output_redirect_file.c_str(),
+                     O_WRONLY | O_APPEND | O_CREAT, 0664);
+    dup2(fd_out, STDOUT_FILENO);
+    close(fd_out);
+  } else {
+    int fd_out = open(command_parse_result.output_redirect_file.c_str(),
+                     O_WRONLY | O_TRUNC | O_CREAT, 0664);
+    dup2(fd_out, STDOUT_FILENO);
+    close(fd_out);
   }
-  argv.push_back(nullptr);
-  return argv;
+}
+void CommandExecutor::input_redirect(
+    const CommandParseResult &command_parse_result) {
+  int fd_in = open(command_parse_result.input_redirect_file.c_str(), O_RDONLY);
+  dup2(fd_in, STDIN_FILENO);
+  close(fd_in);
 }
 
-int CommandExecutor::ProcessChild(const std::string &command,
-                                  const std::vector<std::string> &args) {
+int CommandExecutor::ProcessChild(
+    const CommandParseResult &command_parse_result) {
   // child
-  struct sigaction new_action {};
-  new_action.sa_handler = SIG_DFL;
-  int result = sigaction(SIGINT, &new_action, nullptr);
-  if (result) {
-    utils::PrintSystemError(std::cerr);
+  ResetSignalHandlerForInterrupt();
+
+  auto argv = BuildArgv(command_parse_result.command,
+                                command_parse_result.args);
+
+  if (!command_parse_result.input_redirect_file.empty()) {
+    input_redirect(command_parse_result);
+  }
+  if (!command_parse_result.output_redirect_file.empty()) {
+    output_redirect(command_parse_result);
   }
 
-  auto argv = BuildArgv(command, args);
-
-  auto ret = execvp(command.c_str(), &argv[0]);
+  auto ret = execvp(command_parse_result.command.c_str(), &argv[0]);
   // should not execute to here if success
   if (ret == ERROR_CODE_SYSTEM) {
     utils::PrintSystemError(std::cerr);
     exit(ERROR_CODE_DEFAULT);
   }
   return ERROR_CODE_DEFAULT;
+}
+void CommandExecutor::ResetSignalHandlerForInterrupt() {
+  struct sigaction new_action {};
+  new_action.sa_handler = SIG_DFL;
+  int result = sigaction(SIGINT, &new_action, nullptr);
+  if (result) {
+    utils::PrintSystemError(std::cerr);
+  }
 }
 
 void CommandExecutor::WaitChildExit(pid_t pid) {
@@ -51,9 +75,11 @@ void CommandExecutor::WaitChildExit(pid_t pid) {
 }
 
 int CommandExecutor::Execute(const std::string &line) {
-  auto [cmd, args] = ParseUserInput(line);
-  if (build_in_.Exist(cmd)) {
-    return build_in_.Execute(cmd, args);
+  CommandParseResult command_parse_result =
+      parser_.ParseUserInputLine(line);
+  if (build_in_.Exist(command_parse_result.command)) {
+    return build_in_.Execute(command_parse_result.command,
+                             command_parse_result.args);
   }
 
   pid_t pid = fork();
@@ -64,25 +90,21 @@ int CommandExecutor::Execute(const std::string &line) {
   }
 
   if (pid == 0) {
-    return ProcessChild(cmd, args);
+    return ProcessChild(command_parse_result);
   } else {
     WaitChildExit(pid);
   }
 
   return 0;
 }
-
-// Todo: test
-std::tuple<std::string, std::vector<std::string>>
-CommandExecutor::ParseUserInput(const std::string &input_line) {
-  auto parts = utils::SplitArgs(input_line);
-  const std::string init_command = parts[0];
-  auto command_with_args_str = build_in_.GetAlias()->Replace(init_command);
-  auto command_with_args = utils::SplitArgs(command_with_args_str);
-  auto command = command_with_args[0];
-  parts.erase(parts.begin());
-  for (size_t i = command_with_args.size() - 1; i > 0; i--) {
-    parts.insert(parts.begin(), command_with_args[i]);
+std::vector<char *> CommandExecutor::BuildArgv(const std::string &command,
+                                      const std::vector<std::string> &args) {
+  std::vector<char *> argv;
+  argv.reserve(args.size() + 2);
+  argv.push_back(const_cast<char *>(command.c_str()));
+  for (const auto &arg : args) {
+    argv.push_back(const_cast<char *>(arg.c_str()));
   }
-  return {command, parts};
+  argv.push_back(nullptr);
+  return argv;
 }
