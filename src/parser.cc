@@ -6,64 +6,40 @@
 
 #include "xcshell/CommandParseResult.h"
 #include "xcshell/utils.h"
+#include "xcshell/constants.h"
 
-std::vector<std::string> getArgs(
-    const std::vector<std::string> &command_with_args) {
+CommandParseResult buildParseResultWithRedirect(
+    const std::vector<std::string> &command_with_args, const std::string &command) {
   std::vector<std::string> args;
-  for (auto &command_with_arg : command_with_args) {
-    if (command_with_arg == ">" || command_with_arg == "<" ||
-        command_with_arg == ">>") {
-      break;
+  bool args_end = false;
+  std::string output_file;
+  std::string input_file;
+  bool is_overwrite;
+  for (int i = 0; i < command_with_args.size(); i++) {
+    auto command_with_arg = command_with_args[i];
+    if (command_with_arg == REDIRECT_OUTPUT_OVERWRITE || command_with_arg == REDIRECT_INPUT ||
+        command_with_arg == REDIRECT_OUTPUT_APPEND) {
+      args_end = true;
     }
-    args.push_back(command_with_arg);
-  }
-  return args;
-}
-
-std::string getOutputName(const std::vector<std::string> &commandSuffix) {
-  for (auto it = 0; it < commandSuffix.size(); it++) {
-    if (commandSuffix[it] == ">" || commandSuffix[it] == ">>") {
-      int index = ++it;
-      if (index < commandSuffix.size()) {
-        return commandSuffix[index];
+    if (!args_end) {
+      args.push_back(command_with_arg);
+    } else if ((i + 1) < command_with_args.size()) {
+      if (command_with_arg == REDIRECT_OUTPUT_OVERWRITE || command_with_arg == REDIRECT_OUTPUT_APPEND) {
+        output_file = command_with_args[i + 1];
+        is_overwrite = command_with_arg == REDIRECT_OUTPUT_APPEND;
+      }
+      if (command_with_arg == REDIRECT_INPUT) {
+        input_file = command_with_args[i + 1];
       }
     }
   }
-  return "";
+  return {command, args, input_file, output_file, is_overwrite};
 }
 
-std::string getInputName(const std::vector<std::string> &commandSuffix) {
-  for (auto it = 0; it < commandSuffix.size(); it++) {
-    if (commandSuffix[it] == "<") {
-      int index = ++it;
-      if (index < commandSuffix.size()) {
-        return commandSuffix[index];
-      }
-    }
-  }
-  return "";
-}
-
-bool redirectOutputMode(const std::vector<std::string> &commandSuffix) {
-  if (std::any_of(commandSuffix.begin(), commandSuffix.end(),
-                  [](const std::string &symbol) { return symbol == ">>"; })) {
-    return true;
-  }
-  return false;
-}
 CommandParseResult Parser::ParseUserInputLine(const std::string &input_line) {
-  CommandParseResult command_parse_result;
   auto [command, commandSuffix] = getCommandAndSuffix(input_line);
 
-  command_parse_result.command = command;
-  if (!commandSuffix.empty()) {
-    command_parse_result.args = getArgs(commandSuffix);
-    command_parse_result.output_redirect_file = getOutputName(commandSuffix);
-    command_parse_result.input_redirect_file = getInputName(commandSuffix);
-    command_parse_result.output_is_append = redirectOutputMode(commandSuffix);
-  }
-
-  return command_parse_result;
+  return buildParseResultWithRedirect(commandSuffix, command);
 }
 std::tuple<std::string, std::vector<std::string>> Parser::getCommandAndSuffix(
     const std::string &input_line) {

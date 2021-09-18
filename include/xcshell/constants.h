@@ -6,6 +6,10 @@
 #define ERROR_CODE_DEFAULT -1
 #define ERROR_CODE_SYSTEM -1
 
+#define REDIRECT_OUTPUT_OVERWRITE ">"
+#define REDIRECT_OUTPUT_APPEND ">>"
+#define REDIRECT_INPUT "<"
+
 #define GLOBAL_CONFIG_FILE "/etc/xcshrc"
 
 #define USER_CONFIG_FILE "~/.xcshrc"
