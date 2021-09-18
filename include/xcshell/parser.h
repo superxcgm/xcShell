@@ -2,6 +2,7 @@
 #define INCLUDE_XCSHELL_PARSER_H_
 
 #include <string>
+#include <tuple>
 #include <utility>
 #include <vector>
 
@@ -10,11 +11,12 @@
 
 class Parser {
  public:
-  Parser(BuildIn &build_in): build_in_(build_in) { }
+  explicit Parser(BuildIn &build_in) : build_in_(build_in) {}
   CommandParseResult ParseUserInputLine(const std::string &input_line);
 
  private:
   BuildIn &build_in_;
-  std::tuple<std::string, std::vector<std::string>> getCommandAndSuffix(const std::string &input_line);
+  std::tuple<std::string, std::vector<std::string>> getCommandAndSuffix(
+      const std::string &input_line);
 };
 #endif  // INCLUDE_XCSHELL_PARSER_H_

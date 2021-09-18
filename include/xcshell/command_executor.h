@@ -12,8 +12,7 @@
 
 class CommandExecutor {
  public:
-
-  CommandExecutor(): parser_(build_in_) {};
+  CommandExecutor() : parser_(build_in_) {}
 
   int Execute(const std::string &line);
 
@@ -29,6 +28,7 @@ class CommandExecutor {
   BuildIn build_in_;
 
   Parser parser_;
+  static void ResetSignalHandlerForInterrupt();
 };
 
 #endif  // INCLUDE_XCSHELL_COMMAND_EXECUTOR_H_

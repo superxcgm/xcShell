@@ -5,48 +5,39 @@
 #include <unistd.h>
 
 #include <algorithm>
-#include <csignal>
 #include <iostream>
-#include <map>
 #include <string>
 #include <vector>
 
 #include "xcshell/CommandParseResult.h"
-#include "xcshell/command_executor.h"
 #include "xcshell/constants.h"
-#include "xcshell/parser.h"
 #include "xcshell/utils.h"
 
 void CommandExecutor::output_redirect(
     const CommandParseResult &command_parse_result) {
   if (command_parse_result.output_is_append) {
-    int fdout = open(command_parse_result.output_redirect_file.c_str(),
+    int fd_out = open(command_parse_result.output_redirect_file.c_str(),
                      O_WRONLY | O_APPEND | O_CREAT, 0664);
-    dup2(fdout, STDOUT_FILENO);
-    close(fdout);
+    dup2(fd_out, STDOUT_FILENO);
+    close(fd_out);
   } else {
-    int fdout = open(command_parse_result.output_redirect_file.c_str(),
+    int fd_out = open(command_parse_result.output_redirect_file.c_str(),
                      O_WRONLY | O_TRUNC | O_CREAT, 0664);
-    dup2(fdout, STDOUT_FILENO);
-    close(fdout);
+    dup2(fd_out, STDOUT_FILENO);
+    close(fd_out);
   }
 }
 void CommandExecutor::input_redirect(
     const CommandParseResult &command_parse_result) {
-  int fdin = open(command_parse_result.input_redirect_file.c_str(), O_RDONLY);
-  dup2(fdin, STDIN_FILENO);
-  close(fdin);
+  int fd_in = open(command_parse_result.input_redirect_file.c_str(), O_RDONLY);
+  dup2(fd_in, STDIN_FILENO);
+  close(fd_in);
 }
 
 int CommandExecutor::ProcessChild(
     const CommandParseResult &command_parse_result) {
   // child
-  struct sigaction new_action {};
-  new_action.sa_handler = SIG_DFL;
-  int result = sigaction(SIGINT, &new_action, nullptr);
-  if (result) {
-    utils::PrintSystemError(std::cerr);
-  }
+  ResetSignalHandlerForInterrupt();
 
   auto argv = BuildArgv(command_parse_result.command,
                                 command_parse_result.args);
@@ -65,6 +56,14 @@ int CommandExecutor::ProcessChild(
     exit(ERROR_CODE_DEFAULT);
   }
   return ERROR_CODE_DEFAULT;
+}
+void CommandExecutor::ResetSignalHandlerForInterrupt() {
+  struct sigaction new_action {};
+  new_action.sa_handler = SIG_DFL;
+  int result = sigaction(SIGINT, &new_action, nullptr);
+  if (result) {
+    utils::PrintSystemError(std::cerr);
+  }
 }
 
 void CommandExecutor::WaitChildExit(pid_t pid) {

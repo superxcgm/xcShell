@@ -5,11 +5,12 @@
 #include <vector>
 
 #include "xcshell/CommandParseResult.h"
-#include "xcshell/utils.h"
 #include "xcshell/constants.h"
+#include "xcshell/utils.h"
 
 CommandParseResult buildParseResultWithRedirect(
-    const std::vector<std::string> &command_with_args, const std::string &command) {
+    const std::vector<std::string> &command_with_args,
+    const std::string &command) {
   std::vector<std::string> args;
   bool args_end = false;
   std::string output_file;
@@ -17,14 +18,16 @@ CommandParseResult buildParseResultWithRedirect(
   bool is_overwrite;
   for (int i = 0; i < command_with_args.size(); i++) {
     auto command_with_arg = command_with_args[i];
-    if (command_with_arg == REDIRECT_OUTPUT_OVERWRITE || command_with_arg == REDIRECT_INPUT ||
+    if (command_with_arg == REDIRECT_OUTPUT_OVERWRITE ||
+        command_with_arg == REDIRECT_INPUT ||
         command_with_arg == REDIRECT_OUTPUT_APPEND) {
       args_end = true;
     }
     if (!args_end) {
       args.push_back(command_with_arg);
     } else if ((i + 1) < command_with_args.size()) {
-      if (command_with_arg == REDIRECT_OUTPUT_OVERWRITE || command_with_arg == REDIRECT_OUTPUT_APPEND) {
+      if (command_with_arg == REDIRECT_OUTPUT_OVERWRITE ||
+          command_with_arg == REDIRECT_OUTPUT_APPEND) {
         output_file = command_with_args[i + 1];
         is_overwrite = command_with_arg == REDIRECT_OUTPUT_APPEND;
       }
