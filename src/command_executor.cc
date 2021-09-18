@@ -4,12 +4,17 @@
 #include <sys/wait.h>
 #include <unistd.h>
 
+#include <algorithm>
 #include <csignal>
 #include <iostream>
 #include <map>
+#include <string>
+#include <vector>
 
 #include "xcshell/CommandParseResult.h"
+#include "xcshell/command_executor.h"
 #include "xcshell/constants.h"
+#include "xcshell/parser.h"
 #include "xcshell/utils.h"
 
 void CommandExecutor::output_redirect(
@@ -43,7 +48,7 @@ int CommandExecutor::ProcessChild(
     utils::PrintSystemError(std::cerr);
   }
 
-  auto argv = Parser::BuildArgv(command_parse_result.command,
+  auto argv = BuildArgv(command_parse_result.command,
                                 command_parse_result.args);
 
   if (!command_parse_result.input_redirect_file.empty()) {
@@ -71,7 +76,7 @@ void CommandExecutor::WaitChildExit(pid_t pid) {
 
 int CommandExecutor::Execute(const std::string &line) {
   CommandParseResult command_parse_result =
-      parser_.ParseUserInputLine(line, build_in_);
+      parser_.ParseUserInputLine(line);
   if (build_in_.Exist(command_parse_result.command)) {
     return build_in_.Execute(command_parse_result.command,
                              command_parse_result.args);
@@ -91,4 +96,15 @@ int CommandExecutor::Execute(const std::string &line) {
   }
 
   return 0;
+}
+std::vector<char *> CommandExecutor::BuildArgv(const std::string &command,
+                                      const std::vector<std::string> &args) {
+  std::vector<char *> argv;
+  argv.reserve(args.size() + 2);
+  argv.push_back(const_cast<char *>(command.c_str()));
+  for (const auto &arg : args) {
+    argv.push_back(const_cast<char *>(arg.c_str()));
+  }
+  argv.push_back(nullptr);
+  return argv;
 }

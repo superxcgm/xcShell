@@ -20,20 +20,6 @@ std::vector<std::string> getArgs(
   return args;
 }
 
-std::tuple<std::string, std::vector<std::string>> getCommandAndSuffix(
-    const std::string &input_line, BuildIn build_in) {
-  auto parts = utils::SplitArgs(input_line);
-  const std::string init_command = parts[0];
-  auto command_with_args_str = build_in.GetAlias()->Replace(init_command);
-  auto command_with_args = utils::SplitArgs(command_with_args_str);
-  auto command = command_with_args[0];
-  parts.erase(parts.begin());
-  for (size_t i = command_with_args.size() - 1; i > 0; i--) {
-    parts.insert(parts.begin(), command_with_args[i]);
-  }
-  return {command, parts};
-}
-
 std::string getOutputName(const std::vector<std::string> &commandSuffix) {
   for (auto it = 0; it < commandSuffix.size(); it++) {
     if (commandSuffix[it] == ">" || commandSuffix[it] == ">>") {
@@ -65,10 +51,9 @@ bool redirectOutputMode(const std::vector<std::string> &commandSuffix) {
   }
   return false;
 }
-CommandParseResult Parser::ParseUserInputLine(const std::string &input_line,
-                                              BuildIn build_in_) {
+CommandParseResult Parser::ParseUserInputLine(const std::string &input_line) {
   CommandParseResult command_parse_result;
-  auto [command, commandSuffix] = getCommandAndSuffix(input_line, build_in_);
+  auto [command, commandSuffix] = getCommandAndSuffix(input_line);
 
   command_parse_result.command = command;
   if (!commandSuffix.empty()) {
@@ -80,14 +65,16 @@ CommandParseResult Parser::ParseUserInputLine(const std::string &input_line,
 
   return command_parse_result;
 }
-std::vector<char *> Parser::BuildArgv(const std::string &command,
-                                      const std::vector<std::string> &args) {
-  std::vector<char *> argv;
-  argv.reserve(args.size() + 2);
-  argv.push_back(const_cast<char *>(command.c_str()));
-  for (const auto &arg : args) {
-    argv.push_back(const_cast<char *>(arg.c_str()));
+std::tuple<std::string, std::vector<std::string>> Parser::getCommandAndSuffix(
+    const std::string &input_line) {
+  auto parts = utils::SplitArgs(input_line);
+  const std::string init_command = parts[0];
+  auto command_with_args_str = build_in_.GetAlias()->Replace(init_command);
+  auto command_with_args = utils::SplitArgs(command_with_args_str);
+  auto command = command_with_args[0];
+  parts.erase(parts.begin());
+  for (size_t i = command_with_args.size() - 1; i > 0; i--) {
+    parts.insert(parts.begin(), command_with_args[i]);
   }
-  argv.push_back(nullptr);
-  return argv;
+  return {command, parts};
 }

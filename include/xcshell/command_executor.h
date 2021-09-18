@@ -3,14 +3,22 @@
 
 #include <string>
 #include <tuple>
+#include <utility>
 #include <vector>
 
 #include "build_in/build_in.h"
+#include "xcshell/CommandParseResult.h"
 #include "xcshell/parser.h"
 
 class CommandExecutor {
  public:
+
+  CommandExecutor(): parser_(build_in_) {};
+
   int Execute(const std::string &line);
+
+  static std::vector<char *> BuildArgv(const std::string &command,
+                                       const std::vector<std::string> &args);
 
  private:
   static int ProcessChild(const CommandParseResult &command_parse_result);
