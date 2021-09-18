@@ -3,6 +3,7 @@
 #include <fcntl.h>
 #include <sys/wait.h>
 #include <unistd.h>
+#include <csignal>
 
 #include <algorithm>
 #include <iostream>
