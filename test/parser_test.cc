@@ -9,8 +9,9 @@ TEST(ParseTest, Parse_PraseOutputRedirectionCorrectlyWithOverwrite) {
   Parser parser(build_in);
   std::string str = "ls > a.txt";
   std::vector<std::string> vec;
-  CommandParseResult command_parse_result =
+  std::vector<CommandParseResult> command_parse_result_list =
       parser.ParseUserInputLine(str);
+  CommandParseResult command_parse_result = command_parse_result_list[0];
 
   EXPECT_EQ(command_parse_result.command, "ls");
   EXPECT_EQ(command_parse_result.args, vec);
@@ -25,8 +26,9 @@ TEST(ParseTest, Parse_PraseOutputRedirectionCorrectlyWithAppend) {
   std::string str = "ls -l >> a.txt";
   std::vector<std::string> vec;
   vec.emplace_back("-l");
-  CommandParseResult command_parse_result =
+  std::vector<CommandParseResult> command_parse_result_list =
       parser.ParseUserInputLine(str);
+  CommandParseResult command_parse_result = command_parse_result_list[0];
 
   EXPECT_EQ(command_parse_result.command, "ls");
   EXPECT_EQ(command_parse_result.args, vec);
@@ -40,8 +42,9 @@ TEST(ParseTest, Parse_PraseInputRedirectionCorrectly) {
   Parser parser(build_in);
   std::string str = "bc < a.input";
   std::vector<std::string> vec;
-  CommandParseResult command_parse_result =
+  std::vector<CommandParseResult> command_parse_result_list =
       parser.ParseUserInputLine(str);
+  CommandParseResult command_parse_result = command_parse_result_list[0];
 
   EXPECT_EQ(command_parse_result.command, "bc");
   EXPECT_EQ(command_parse_result.args, vec);
@@ -54,8 +57,9 @@ TEST(ParseTest, Parse_PraseInputAndOutputRedirectionCorrectly) {
   Parser parser(build_in);
   std::string str = "bc < a.input > a.txt";
   std::vector<std::string> vec;
-  CommandParseResult command_parse_result =
+  std::vector<CommandParseResult> command_parse_result_list =
       parser.ParseUserInputLine(str);
+  CommandParseResult command_parse_result = command_parse_result_list[0];
 
   EXPECT_EQ(command_parse_result.command, "bc");
   EXPECT_EQ(command_parse_result.args, vec);
@@ -70,8 +74,9 @@ TEST(ParseTest, Parse_OutputCorrectlyNotContainAnyRedirection) {
   std::string str = "ls -a";
   std::vector<std::string> vec;
   vec.emplace_back("-a");
-  CommandParseResult command_parse_result =
+  std::vector<CommandParseResult> command_parse_result_list =
       parser.ParseUserInputLine(str);
+  CommandParseResult command_parse_result = command_parse_result_list[0];
 
   EXPECT_EQ(command_parse_result.command, "ls");
   EXPECT_EQ(command_parse_result.args, vec);
@@ -84,11 +89,35 @@ TEST(ParseTest, Parse_OutputCorrectlyredirectionWithNoCommand) {
   Parser parser(build_in);
   std::string str = "> a.txt";
   std::vector<std::string> vec;
-  CommandParseResult command_parse_result =
+  std::vector<CommandParseResult> command_parse_result_list =
       parser.ParseUserInputLine(str);
+  CommandParseResult command_parse_result = command_parse_result_list[0];
 
   EXPECT_EQ(command_parse_result.command, "");
   EXPECT_EQ(command_parse_result.args, vec);
   EXPECT_EQ(command_parse_result.output_redirect_file, "a.txt");
   EXPECT_EQ(command_parse_result.input_redirect_file, "");
+}
+
+TEST(ParseTest, Parse_CorrectlyParseTwoCommandsAtTheSameTime) {
+  BuildIn build_in;
+  Parser parser(build_in);
+  std::string str = "ls | grep PM";
+  std::vector<std::string> vec_first_command_args;
+  std::vector<std::string> vec_second_command_args;
+  vec_second_command_args.emplace_back("PM");
+  std::vector<CommandParseResult> command_parse_result_list =
+      parser.ParseUserInputLine(str);
+  CommandParseResult command_parse_result_with_first = command_parse_result_list[0];
+  CommandParseResult command_parse_result_with_second = command_parse_result_list[1];
+
+  EXPECT_EQ(command_parse_result_with_first.command, "ls");
+  EXPECT_EQ(command_parse_result_with_first.args, vec_first_command_args);
+  EXPECT_EQ(command_parse_result_with_first.output_redirect_file, "");
+  EXPECT_EQ(command_parse_result_with_first.input_redirect_file, "");
+
+  EXPECT_EQ(command_parse_result_with_second.command, "grep");
+  EXPECT_EQ(command_parse_result_with_second.args, vec_second_command_args);
+  EXPECT_EQ(command_parse_result_with_second.output_redirect_file, "");
+  EXPECT_EQ(command_parse_result_with_second.input_redirect_file, "");
 }

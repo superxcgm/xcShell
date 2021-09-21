@@ -136,3 +136,17 @@ std::string utils::RemoveQuote(const std::string& str) {
   }
   return str;
 }
+std::vector<std::string> utils::SpiltWithSymbol(const std::string& str,
+                                                const std::string& symbol) {
+  char * str_c = new char[strlen(str.c_str())+1];
+  strcpy(str_c, str.c_str());
+  std::vector<std::string> res;
+  char* temp = strtok(str_c, symbol.c_str());
+  while(temp != nullptr)
+  {
+    res.emplace_back(temp);
+    temp = strtok(NULL, symbol.c_str());
+  }
+  delete[] str_c;
+  return res;
+}

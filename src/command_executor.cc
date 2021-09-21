@@ -74,24 +74,27 @@ void CommandExecutor::WaitChildExit(pid_t pid) {
 }
 
 int CommandExecutor::Execute(const std::string &line) {
-  CommandParseResult command_parse_result =
+  std::vector<CommandParseResult> command_parse_result_list =
       parser_.ParseUserInputLine(line);
-  if (build_in_.Exist(command_parse_result.command)) {
-    return build_in_.Execute(command_parse_result.command,
-                             command_parse_result.args);
-  }
+  if(command_parse_result_list.size() == 1) {
+    CommandParseResult command_parse_result = command_parse_result_list[0];
+    if (build_in_.Exist(command_parse_result.command)) {
+      return build_in_.Execute(command_parse_result.command,
+                               command_parse_result.args);
+    }
 
-  pid_t pid = fork();
-  if (pid == ERROR_CODE_SYSTEM) {
-    // error
-    utils::PrintSystemError(std::cerr);
-    return ERROR_CODE_DEFAULT;
-  }
+    pid_t pid = fork();
+    if (pid == ERROR_CODE_SYSTEM) {
+      // error
+      utils::PrintSystemError(std::cerr);
+      return ERROR_CODE_DEFAULT;
+    }
 
-  if (pid == 0) {
-    return ProcessChild(command_parse_result);
-  } else {
-    WaitChildExit(pid);
+    if (pid == 0) {
+      return ProcessChild(command_parse_result);
+    } else {
+      WaitChildExit(pid);
+    }
   }
 
   return 0;
