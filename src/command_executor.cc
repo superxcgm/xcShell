@@ -7,7 +7,6 @@
 
 #include <algorithm>
 #include <iostream>
-#include <string>
 #include <vector>
 
 #include "xcshell/CommandParseResult.h"

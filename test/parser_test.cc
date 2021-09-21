@@ -78,3 +78,17 @@ TEST(ParseTest, Parse_OutputCorrectlyNotContainAnyRedirection) {
   EXPECT_EQ(command_parse_result.output_redirect_file, "");
   EXPECT_EQ(command_parse_result.input_redirect_file, "");
 }
+
+TEST(ParseTest, Parse_OutputCorrectlyredirectionWithNoCommand) {
+  BuildIn build_in;
+  Parser parser(build_in);
+  std::string str = "> a.txt";
+  std::vector<std::string> vec;
+  CommandParseResult command_parse_result =
+      parser.ParseUserInputLine(str);
+
+  EXPECT_EQ(command_parse_result.command, "");
+  EXPECT_EQ(command_parse_result.args, vec);
+  EXPECT_EQ(command_parse_result.output_redirect_file, "a.txt");
+  EXPECT_EQ(command_parse_result.input_redirect_file, "");
+}

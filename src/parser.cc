@@ -51,9 +51,15 @@ std::tuple<std::string, std::vector<std::string>> Parser::getCommandAndSuffix(
   auto command_with_args_str = build_in_.GetAlias()->Replace(init_command);
   auto command_with_args = utils::SplitArgs(command_with_args_str);
   auto command = command_with_args[0];
-  parts.erase(parts.begin());
-  for (size_t i = command_with_args.size() - 1; i > 0; i--) {
-    parts.insert(parts.begin(), command_with_args[i]);
+
+  if (command == ">" || command == "<" || command == ">>") {
+    command = "";
+  } else {
+    parts.erase(parts.begin());
+    for (size_t i = command_with_args.size() - 1; i > 0; i--) {
+      parts.insert(parts.begin(), command_with_args[i]);
+    }
   }
+
   return {command, parts};
 }
