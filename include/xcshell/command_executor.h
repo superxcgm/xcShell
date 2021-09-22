@@ -20,10 +20,12 @@ class CommandExecutor {
                                        const std::vector<std::string> &args);
 
  private:
-  static int ProcessChild(const CommandParseResult &command_parse_result);
+  static int ProcessChild(const CommandParseResult &command_parse_result,
+                          bool is_need_pipe, int *pipe_fds, int cmd_numebr);
   static void WaitChildExit(pid_t pid);
   static void output_redirect(const CommandParseResult &command_parse_result);
   static void input_redirect(const CommandParseResult &command_parse_result);
+  static void pipe_redirect(int *pipe_fds, int cmd_number);
 
   BuildIn build_in_;
 

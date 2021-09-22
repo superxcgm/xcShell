@@ -121,3 +121,27 @@ TEST(ParseTest, Parse_CorrectlyParseTwoCommandsAtTheSameTime) {
   EXPECT_EQ(command_parse_result_with_second.output_redirect_file, "");
   EXPECT_EQ(command_parse_result_with_second.input_redirect_file, "");
 }
+
+TEST(ParseTest, Parse_CorrectlyParseTwoCommandsWithAnotherIsNotCommand) {
+  BuildIn build_in;
+  Parser parser(build_in);
+  std::string str = "ls | > a.txt";
+  std::vector<std::string> vec_first_command_args;
+  std::vector<std::string> vec_second_command_args;
+
+  std::vector<CommandParseResult> command_parse_result_list =
+      parser.ParseUserInputLine(str);
+  CommandParseResult command_parse_result_with_first = command_parse_result_list[0];
+  CommandParseResult command_parse_result_with_second = command_parse_result_list[1];
+
+  EXPECT_EQ(command_parse_result_with_first.command, "ls");
+  EXPECT_EQ(command_parse_result_with_first.args, vec_first_command_args);
+  EXPECT_EQ(command_parse_result_with_first.output_redirect_file, "");
+  EXPECT_EQ(command_parse_result_with_first.input_redirect_file, "");
+
+  EXPECT_EQ(command_parse_result_with_second.command, "");
+  EXPECT_EQ(command_parse_result_with_second.args, vec_second_command_args);
+  EXPECT_EQ(command_parse_result_with_second.output_redirect_file, "a.txt");
+  EXPECT_EQ(command_parse_result_with_second.output_is_append, false);
+  EXPECT_EQ(command_parse_result_with_second.input_redirect_file, "");
+}
