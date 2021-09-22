@@ -39,14 +39,16 @@ CommandParseResult buildParseResultWithRedirect(
   return {command, args, input_file, output_file, is_overwrite};
 }
 
-std::vector<CommandParseResult> Parser::ParseUserInputLine(const std::string &input_line) {
+std::vector<CommandParseResult> Parser::ParseUserInputLine(
+    const std::string &input_line) {
   std::vector<CommandParseResult> command_parse_result_list;
   std::vector<std::string> command_and_suffix_list =
       utils::SpiltWithSymbol(input_line, "|");
   for (const auto &command_and_suffix : command_and_suffix_list) {
     auto [command, commandSuffix] = getCommandAndSuffix(command_and_suffix);
 
-    command_parse_result_list.push_back(buildParseResultWithRedirect(commandSuffix,command));
+    command_parse_result_list.push_back(
+        buildParseResultWithRedirect(commandSuffix, command));
   }
 
   return command_parse_result_list;

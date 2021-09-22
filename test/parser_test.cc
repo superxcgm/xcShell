@@ -108,8 +108,10 @@ TEST(ParseTest, Parse_CorrectlyParseTwoCommandsAtTheSameTime) {
   vec_second_command_args.emplace_back("PM");
   std::vector<CommandParseResult> command_parse_result_list =
       parser.ParseUserInputLine(str);
-  CommandParseResult command_parse_result_with_first = command_parse_result_list[0];
-  CommandParseResult command_parse_result_with_second = command_parse_result_list[1];
+  CommandParseResult command_parse_result_with_first =
+      command_parse_result_list[0];
+  CommandParseResult command_parse_result_with_second =
+      command_parse_result_list[1];
 
   EXPECT_EQ(command_parse_result_with_first.command, "ls");
   EXPECT_EQ(command_parse_result_with_first.args, vec_first_command_args);
@@ -131,8 +133,10 @@ TEST(ParseTest, Parse_CorrectlyParseTwoCommandsWithAnotherIsNotCommand) {
 
   std::vector<CommandParseResult> command_parse_result_list =
       parser.ParseUserInputLine(str);
-  CommandParseResult command_parse_result_with_first = command_parse_result_list[0];
-  CommandParseResult command_parse_result_with_second = command_parse_result_list[1];
+  CommandParseResult command_parse_result_with_first =
+      command_parse_result_list[0];
+  CommandParseResult command_parse_result_with_second =
+      command_parse_result_list[1];
 
   EXPECT_EQ(command_parse_result_with_first.command, "ls");
   EXPECT_EQ(command_parse_result_with_first.args, vec_first_command_args);
