@@ -43,7 +43,7 @@ std::vector<CommandParseResult> Parser::ParseUserInputLine(
     const std::string &input_line) {
   std::vector<CommandParseResult> command_parse_result_list;
   std::vector<std::string> command_and_suffix_list =
-      utils::SpiltWithSymbol(input_line, "|");
+      utils::SpiltWithSymbol(input_line, REDIRECT_PIPE);
   for (const auto &command_and_suffix : command_and_suffix_list) {
     auto [command, commandSuffix] = getCommandAndSuffix(command_and_suffix);
 
@@ -61,7 +61,8 @@ std::tuple<std::string, std::vector<std::string>> Parser::getCommandAndSuffix(
   auto command_with_args = utils::SplitArgs(command_with_args_str);
   auto command = command_with_args[0];
 
-  if (command == ">" || command == "<" || command == ">>") {
+  if (command == REDIRECT_OUTPUT_OVERWRITE ||
+      command == REDIRECT_OUTPUT_APPEND || command == REDIRECT_INPUT) {
     command = "";
   } else {
     parts.erase(parts.begin());

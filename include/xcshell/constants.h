@@ -9,6 +9,7 @@
 #define REDIRECT_OUTPUT_OVERWRITE ">"
 #define REDIRECT_OUTPUT_APPEND ">>"
 #define REDIRECT_INPUT "<"
+#define REDIRECT_PIPE "|"
 
 #define GLOBAL_CONFIG_FILE "/etc/xcshrc"
 
