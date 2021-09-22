@@ -1,6 +1,6 @@
-#include <gtest/gtest.h>
-
 #include "xcshell/utils.h"
+
+#include <gtest/gtest.h>
 
 TEST(UtilsTest, Split_ShouldSplitCorrectlyFor1part) {
   auto parts = utils::Split("hello");
@@ -118,4 +118,10 @@ TEST(UtilsTest, ExpandPath_ShouldReturnOriginPathIfNotStartWithTilde) {
 TEST(UtilsTest, ExpandPath_ShouldReturnReplacedPathIfStartWithTilde) {
   auto replaced = utils::ExpandPath("~/a.txt");
   EXPECT_TRUE(replaced.find("~") == std::string::npos);
+}
+
+TEST(UtilsTest, SpiltWithSymbol_ShouldReturnInputLineListIfHavePipeSymbol) {
+  std::vector<std::string> expected = {"ls ", " > a.txt"};
+  auto inout_line = utils::SpiltWithSymbol("ls | > a.txt", "|");
+  EXPECT_EQ(inout_line, expected);
 }
