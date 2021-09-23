@@ -31,9 +31,10 @@ class CommandExecutor {
 
   Parser parser_;
   static void ResetSignalHandlerForInterrupt();
-  static void redirect_selector(const CommandParseResult &command_parse_result,
+  static void RedirectSelector(const CommandParseResult &command_parse_result,
                                 bool is_pipe_redirect, int *pipe_fds,
                                 int cmd_number);
+  int BuildInCommand(const CommandParseResult &command_parse_result);
 };
 
 #endif  // INCLUDE_XCSHELL_COMMAND_EXECUTOR_H_

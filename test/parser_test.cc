@@ -20,6 +20,21 @@ TEST(ParseTest, Parse_PraseOutputRedirectionCorrectlyWithOverwrite) {
   EXPECT_EQ(command_parse_result.output_is_append, false);
 }
 
+TEST(ParseTest, Parse_PraseOutputRedirectionWithSingleBuildInCommand) {
+  BuildIn build_in;
+  Parser parser(build_in);
+  std::string str = "alias";
+  std::vector<std::string> vec;
+  std::vector<CommandParseResult> command_parse_result_list =
+      parser.ParseUserInputLine(str);
+  CommandParseResult command_parse_result = command_parse_result_list[0];
+
+  EXPECT_EQ(command_parse_result.command, "alias");
+  EXPECT_EQ(command_parse_result.args, vec);
+  EXPECT_EQ(command_parse_result.output_redirect_file, "");
+  EXPECT_EQ(command_parse_result.input_redirect_file, "");
+}
+
 TEST(ParseTest, Parse_PraseOutputRedirectionCorrectlyWithAppend) {
   BuildIn build_in;
   Parser parser(build_in);
@@ -147,5 +162,30 @@ TEST(ParseTest, Parse_CorrectlyParseTwoCommandsWithAnotherIsNotCommand) {
   EXPECT_EQ(command_parse_result_with_second.args, vec_second_command_args);
   EXPECT_EQ(command_parse_result_with_second.output_redirect_file, "a.txt");
   EXPECT_EQ(command_parse_result_with_second.output_is_append, false);
+  EXPECT_EQ(command_parse_result_with_second.input_redirect_file, "");
+}
+
+TEST(ParseTest, Parse_CorrectlyParseTwoCommandsWithBuildInCommand) {
+  BuildIn build_in;
+  Parser parser(build_in);
+  std::string str = "alias | grep ls";
+  std::vector<std::string> vec_first_command_args;
+  std::vector<std::string> vec_second_command_args;
+  vec_second_command_args.emplace_back("ls");
+  std::vector<CommandParseResult> command_parse_result_list =
+      parser.ParseUserInputLine(str);
+  CommandParseResult command_parse_result_with_first =
+      command_parse_result_list[0];
+  CommandParseResult command_parse_result_with_second =
+      command_parse_result_list[1];
+
+  EXPECT_EQ(command_parse_result_with_first.command, "alias");
+  EXPECT_EQ(command_parse_result_with_first.args, vec_first_command_args);
+  EXPECT_EQ(command_parse_result_with_first.output_redirect_file, "");
+  EXPECT_EQ(command_parse_result_with_first.input_redirect_file, "");
+
+  EXPECT_EQ(command_parse_result_with_second.command, "grep");
+  EXPECT_EQ(command_parse_result_with_second.args, vec_second_command_args);
+  EXPECT_EQ(command_parse_result_with_second.output_redirect_file, "");
   EXPECT_EQ(command_parse_result_with_second.input_redirect_file, "");
 }

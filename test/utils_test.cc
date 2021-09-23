@@ -121,7 +121,7 @@ TEST(UtilsTest, ExpandPath_ShouldReturnReplacedPathIfStartWithTilde) {
 }
 
 TEST(UtilsTest, SpiltWithSymbol_ShouldReturnInputLineListIfHavePipeSymbol) {
-  std::vector<std::string> expected = {"ls ", " > a.txt"};
-  auto inout_line = utils::SpiltWithSymbol("ls | > a.txt", "|");
+  std::vector<std::string> expected = {"ls -l ", " grep 'hello'"};
+  auto inout_line = utils::SpiltWithSymbol("ls -l | grep 'hello'", "|");
   EXPECT_EQ(inout_line, expected);
 }
