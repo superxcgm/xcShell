@@ -23,18 +23,19 @@ class CommandExecutor {
   static int ProcessChild(const CommandParseResult &command_parse_result,
                           bool is_pipe_redirect, int *pipe_fds, int cmd_number);
   static void WaitChildExit(pid_t pid);
-  static void output_redirect(const CommandParseResult &command_parse_result);
-  static void input_redirect(const CommandParseResult &command_parse_result);
-  static void pipe_redirect(int *pipe_fds, int cmd_number);
+  static void OutputRedirect(const CommandParseResult &command_parse_result);
+  static void InputRedirect(const CommandParseResult &command_parse_result);
+  static void PipeRedirect(int *pipe_fds, int cmd_number);
 
   BuildIn build_in_;
 
   Parser parser_;
   static void ResetSignalHandlerForInterrupt();
   static void RedirectSelector(const CommandParseResult &command_parse_result,
-                                bool is_pipe_redirect, int *pipe_fds,
-                                int cmd_number);
-  int BuildInCommand(const CommandParseResult &command_parse_result);
+                               bool is_pipe_redirect, int *pipe_fds,
+                               int cmd_number);
+  static void PipeRedirectOut(const int *pipe_fds);
+  static void PipeRedirectIn(const int *pipe_fds);
 };
 
 #endif  // INCLUDE_XCSHELL_COMMAND_EXECUTOR_H_

@@ -13,7 +13,7 @@
 #include "xcshell/constants.h"
 #include "xcshell/utils.h"
 
-void CommandExecutor::output_redirect(
+void CommandExecutor::OutputRedirect(
     const CommandParseResult &command_parse_result) {
   if (command_parse_result.output_is_append) {
     int fd_out = open(command_parse_result.output_redirect_file.c_str(),
@@ -28,7 +28,7 @@ void CommandExecutor::output_redirect(
   }
 }
 
-void CommandExecutor::input_redirect(
+void CommandExecutor::InputRedirect(
     const CommandParseResult &command_parse_result) {
   int fd_in = open(command_parse_result.input_redirect_file.c_str(), O_RDONLY);
   dup2(fd_in, STDIN_FILENO);
@@ -41,11 +41,11 @@ int CommandExecutor::ProcessChild(
   // child
   ResetSignalHandlerForInterrupt();
 
-  auto argv =
-      BuildArgv(command_parse_result.command, command_parse_result.args);
-
   RedirectSelector(command_parse_result, is_pipe_redirect, pipe_fds,
                    cmd_number);
+
+  auto argv =
+      BuildArgv(command_parse_result.command, command_parse_result.args);
 
   auto ret = execvp(command_parse_result.command.c_str(), &argv[0]);
   // should not execute to here if success
@@ -60,13 +60,13 @@ void CommandExecutor::RedirectSelector(
     const CommandParseResult &command_parse_result, bool is_pipe_redirect,
     int *pipe_fds, int cmd_number) {
   if (is_pipe_redirect) {
-    pipe_redirect(pipe_fds, cmd_number);
+    PipeRedirect(pipe_fds, cmd_number);
   }
   if (!command_parse_result.input_redirect_file.empty()) {
-    input_redirect(command_parse_result);
+    InputRedirect(command_parse_result);
   }
   if (!command_parse_result.output_redirect_file.empty()) {
-    output_redirect(command_parse_result);
+    OutputRedirect(command_parse_result);
   }
 }
 
@@ -89,7 +89,7 @@ void CommandExecutor::WaitChildExit(pid_t pid) {
 int CommandExecutor::Execute(const std::string &line) {
   std::vector<CommandParseResult> command_parse_result_list =
       parser_.ParseUserInputLine(line);
-  bool is_pipe_redirect = command_parse_result_list.size() != 1;
+  bool is_pipe_redirect = command_parse_result_list.size() > 1;
   int pipe_fds[2];
   if (pipe(pipe_fds) == -1) {
     utils::PrintSystemError(std::cerr);
@@ -99,31 +99,28 @@ int CommandExecutor::Execute(const std::string &line) {
     auto cmd_number = i;
     CommandParseResult command_parse_result = command_parse_result_list[i];
     if (build_in_.Exist(command_parse_result.command)) {
-      return BuildInCommand(command_parse_result);
-    }
-    pid_t pid = fork();
-    if (pid == ERROR_CODE_SYSTEM) {
-      // error
-      utils::PrintSystemError(std::cerr);
-      return ERROR_CODE_DEFAULT;
-    }
+      // default: build_in command only in first index
+      return build_in_.Execute(command_parse_result.command,
+                               command_parse_result.args);
+    } else {
+      pid_t pid = fork();
+      if (pid == ERROR_CODE_SYSTEM) {
+        // error
+        utils::PrintSystemError(std::cerr);
+        return ERROR_CODE_DEFAULT;
+      }
 
-    if (pid == 0) {
-      return ProcessChild(command_parse_result, is_pipe_redirect, pipe_fds,
-                          cmd_number);
-    } else if (cmd_number == command_parse_result_list.size() - 1) {
-      close(pipe_fds[0]);
-      WaitChildExit(pid);
+      if (pid == 0) {
+        return ProcessChild(command_parse_result, is_pipe_redirect, pipe_fds,
+                            cmd_number);
+      } else if (cmd_number == command_parse_result_list.size() - 1) {
+        close(pipe_fds[1]);
+        close(pipe_fds[0]);
+        WaitChildExit(pid);
+      }
     }
-    close(pipe_fds[1]);
   }
   return 0;
-}
-
-int CommandExecutor::BuildInCommand(
-    const CommandParseResult &command_parse_result) {
-  return build_in_.Execute(command_parse_result.command,
-                           command_parse_result.args);
 }
 
 std::vector<char *> CommandExecutor::BuildArgv(
@@ -138,16 +135,20 @@ std::vector<char *> CommandExecutor::BuildArgv(
   return argv;
 }
 
-void CommandExecutor::pipe_redirect(int *pipe_fds, int cmd_number) {
+void CommandExecutor::PipeRedirect(int *pipe_fds, int cmd_number) {
   if (cmd_number == 0) {
-    // output in pipeline
-    dup2(pipe_fds[1], STDOUT_FILENO);
-    close(pipe_fds[0]);
-    close(pipe_fds[1]);
+    PipeRedirectOut(pipe_fds);
   } else {
-    // read data for pipeline
-    dup2(pipe_fds[0], STDIN_FILENO);
-    close(pipe_fds[1]);
-    close(pipe_fds[0]);
+    PipeRedirectIn(pipe_fds);
   }
+}
+void CommandExecutor::PipeRedirectIn(const int *pipe_fds) {
+  close(pipe_fds[1]);
+  dup2(pipe_fds[0], STDIN_FILENO);
+  close(pipe_fds[0]);
+}
+void CommandExecutor::PipeRedirectOut(const int *pipe_fds) {
+  close(pipe_fds[0]);
+  dup2(pipe_fds[1], STDOUT_FILENO);
+  close(pipe_fds[1]);
 }
