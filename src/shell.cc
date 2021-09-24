@@ -39,7 +39,6 @@ void Shell::Process() {
     if (line.empty()) {
       continue;
     }
-
     command_executor_.Execute(line);
   }
 }
