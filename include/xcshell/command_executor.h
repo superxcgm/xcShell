@@ -1,6 +1,7 @@
 #ifndef INCLUDE_XCSHELL_COMMAND_EXECUTOR_H_
 #define INCLUDE_XCSHELL_COMMAND_EXECUTOR_H_
 
+#include <memory>
 #include <string>
 #include <tuple>
 #include <utility>
@@ -36,6 +37,12 @@ class CommandExecutor {
                                int cmd_number);
   static void PipeRedirectOut(const int *pipe_fds);
   static void PipeRedirectIn(const int *pipe_fds);
+  std::shared_ptr<CommandParseResult> BuildInCommandPipeExecute(
+      int save_fd, std::shared_ptr<CommandParseResult> built_In_Command_ptr,
+      const int *pipe_fds);
+  static void ProcessFather(
+      const std::vector<CommandParseResult> &command_parse_result_list,
+      const int *pipe_fds, int cmd_number, pid_t pid);
 };
 
 #endif  // INCLUDE_XCSHELL_COMMAND_EXECUTOR_H_
