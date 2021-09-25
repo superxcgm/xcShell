@@ -22,27 +22,30 @@ class CommandExecutor {
 
  private:
   static int ProcessChild(const CommandParseResult &command_parse_result,
-                          bool is_pipe_redirect, int *pipe_fds, int cmd_number);
+                          bool is_pipe_redirect, int *pipe_fds_left,
+                          int *pipe_fds_right, int cmd_number,
+                          int cmd_last_number);
   static void WaitChildExit(pid_t pid);
   static void OutputRedirect(const CommandParseResult &command_parse_result);
   static void InputRedirect(const CommandParseResult &command_parse_result);
-  static void PipeRedirect(int *pipe_fds, int cmd_number);
+  static void PipeRedirect(int *pipe_fds_left, int *pipe_fds_right,
+                           int cmd_number, int cmd_last_number);
 
   BuildIn build_in_;
 
   Parser parser_;
   static void ResetSignalHandlerForInterrupt();
   static void RedirectSelector(const CommandParseResult &command_parse_result,
-                               bool is_pipe_redirect, int *pipe_fds,
-                               int cmd_number);
-  static void PipeRedirectOut(const int *pipe_fds);
-  static void PipeRedirectIn(const int *pipe_fds);
+                               bool is_pipe_redirect, int *pipe_fds_left,
+                               int *pipe_fds_right, int cmd_number,
+                               int cmd_last_number);
   std::shared_ptr<CommandParseResult> BuildInCommandPipeExecute(
       int save_fd, std::shared_ptr<CommandParseResult> built_In_Command_ptr,
       const int *pipe_fds);
   static void ProcessFather(
       const std::vector<CommandParseResult> &command_parse_result_list,
-      const int *pipe_fds, int cmd_number, pid_t pid);
+      const int *pipe_fds_left, const int *pipe_fds_right, int cmd_number,
+      pid_t pid);
 };
 
 #endif  // INCLUDE_XCSHELL_COMMAND_EXECUTOR_H_
