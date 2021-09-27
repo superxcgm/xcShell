@@ -56,7 +56,7 @@ int CommandExecutor::ProcessChild(
 void CommandExecutor::RedirectSelector(
     const CommandParseResult &command_parse_result, bool is_pipe_redirect,
     std::vector<int *> &pipe_fds_list, int cmd_number, int cmd_last_number) {
-  if (is_pipe_redirect) {
+  if (!pipe_fds_list.empty()) {
     PipeRedirect(pipe_fds_list, cmd_number, cmd_last_number);
   }
   if (!command_parse_result.input_redirect_file.empty()) {
@@ -109,7 +109,7 @@ int CommandExecutor::Execute(const std::string &line) {
     if (build_in_.Exist(command_parse_result.command)) {
       // build_in command pipe redirect,need the reader needs to be received
       // before it can be written to the pipe
-      if (is_pipe_redirect) {
+      if (!pipe_fds_list.empty()) {
         built_In_Command_ptr =
             std::make_shared<CommandParseResult>(command_parse_result_list[i]);
       } else {
@@ -130,7 +130,8 @@ int CommandExecutor::Execute(const std::string &line) {
       } else {
         // Reading end is received
         built_In_Command_ptr = BuildInCommandPipeExecute(
-            save_fd, built_In_Command_ptr, pipe_fds_list);
+            save_fd, built_In_Command_ptr, pipe_fds_list,
+            command_parse_result_list, cmd_number);
         ProcessFather(command_parse_result_list, pipe_fds_list, cmd_number,
                       pid);
       }
@@ -153,8 +154,11 @@ void CommandExecutor::ProcessFather(
 
 std::shared_ptr<CommandParseResult> CommandExecutor::BuildInCommandPipeExecute(
     int save_fd, std::shared_ptr<CommandParseResult> built_In_Command_ptr,
-    std::vector<int *> &pipe_fds_list) {
-  if (built_In_Command_ptr != nullptr) {
+    std::vector<int *> &pipe_fds_list,
+    const std::vector<CommandParseResult> &command_parse_result_list,
+    int cmd_number) {
+  if (built_In_Command_ptr != nullptr &&
+      cmd_number + 1 == command_parse_result_list.size()) {
     for (int i = 1; i < pipe_fds_list.size(); i++) {
       close(pipe_fds_list[i][0]);
       close(pipe_fds_list[i][1]);

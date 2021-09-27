@@ -41,7 +41,9 @@ class CommandExecutor {
                                int cmd_number, int cmd_last_number);
   std::shared_ptr<CommandParseResult> BuildInCommandPipeExecute(
       int save_fd, std::shared_ptr<CommandParseResult> built_In_Command_ptr,
-      std::vector<int *> &pipe_fds_list);
+      std::vector<int *> &pipe_fds_list,
+      const std::vector<CommandParseResult> &command_parse_result_list,
+      int cmd_number);
   static void ProcessFather(
       const std::vector<CommandParseResult> &command_parse_result_list,
       std::vector<int *> &pipe_fds_list, int cmd_number, pid_t pid);
