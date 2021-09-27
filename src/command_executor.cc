@@ -86,20 +86,27 @@ void CommandExecutor::WaitChildExit(pid_t pid) {
   } while (!WIFEXITED(status) && !WIFSIGNALED(status));
 }
 
+std::vector<std::array<int, 2>> CommandExecutor::CreatePipe(
+    const std::vector<CommandParseResult> &command_parse_result_list) {
+  std::vector<std::array<int, 2>> pipe_fds_list;
+  auto pipe_number = command_parse_result_list.size() - 1;
+  for (int i = 0; i < pipe_number; i++) {
+    int pipe_fds[2];
+    if (pipe(pipe_fds) == ERROR_CODE_SYSTEM) {
+      utils::PrintSystemError(std::cerr);
+      exit(ERROR_CODE_DEFAULT);
+    }
+    pipe_fds_list.push_back({pipe_fds[0], pipe_fds[1]});
+  }
+  return pipe_fds_list;
+}
+
 int CommandExecutor::Execute(const std::string &line) {
   std::vector<CommandParseResult> command_parse_result_list =
       parser_.ParseUserInputLine(line);
   int save_fd = dup(STDOUT_FILENO);
   struct CommandParseResult *built_In_Command_ptr = nullptr;
-  auto pipe_number = command_parse_result_list.size() - 1;
-  std::vector<std::array<int, 2>> pipe_fds_list;
-  for (int i = 0; i < pipe_number; i++) {
-    int pipe_fds[2];
-    if (pipe(pipe_fds) == ERROR_CODE_SYSTEM) {
-      return GetErrorInformation();
-    }
-    pipe_fds_list.push_back({pipe_fds[0], pipe_fds[1]});
-  }
+  auto pipe_fds_list = CreatePipe(command_parse_result_list);
   for (int i = 0; i < command_parse_result_list.size(); i++) {
     auto cmd_number = i;
     bool is_last_command = i == command_parse_result_list.size() - 1;
