@@ -100,7 +100,6 @@ int CommandExecutor::Execute(const std::string &line) {
     }
     pipe_fds_list.push_back({pipe_fds[0], pipe_fds[1]});
   }
-
   for (int i = 0; i < command_parse_result_list.size(); i++) {
     auto cmd_number = i;
     bool is_last_command = i == command_parse_result_list.size() - 1;
@@ -132,11 +131,13 @@ int CommandExecutor::Execute(const std::string &line) {
   }
   return 0;
 }
+
 int CommandExecutor::GetErrorInformation() {
   // error
   utils::PrintSystemError(std::cerr);
   return ERROR_CODE_DEFAULT;
 }
+
 void CommandExecutor::BuildInCommandExecute(
     int save_fd, CommandParseResult *built_In_Command_ptr,
     const std::vector<std::array<int, 2>> &pipe_fds_list) {
