@@ -137,18 +137,37 @@ std::string utils::RemoveQuote(const std::string& str) {
   return str;
 }
 
-char* Trim(char* str) {
-  char *end, *sp, *ep;
-  int len;
-  sp = str;
-  end = str + strlen(str) - 1;
-  ep = end;
+char* LeftTrim(char* str) {
+  if (str == nullptr || *str == '\0') {
+    return str;
+  }
+  int len = 0;
+  char* p = str;
+  while (*p != '\0' && isspace(*p)) {
+    ++p;
+    ++len;
+  }
+  memmove(str, p, strlen(str) - len + 1);
+  return str;
+}
 
-  while (sp <= end && isspace(*sp)) sp++;
-  while (ep >= sp && isspace(*ep)) ep--;
-  len = ep < sp ? 0 : (ep - sp) + 1;
-  sp[len] = '\0';
-  return sp;
+char* RightTrim(char* str) {
+  if (str == nullptr || *str == '\0') {
+    return str;
+  }
+  auto len = strlen(str);
+  char* p = str + len - 1;
+  while (p >= str && isspace(*p)) {
+    *p = '\0';
+    --p;
+  }
+  return str;
+}
+
+char* Trim(char* str) {
+  str = RightTrim(str);
+  str = LeftTrim(str);
+  return str;
 }
 
 std::vector<std::string> utils::SpiltWithSymbol(const std::string& str,

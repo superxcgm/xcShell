@@ -17,6 +17,4 @@ int BuildIn::Execute(const std::string& cmd,
   return commands_[cmd]->Execute(args, std::cout, std::cerr);
 }
 
-std::shared_ptr<Alias> BuildIn::GetAlias() {
-  return alias_;
-}
+std::shared_ptr<Alias> BuildIn::GetAlias() { return alias_; }

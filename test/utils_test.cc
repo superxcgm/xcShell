@@ -122,13 +122,13 @@ TEST(UtilsTest, ExpandPath_ShouldReturnReplacedPathIfStartWithTilde) {
 
 TEST(UtilsTest, SpiltWithSymbol_ShouldReturnInputLineListIfHavePipeSymbol) {
   std::vector<std::string> expected = {"ls -l", "grep 'hello'"};
-  auto inout_line = utils::SpiltWithSymbol("ls -l | grep 'hello'", "|");
-  EXPECT_EQ(inout_line, expected);
+  auto input_line = utils::SpiltWithSymbol("ls -l | grep 'hello'", "|");
+  EXPECT_EQ(input_line, expected);
 }
 
 TEST(UtilsTest, SpiltWithSymbol_ShouldReturnInputLineListIfHaveMutilPipe) {
   std::vector<std::string> expected = {"cat /etc/passwd", "grep sh", "less"};
-  auto inout_line =
+  auto input_line =
       utils::SpiltWithSymbol("cat /etc/passwd | grep sh | less", "|");
-  EXPECT_EQ(inout_line, expected);
+  EXPECT_EQ(input_line, expected);
 }
