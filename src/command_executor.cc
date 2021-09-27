@@ -108,18 +108,15 @@ int CommandExecutor::Execute(const std::string &line) {
   struct CommandParseResult *built_In_Command_ptr = nullptr;
   auto pipe_fds_list = CreatePipe(command_parse_result_list);
   for (int i = 0; i < command_parse_result_list.size(); i++) {
-    auto cmd_number = i;
     bool is_last_command = i == command_parse_result_list.size() - 1;
-    const CommandParseResult command_parse_result =
-        command_parse_result_list[i];
-    if (build_in_.Exist(command_parse_result.command)) {
+    if (build_in_.Exist(command_parse_result_list[i].command)) {
       // build_in command pipe redirect,need the reader needs to be received
       // before it can be written to the pipe
       if (!pipe_fds_list.empty()) {
         built_In_Command_ptr = &command_parse_result_list[i];
       } else {
-        build_in_.Execute(command_parse_result.command,
-                          command_parse_result.args);
+        build_in_.Execute(command_parse_result_list[i].command,
+                          command_parse_result_list[i].args);
       }
     } else {
       pid_t pid = fork();
@@ -127,9 +124,9 @@ int CommandExecutor::Execute(const std::string &line) {
         return GetErrorInformation();
       }
       if (pid == 0) {
-        return ProcessChild(command_parse_result, pipe_fds_list, cmd_number,
+        return ProcessChild(command_parse_result_list[i], pipe_fds_list, i,
                             is_last_command);
-      } else if (cmd_number + 1 == command_parse_result_list.size()) {
+      } else if (i + 1 == command_parse_result_list.size()) {
         // Reading end is received
         BuildInCommandExecute(save_fd, built_In_Command_ptr, pipe_fds_list);
         ProcessFather(pipe_fds_list, pid);
