@@ -27,8 +27,8 @@ class CommandExecutor {
   static void WaitChildExit(pid_t pid);
   static void OutputRedirect(const CommandParseResult &command_parse_result);
   static void InputRedirect(const CommandParseResult &command_parse_result);
-  static void PipeRedirect(const std::vector<int *>& pipe_fds_list, int cmd_number,
-                           bool is_last_command);
+  static void PipeRedirect(const std::vector<int *> &pipe_fds_list,
+                           int cmd_number, bool is_last_command);
 
   BuildIn build_in_;
 
