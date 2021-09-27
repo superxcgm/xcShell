@@ -137,6 +137,39 @@ std::string utils::RemoveQuote(const std::string& str) {
   return str;
 }
 
+char* LeftTrim(char* str) {
+  if (str == nullptr || *str == '\0') {
+    return str;
+  }
+  int len = 0;
+  char* p = str;
+  while (*p != '\0' && isspace(*p)) {
+    ++p;
+    ++len;
+  }
+  memmove(str, p, strlen(str) - len + 1);
+  return str;
+}
+
+char* RightTrim(char* str) {
+  if (str == nullptr || *str == '\0') {
+    return str;
+  }
+  auto len = strlen(str);
+  char* p = str + len - 1;
+  while (p >= str && isspace(*p)) {
+    *p = '\0';
+    --p;
+  }
+  return str;
+}
+
+char* Trim(char* str) {
+  str = RightTrim(str);
+  str = LeftTrim(str);
+  return str;
+}
+
 std::vector<std::string> utils::SpiltWithSymbol(const std::string& str,
                                                 const std::string& symbol) {
   std::vector<std::string> str_list;
@@ -144,6 +177,7 @@ std::vector<std::string> utils::SpiltWithSymbol(const std::string& str,
   char* p = const_cast<char*>(str.c_str());
   char* input = strdup(p);
   while ((input = strtok_r(input, symbol.c_str(), &save_ptr)) != nullptr) {
+    input = Trim(input);
     str_list.emplace_back(input);
     input = nullptr;
   }

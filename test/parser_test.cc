@@ -148,3 +148,37 @@ TEST(ParseTest, Parse_CorrectlyParseTwoCommandsWithBuildInCommand) {
   EXPECT_EQ(command_parse_result_with_second.output_redirect_file, "");
   EXPECT_EQ(command_parse_result_with_second.input_redirect_file, "");
 }
+
+TEST(ParseTest, Parse_CorrectlyParseMoreCommandsAtTheSameTime) {
+  BuildIn build_in;
+  Parser parser(build_in);
+  std::string str = "cat /etc/passwd | grep sh | less";
+  std::vector<std::string> vec_first_command_args;
+  std::vector<std::string> vec_second_command_args;
+  std::vector<std::string> vec_third_command_args;
+  vec_first_command_args.emplace_back("/etc/passwd");
+  vec_second_command_args.emplace_back("sh");
+  std::vector<CommandParseResult> command_parse_result_list =
+      parser.ParseUserInputLine(str);
+  CommandParseResult command_parse_result_with_first =
+      command_parse_result_list[0];
+  CommandParseResult command_parse_result_with_second =
+      command_parse_result_list[1];
+  CommandParseResult command_parse_result_with_third =
+      command_parse_result_list[2];
+
+  EXPECT_EQ(command_parse_result_with_first.command, "cat");
+  EXPECT_EQ(command_parse_result_with_first.args, vec_first_command_args);
+  EXPECT_EQ(command_parse_result_with_first.output_redirect_file, "");
+  EXPECT_EQ(command_parse_result_with_first.input_redirect_file, "");
+
+  EXPECT_EQ(command_parse_result_with_second.command, "grep");
+  EXPECT_EQ(command_parse_result_with_second.args, vec_second_command_args);
+  EXPECT_EQ(command_parse_result_with_second.output_redirect_file, "");
+  EXPECT_EQ(command_parse_result_with_second.input_redirect_file, "");
+
+  EXPECT_EQ(command_parse_result_with_third.command, "less");
+  EXPECT_EQ(command_parse_result_with_third.args, vec_third_command_args);
+  EXPECT_EQ(command_parse_result_with_third.output_redirect_file, "");
+  EXPECT_EQ(command_parse_result_with_third.input_redirect_file, "");
+}

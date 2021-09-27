@@ -1,6 +1,6 @@
-#include <gtest/gtest.h>
-
 #include "xcshell/build_in/alias.h"
+
+#include <gtest/gtest.h>
 
 TEST(AliasTest, Execute_ShouldPrintEmptyLineForNoAlias) {
   Alias alias;
@@ -18,17 +18,13 @@ TEST(AliasTest, Execute_ShouldPrintSingleAlias) {
   Alias alias;
   std::ostringstream os;
   std::ostringstream os_err;
-  std::vector<std::string> create_alias = {
-      "ls='ls -G'"
-  };
+  std::vector<std::string> create_alias = {"ls='ls -G'"};
 
-  auto rtn =  alias.Execute(create_alias, os, os_err);
+  auto rtn = alias.Execute(create_alias, os, os_err);
   EXPECT_EQ(rtn, 0);
   EXPECT_EQ(os.str(), "");
 
-  std::vector<std::string> list_single_alias = {
-      "ls"
-  };
+  std::vector<std::string> list_single_alias = {"ls"};
   rtn = alias.Execute(list_single_alias, os, os_err);
 
   EXPECT_EQ(rtn, 0);
@@ -40,19 +36,15 @@ TEST(AliasTest, Execute_ShouldPrintAlias) {
   std::vector<std::string> no_args;
   std::ostringstream os;
   std::ostringstream os_err;
-  std::vector<std::string> create_alias = {
-      "ls='ls -G'"
-  };
+  std::vector<std::string> create_alias = {"ls='ls -G'"};
 
-  auto rtn =  alias.Execute(create_alias, os, os_err);
+  auto rtn = alias.Execute(create_alias, os, os_err);
   EXPECT_EQ(rtn, 0);
   EXPECT_EQ(os.str(), "");
 
-  std::vector<std::string> create_another_alias = {
-      "ll='ls -lh'"
-  };
+  std::vector<std::string> create_another_alias = {"ll='ls -lh'"};
 
-  rtn =  alias.Execute(create_another_alias, os, os_err);
+  rtn = alias.Execute(create_another_alias, os, os_err);
   EXPECT_EQ(rtn, 0);
   EXPECT_EQ(os.str(), "");
 
@@ -67,9 +59,7 @@ TEST(AliasTest, Replace_ShouldRepleaseIfAliasFound) {
   std::vector<std::string> no_args;
   std::ostringstream os;
   std::ostringstream os_err;
-  std::vector<std::string> create_alias = {
-      "ls='ls -G'"
-  };
+  std::vector<std::string> create_alias = {"ls='ls -G'"};
 
   alias.Execute(create_alias, os, os_err);
   EXPECT_EQ(alias.Replace("ls"), "ls -G");
@@ -80,14 +70,10 @@ TEST(AliasTest, Replace_ShouldRepleaseMultiTimesIfAliasFound) {
   std::vector<std::string> no_args;
   std::ostringstream os;
   std::ostringstream os_err;
-  std::vector<std::string> create_alias = {
-      "ls='ls -G'"
-  };
+  std::vector<std::string> create_alias = {"ls='ls -G'"};
 
   alias.Execute(create_alias, os, os_err);
-  create_alias = {
-      "ll='ls -lh'"
-  };
+  create_alias = {"ll='ls -lh'"};
   alias.Execute(create_alias, os, os_err);
 
   EXPECT_EQ(alias.Replace("ll"), "ls -G -lh");
