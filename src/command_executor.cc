@@ -173,7 +173,7 @@ std::vector<char *> CommandExecutor::BuildArgv(
   return argv;
 }
 
-void CommandExecutor::PipeRedirect(std::vector<int *> pipe_fds_list,
+void CommandExecutor::PipeRedirect(const std::vector<int *>& pipe_fds_list,
                                    int cmd_number, bool is_last_command) {
   if (cmd_number == 0) {
     PipeRedirectFirst(pipe_fds_list);

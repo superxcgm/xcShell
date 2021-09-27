@@ -149,7 +149,7 @@ TEST(ParseTest, Parse_CorrectlyParseTwoCommandsWithBuildInCommand) {
   EXPECT_EQ(command_parse_result_with_second.input_redirect_file, "");
 }
 
-TEST(ParseTest, Parse_CorrectlyParseThreeCommandsAtTheSameTime) {
+TEST(ParseTest, Parse_CorrectlyParseMoreCommandsAtTheSameTime) {
   BuildIn build_in;
   Parser parser(build_in);
   std::string str = "cat /etc/passwd | grep sh | less";
