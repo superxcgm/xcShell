@@ -49,7 +49,7 @@ class CommandExecutor {
   void BuildInCommandExecute(
       int save_fd, CommandParseResult *built_In_Command_ptr,
       const std::vector<std::array<int, 2>> &pipe_fds_list);
-  static int GetErrorInformation() ;
+  static int GetErrorInformation();
 };
 
 #endif  // INCLUDE_XCSHELL_COMMAND_EXECUTOR_H_
