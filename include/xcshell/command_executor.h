@@ -22,30 +22,34 @@ class CommandExecutor {
 
  private:
   static int ProcessChild(const CommandParseResult &command_parse_result,
-                          const std::vector<int *> &pipe_fds_list,
+                          const std::vector<std::array<int, 2>> &pipe_fds_list,
                           int cmd_number, bool is_last_command);
   static void WaitChildExit(pid_t pid);
   static void OutputRedirect(const CommandParseResult &command_parse_result);
   static void InputRedirect(const CommandParseResult &command_parse_result);
-  static void PipeRedirect(const std::vector<int *> &pipe_fds_list,
+  static void PipeRedirect(const std::vector<std::array<int, 2>> &pipe_fds_list,
                            int cmd_number, bool is_last_command);
 
   BuildIn build_in_;
 
   Parser parser_;
   static void ResetSignalHandlerForInterrupt();
-  static void RedirectSelector(const CommandParseResult &command_parse_result,
-                               const std::vector<int *> &pipe_fds_list,
-                               int cmd_number, bool is_last_command);
-  std::shared_ptr<CommandParseResult> BuildInCommandPipeExecute(
-      int save_fd, std::shared_ptr<CommandParseResult> built_In_Command_ptr,
-      const std::vector<int *> &pipe_fds_list);
-  static void ProcessFather(const std::vector<int *> &pipe_fds_list, pid_t pid);
-  static void PipeRedirectFirst(const std::vector<int *> &pipe_fds_list);
-  static void PipeRedirectMiddle(const std::vector<int *> &pipe_fds_list,
-                                 int cmd_number);
-  static void PipeRedirectEnd(const std::vector<int *> &pipe_fds_list,
-                              int cmd_number);
+  static void RedirectSelector(
+      const CommandParseResult &command_parse_result,
+      const std::vector<std::array<int, 2>> &pipe_fds_list, int cmd_number,
+      bool is_last_command);
+  static void ProcessFather(
+      const std::vector<std::array<int, 2>> &pipe_fds_list, pid_t pid);
+  static void PipeRedirectFirst(
+      const std::vector<std::array<int, 2>> &pipe_fds_list);
+  static void PipeRedirectMiddle(
+      const std::vector<std::array<int, 2>> &pipe_fds_list, int cmd_number);
+  static void PipeRedirectEnd(
+      const std::vector<std::array<int, 2>> &pipe_fds_list, int cmd_number);
+  void BuildInCommandExecute(
+      int save_fd, CommandParseResult *built_In_Command_ptr,
+      const std::vector<std::array<int, 2>> &pipe_fds_list);
+  static int GetErrorInformation() ;
 };
 
 #endif  // INCLUDE_XCSHELL_COMMAND_EXECUTOR_H_
