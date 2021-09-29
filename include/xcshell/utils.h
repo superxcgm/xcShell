@@ -17,6 +17,7 @@ std::string RemoveQuote(const std::string &str);
 void PrintSystemError(std::ostream &os_err);
 std::string ReadFileText(const std::string &file_name);
 std::string GetCommandExecuteResult(const std::string &command);
+std::string GetBranchName(std::string prompt_line);
 }  // namespace utils
 
 #endif  // INCLUDE_XCSHELL_UTILS_H_

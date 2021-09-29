@@ -8,8 +8,8 @@
 #include <csignal>
 #include <sstream>
 
-#include "xcshell/shell.h"
 #include "xcshell/constants.h"
+#include "xcshell/shell.h"
 #include "xcshell/utils.h"
 
 void Shell::Init() {
@@ -49,23 +49,14 @@ int Shell::Exit() {
 std::string Shell::GeneratePrompt() {
   auto pwd = utils::GetCurrentWorkingDirectory(std::cerr);
   auto home = utils::GetHomeDir();
-  std::string dir;
+  std::string prompt_line;
   if (home == pwd) {
-    dir = "~";
+    prompt_line = "~";
   } else {
-    dir = utils::GetLastDir(pwd);
+    prompt_line = utils::GetLastDir(pwd);
   }
-
-  auto branch_name = utils::GetCommandExecuteResult(
-      R"(git branch | grep "^\*" | sed 's/^..//')");
-  auto is_git_manage = utils::GetCommandExecuteResult(
-                           "git rev-parse --is-inside-work-tree") == "true";
-
-  if (!branch_name.empty() && branch_name != ".git" && is_git_manage) {
-    dir += "\033[31m git(" + branch_name + ")\033[0m ";
-  }
-
-  return dir + " > ";
+  prompt_line = utils::GetBranchName(prompt_line);
+  return prompt_line + " > ";
 }
 
 void Shell::ExecuteConfig(const std::string &config_string) {
