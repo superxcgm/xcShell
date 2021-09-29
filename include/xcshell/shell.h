@@ -16,7 +16,7 @@ class Shell {
   int Exit();
 
  private:
-  static std::string GeneratePrompt();
+  std::string GeneratePrompt();
   void ExecuteConfig(const std::string &config_string);
   static void IgnoreSignalInterrupt();
 

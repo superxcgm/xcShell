@@ -4,11 +4,11 @@
 #include <pwd.h>
 #include <unistd.h>
 
+#include <cstdio>
 #include <cstring>
 #include <fstream>
 #include <sstream>
 #include <string>
-#include <cstdio>
 
 #include "xcshell/shell.h"
 
@@ -188,9 +188,9 @@ std::vector<std::string> utils::SpiltWithSymbol(const std::string& str,
   free(input);
   return str_list;
 }
-std::string utils::GetCommandExecuteResult(const std::string& command) {
+std::string utils::GetCommandExecuteResult(CommandExecutor commandExecutor,
+                                           const std::string& command) {
   std::string result;
-  CommandExecutor commandExecutor;
   int save_fd_out = dup(STDOUT_FILENO);
   int save_fd_err = dup(STDERR_FILENO);
   std::string temporary_file = "file.txt";
@@ -209,14 +209,12 @@ std::string utils::GetCommandExecuteResult(const std::string& command) {
   return result;
 }
 
-std::string utils::GetBranchName(std::string prompt_line) {
+std::string utils::GetBranchName(const CommandExecutor& commandExecutor) {
   auto branch_name = utils::GetCommandExecuteResult(
-      R"(git branch | grep "^\*" | sed 's/^..//')");
-  auto is_git_manage = utils::GetCommandExecuteResult(
-                           "git rev-parse --is-inside-work-tree") == "true";
+      commandExecutor, R"(git branch | grep "^\*" | sed 's/^..//')");
 
-  if (!branch_name.empty() && branch_name != ".git" && is_git_manage) {
-    prompt_line += "\033[31m git(" + branch_name + ")\033[0m";
+  if (!branch_name.empty() && branch_name != ".git") {
+    return "\033[31m git(" + branch_name + ")\033[0m";
   }
-  return prompt_line;
+  return "";
 }

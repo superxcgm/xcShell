@@ -1,14 +1,14 @@
 #include "xcshell/shell.h"
 
 #if defined(__linux__)
-#include <readline/readline.h>
 #include <readline/history.h>
+#include <readline/readline.h>
 #elif defined(__APPLE__)
 #include <editline/readline.h>
 #endif
 
-#include <sstream>
 #include <csignal>
+#include <sstream>
 
 #include "xcshell/constants.h"
 #include "xcshell/utils.h"
@@ -56,7 +56,7 @@ std::string Shell::GeneratePrompt() {
   } else {
     prompt_line = utils::GetLastDir(pwd);
   }
-  prompt_line = utils::GetBranchName(prompt_line);
+  prompt_line.append(utils::GetBranchName(command_executor_));
   return prompt_line + " > ";
 }
 
