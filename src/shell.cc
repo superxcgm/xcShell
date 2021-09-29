@@ -1,16 +1,16 @@
+#include "xcshell/shell.h"
+
 #if defined(__linux__)
-#include <readline/history.h>
 #include <readline/readline.h>
+#include <readline/history.h>
 #elif defined(__APPLE__)
 #include <editline/readline.h>
 #endif
 
-#include <cstdio>
-#include <csignal>
 #include <sstream>
+#include <csignal>
 
 #include "xcshell/constants.h"
-#include "xcshell/shell.h"
 #include "xcshell/utils.h"
 
 void Shell::Init() {
