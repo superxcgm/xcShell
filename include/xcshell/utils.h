@@ -16,6 +16,7 @@ std::string ExpandPath(const std::string &path);
 std::string RemoveQuote(const std::string &str);
 void PrintSystemError(std::ostream &os_err);
 std::string ReadFileText(const std::string &file_name);
+std::string GetCommandExecuteResult(const std::string &command);
 }  // namespace utils
 
 #endif  // INCLUDE_XCSHELL_UTILS_H_

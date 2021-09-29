@@ -1,5 +1,5 @@
-#include "xcshell/utils.h"
-
+#include <editline/readline.h>
+#include <fcntl.h>
 #include <pwd.h>
 #include <unistd.h>
 
@@ -7,6 +7,9 @@
 #include <fstream>
 #include <sstream>
 #include <string>
+
+#include "xcshell/shell.h"
+#include "xcshell/utils.h"
 
 std::string utils::ExpandPath(const std::string& path) {
   if (path[0] == '~') {
@@ -183,4 +186,24 @@ std::vector<std::string> utils::SpiltWithSymbol(const std::string& str,
   }
   free(input);
   return str_list;
+}
+std::string utils::GetCommandExecuteResult(const std::string &command) {
+  std::string result;
+  CommandExecutor commandExecutor;
+  int save_fd_out = dup(STDOUT_FILENO);
+  int save_fd_err = dup(STDERR_FILENO);
+  std::string temporary_file = "file.txt";
+  int fd_out =
+      open(temporary_file.c_str(), O_WRONLY | O_APPEND | O_CREAT, 0664);
+  dup2(fd_out, STDOUT_FILENO);
+  dup2(fd_out, STDERR_FILENO);
+  close(fd_out);
+  commandExecutor.Execute(command);
+  std::ifstream fin(temporary_file);
+  while (fin >> result)
+    ;
+  dup2(save_fd_out, STDOUT_FILENO);
+  dup2(save_fd_err, STDERR_FILENO);
+  remove(temporary_file.c_str());
+  return result;
 }

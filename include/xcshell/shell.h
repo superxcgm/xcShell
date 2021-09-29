@@ -21,6 +21,8 @@ class Shell {
   static void IgnoreSignalInterrupt();
 
   CommandExecutor command_executor_;
+  static std::string GetCommandExecuteResult(
+      const std::string& command);
 };
 
 #endif  // INCLUDE_XCSHELL_SHELL_H_
