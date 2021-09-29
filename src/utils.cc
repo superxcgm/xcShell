@@ -9,6 +9,7 @@
 #include <fstream>
 #include <sstream>
 #include <string>
+#include <cstdio>
 
 #include "xcshell/shell.h"
 

@@ -5,6 +5,7 @@
 #include <editline/readline.h>
 #endif
 
+#include <cstdio>
 #include <csignal>
 #include <sstream>
 
