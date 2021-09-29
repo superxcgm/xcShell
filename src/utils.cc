@@ -1,6 +1,5 @@
 #include "xcshell/utils.h"
 
-#include <editline/readline.h>
 #include <fcntl.h>
 #include <pwd.h>
 #include <unistd.h>
