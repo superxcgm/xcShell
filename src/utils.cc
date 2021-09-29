@@ -10,8 +10,6 @@
 #include <sstream>
 #include <string>
 
-#include "xcshell/shell.h"
-
 std::string utils::ExpandPath(const std::string& path) {
   if (path[0] == '~') {
     return GetHomeDir() + path.substr(1);
@@ -203,18 +201,22 @@ std::string utils::GetCommandExecuteResult(CommandExecutor commandExecutor,
   std::ifstream fin(temporary_file);
   while (fin >> result) {
   }
+  std::vector<std::string> branch_result_parse =
+      utils::SpiltWithSymbol(result, " ");
   dup2(save_fd_out, STDOUT_FILENO);
   dup2(save_fd_err, STDERR_FILENO);
   remove(temporary_file.c_str());
-  return result;
+  return branch_result_parse[branch_result_parse.size() - 1];
 }
 
 std::string utils::GetBranchName(const CommandExecutor& commandExecutor) {
   auto branch_name = utils::GetCommandExecuteResult(
       commandExecutor, R"(git branch | grep "^\*" | sed 's/^..//')");
-
+  std::string red_font_attributes = "\033[31m";
+  std::string close_all_attributes = "\033[0m";
   if (!branch_name.empty() && branch_name != ".git") {
-    return "\033[31m git(" + branch_name + ")\033[0m";
+    return red_font_attributes + " git(" + branch_name + ")" +
+           close_all_attributes;
   }
   return "";
 }

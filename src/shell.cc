@@ -72,7 +72,6 @@ void Shell::ExecuteConfig(const std::string &config_string) {
     if (line.empty()) {
       continue;
     }
-
     command_executor_.Execute(line);
   }
 }
