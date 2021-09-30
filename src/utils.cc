@@ -200,7 +200,7 @@ std::string GetRandomString(const int len) {
   return result;
 }
 
-std::string utils::GetCommandExecuteResult(CommandExecutor commandExecutor,
+std::string utils::GetCommandExecuteResult(CommandExecutor* commandExecutor,
                                            const std::string& command) {
   std::string result;
   int save_fd_out = dup(STDOUT_FILENO);
@@ -217,7 +217,7 @@ std::string utils::GetCommandExecuteResult(CommandExecutor commandExecutor,
   close(fd_out_correct);
   dup2(fd_out_error, STDERR_FILENO);
   close(fd_out_error);
-  commandExecutor.Execute(command);
+  commandExecutor->Execute(command);
   std::ifstream fin(temporary_file_correct);
   while (fin >> result) {
   }
@@ -228,7 +228,7 @@ std::string utils::GetCommandExecuteResult(CommandExecutor commandExecutor,
   return result;
 }
 
-std::string utils::GetBranchName(const CommandExecutor& commandExecutor) {
+std::string utils::GetBranchName(CommandExecutor* commandExecutor) {
   auto branch_name = utils::GetCommandExecuteResult(
       commandExecutor, R"(git branch | grep "^\*" | sed 's/^..//')");
   std::string red_font_attributes = "\033[31m";
