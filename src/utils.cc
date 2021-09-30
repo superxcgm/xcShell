@@ -176,7 +176,8 @@ std::string utils::GetRandomString(int len) {
 std::string utils::GetCommandExecuteResult(CommandExecutor* commandExecutor,
                                            const std::string& command) {
   std::string result;
-  // Todo: these redirect should replace with command redirection once Execute can redirect stderr
+  // Todo: these redirect should replace with command redirection
+  //  once Execute can redirect stderr
   int save_fd_out = dup(STDOUT_FILENO);
   int save_fd_err = dup(STDERR_FILENO);
   std::string temporary_file_correct =
@@ -204,7 +205,8 @@ std::string utils::GetCommandExecuteResult(CommandExecutor* commandExecutor,
 }
 
 std::string utils::GetBranchName(CommandExecutor* commandExecutor) {
-  // Todo: Use more fast approach (Read .git/HEAD directly), instead of use Execute
+  // Todo: Use more fast approach (Read .git/HEAD directly)
+  //  instead of use Execute
   auto branch_name = utils::GetCommandExecuteResult(
       commandExecutor, R"(git branch | grep "^\*" | sed 's/^..//')");
   std::string red_font_attributes = "\033[31m";
