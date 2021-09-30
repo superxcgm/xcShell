@@ -5,6 +5,7 @@
 #include <unistd.h>
 
 #include <cstdio>
+#include <cstdlib>
 #include <cstring>
 #include <fstream>
 #include <sstream>
@@ -186,27 +187,45 @@ std::vector<std::string> utils::SpiltWithSymbol(const std::string& str,
   free(input);
   return str_list;
 }
+
+std::string GetRandomString(const int len) {
+  static std::string charset =
+      "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890";
+  std::string result;
+  result.resize(len);
+  srand(time(nullptr));
+  for (int i = 0; i < len; i++) {
+    result[i] = charset[rand() % charset.length()];
+  }
+  return result;
+}
+
 std::string utils::GetCommandExecuteResult(CommandExecutor commandExecutor,
                                            const std::string& command) {
   std::string result;
   int save_fd_out = dup(STDOUT_FILENO);
   int save_fd_err = dup(STDERR_FILENO);
-  std::string temporary_file = "file.txt";
-  int fd_out =
-      open(temporary_file.c_str(), O_WRONLY | O_APPEND | O_CREAT, 0664);
-  dup2(fd_out, STDOUT_FILENO);
-  dup2(fd_out, STDERR_FILENO);
-  close(fd_out);
+  std::string temporary_file_correct =
+      "xcShell_temp_correct_" + GetRandomString(10) + ".txt";
+  std::string temporary_file_error =
+      "xcShell_temp_error_" + GetRandomString(10) + ".txt";
+  int fd_out_correct =
+      open(temporary_file_correct.c_str(), O_WRONLY | O_APPEND | O_CREAT, 0664);
+  int fd_out_error =
+      open(temporary_file_error.c_str(), O_WRONLY | O_APPEND | O_CREAT, 0664);
+  dup2(fd_out_correct, STDOUT_FILENO);
+  close(fd_out_correct);
+  dup2(fd_out_error, STDERR_FILENO);
+  close(fd_out_error);
   commandExecutor.Execute(command);
-  std::ifstream fin(temporary_file);
+  std::ifstream fin(temporary_file_correct);
   while (fin >> result) {
   }
-  std::vector<std::string> branch_result_parse =
-      utils::SpiltWithSymbol(result, " ");
   dup2(save_fd_out, STDOUT_FILENO);
   dup2(save_fd_err, STDERR_FILENO);
-  remove(temporary_file.c_str());
-  return branch_result_parse[branch_result_parse.size() - 1];
+  remove(temporary_file_correct.c_str());
+  remove(temporary_file_error.c_str());
+  return result;
 }
 
 std::string utils::GetBranchName(const CommandExecutor& commandExecutor) {
@@ -214,7 +233,7 @@ std::string utils::GetBranchName(const CommandExecutor& commandExecutor) {
       commandExecutor, R"(git branch | grep "^\*" | sed 's/^..//')");
   std::string red_font_attributes = "\033[31m";
   std::string close_all_attributes = "\033[0m";
-  if (!branch_name.empty() && branch_name != ".git") {
+  if (!branch_name.empty()) {
     return red_font_attributes + " git(" + branch_name + ")" +
            close_all_attributes;
   }
