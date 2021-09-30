@@ -8,7 +8,7 @@
 #include "xcshell/constants.h"
 #include "xcshell/utils.h"
 
-command_parse_result buildParseResultWithRedirect(
+CommandParseResult buildParseResultWithRedirect(
     const std::vector<std::string> &command_with_args,
     const std::string &command) {
   std::vector<std::string> args;
@@ -39,9 +39,9 @@ command_parse_result buildParseResultWithRedirect(
   return {command, args, input_file, output_file, is_overwrite};
 }
 
-std::vector<command_parse_result> Parser::ParseUserInputLine(
+std::vector<CommandParseResult> Parser::ParseUserInputLine(
     const std::string &input_line) {
-  std::vector<command_parse_result> command_parse_result_list;
+  std::vector<CommandParseResult> command_parse_result_list;
   std::vector<std::string> command_and_suffix_list =
       utils::SpiltWithSymbol(input_line, REDIRECT_PIPE);
   for (const auto &command_and_suffix : command_and_suffix_list) {
