@@ -191,13 +191,13 @@ std::vector<std::string> utils::SpiltWithSymbol(const std::string& str,
 std::string GetRandomString(const int len) {
   static std::string charset =
       "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890";
-  std::string result;
-  result.resize(len);
+  std::string rand_string;
+  rand_string.resize(len);
   srand(time(nullptr));
   for (int i = 0; i < len; i++) {
-    result[i] = charset[rand() % charset.length()];
+    rand_string[i] = charset[rand() % charset.length()];
   }
-  return result;
+  return rand_string;
 }
 
 std::string utils::GetCommandExecuteResult(CommandExecutor* commandExecutor,
