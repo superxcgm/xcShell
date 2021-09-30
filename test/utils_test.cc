@@ -132,3 +132,45 @@ TEST(UtilsTest, SpiltWithSymbol_ShouldReturnInputLineListIfHaveMutilPipe) {
       utils::SpiltWithSymbol("cat /etc/passwd | grep sh | less", "|");
   EXPECT_EQ(input_line, expected);
 }
+
+TEST(UtilsTest, LeftTrim_ShouldReturnOriginStringIfNoHeadingSpace) {
+  char str[] = "hello";
+  auto actual = utils::LeftTrim(str);
+  const char *expected = str;
+  EXPECT_TRUE(strcmp(actual, expected) == 0);
+}
+
+TEST(UtilsTest, LeftTrim_ShouldRemoveHeadingSpace) {
+  char str[] = "  hello";
+  const char *expected = "hello";
+  auto actual = utils::LeftTrim(str);
+  EXPECT_TRUE(strcmp(actual, expected) == 0);
+}
+
+TEST(UtilsTest, RightTrim_ShouldReturnOriginStringIfNoTrailingSpace) {
+  char str[] = "hello";
+  auto actual = utils::RightTrim(str);
+  const char *expected = str;
+  EXPECT_TRUE(strcmp(actual, expected) == 0);
+}
+
+TEST(UtilsTest, RightTrim_ShouldRemoveTrailingSpace) {
+  char str[] = "hello  ";
+  auto actual = utils::RightTrim(str);
+  const char *expected = "hello";
+  EXPECT_TRUE(strcmp(actual, expected) == 0);
+}
+
+TEST(UtilsTest, Trim_ShouldReturnOriginStringIfNoHeadingNorTrailingSpace) {
+  char str[] = "hello";
+  auto actual = utils::Trim(str);
+  const char *expected = str;
+  EXPECT_TRUE(strcmp(actual, expected) == 0);
+}
+
+TEST(UtilsTest, Trim_ShouldRemoveHeadingAndTrailingSpace) {
+  char str[] = "  hello  ";
+  auto actual = utils::Trim(str);
+  const char *expected = "hello";
+  EXPECT_TRUE(strcmp(actual, expected) == 0);
+}
