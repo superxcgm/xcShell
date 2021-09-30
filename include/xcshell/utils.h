@@ -21,6 +21,7 @@ std::string ReadFileText(const std::string &file_name);
 std::string GetCommandExecuteResult(CommandExecutor *commandExecutor,
                                     const std::string &command);
 std::string GetBranchName(CommandExecutor *commandExecutor);
+std::string GetRandomString(int len);
 }  // namespace utils
 
 #endif  // INCLUDE_XCSHELL_UTILS_H_

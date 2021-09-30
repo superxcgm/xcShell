@@ -188,7 +188,7 @@ std::vector<std::string> utils::SpiltWithSymbol(const std::string& str,
   return str_list;
 }
 
-std::string GetRandomString(const int len) {
+std::string utils::GetRandomString(int len) {
   static std::string charset =
       "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890";
   std::string rand_string;
@@ -206,9 +206,9 @@ std::string utils::GetCommandExecuteResult(CommandExecutor* commandExecutor,
   int save_fd_out = dup(STDOUT_FILENO);
   int save_fd_err = dup(STDERR_FILENO);
   std::string temporary_file_correct =
-      "xcShell_temp_correct_" + GetRandomString(10) + ".txt";
+      "xcShell_temp_correct_" + utils::GetRandomString(10) + ".txt";
   std::string temporary_file_error =
-      "xcShell_temp_error_" + GetRandomString(10) + ".txt";
+      "xcShell_temp_error_" + utils::GetRandomString(10) + ".txt";
   int fd_out_correct =
       open(temporary_file_correct.c_str(), O_WRONLY | O_TRUNC | O_CREAT, 0664);
   int fd_out_error =
