@@ -7,12 +7,12 @@
 #include <vector>
 
 #include "build_in/build_in.h"
-#include "xcshell/CommandParseResult.h"
+#include "xcshell/command_parse_result.h"
 
 class Parser {
  public:
   explicit Parser(BuildIn &build_in) : build_in_(build_in) {}
-  std::vector<CommandParseResult> ParseUserInputLine(
+  std::vector<command_parse_result> ParseUserInputLine(
       const std::string &input_line);
 
  private:

@@ -8,7 +8,7 @@
 #include <vector>
 
 #include "build_in/build_in.h"
-#include "xcshell/CommandParseResult.h"
+#include "xcshell/command_parse_result.h"
 #include "xcshell/parser.h"
 
 class CommandExecutor {
@@ -21,12 +21,12 @@ class CommandExecutor {
                                        const std::vector<std::string> &args);
 
  private:
-  static int ProcessChild(const CommandParseResult &command_parse_result,
+  static int ProcessChild(const command_parse_result &command_parse_result,
                           const std::vector<std::array<int, 2>> &pipe_fds_list,
                           int cmd_number, bool is_last_command);
   static void WaitChildExit(pid_t pid);
-  static void OutputRedirect(const CommandParseResult &command_parse_result);
-  static void InputRedirect(const CommandParseResult &command_parse_result);
+  static void OutputRedirect(const command_parse_result &command_parse_result);
+  static void InputRedirect(const command_parse_result &command_parse_result);
   static void PipeRedirect(const std::vector<std::array<int, 2>> &pipe_fds_list,
                            int cmd_number, bool is_last_command);
 
@@ -35,7 +35,7 @@ class CommandExecutor {
   Parser parser_;
   static void ResetSignalHandlerForInterrupt();
   static void RedirectSelector(
-      const CommandParseResult &command_parse_result,
+      const command_parse_result &command_parse_result,
       const std::vector<std::array<int, 2>> &pipe_fds_list, int cmd_number,
       bool is_last_command);
   static void ProcessFather(
@@ -47,10 +47,10 @@ class CommandExecutor {
   static void PipeRedirectEnd(
       const std::vector<std::array<int, 2>> &pipe_fds_list, int cmd_number);
   void BuildInCommandExecute(
-      int save_fd, CommandParseResult *built_In_Command_ptr,
+      int save_fd, command_parse_result *built_In_Command_ptr,
       const std::vector<std::array<int, 2>> &pipe_fds_list);
   static std::vector<std::array<int, 2>> CreatePipe(
-      const std::vector<CommandParseResult> &command_parse_result_list);
+      const std::vector<command_parse_result> &command_parse_result_list);
   static int GetErrorInformation();
 };
 

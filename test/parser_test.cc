@@ -9,9 +9,9 @@ TEST(ParseTest, Parse_PraseOutputRedirectionCorrectlyWithOverwrite) {
   Parser parser(build_in);
   std::string str = "ls > a.txt";
   std::vector<std::string> vec;
-  std::vector<CommandParseResult> command_parse_result_list =
+  std::vector<command_parse_result> command_parse_result_list =
       parser.ParseUserInputLine(str);
-  CommandParseResult command_parse_result = command_parse_result_list[0];
+  command_parse_result command_parse_result = command_parse_result_list[0];
 
   EXPECT_EQ(command_parse_result.command, "ls");
   EXPECT_EQ(command_parse_result.args, vec);
@@ -25,9 +25,9 @@ TEST(ParseTest, Parse_PraseOutputRedirectionWithSingleBuildInCommand) {
   Parser parser(build_in);
   std::string str = "alias";
   std::vector<std::string> vec;
-  std::vector<CommandParseResult> command_parse_result_list =
+  std::vector<command_parse_result> command_parse_result_list =
       parser.ParseUserInputLine(str);
-  CommandParseResult command_parse_result = command_parse_result_list[0];
+  command_parse_result command_parse_result = command_parse_result_list[0];
 
   EXPECT_EQ(command_parse_result.command, "alias");
   EXPECT_EQ(command_parse_result.args, vec);
@@ -41,9 +41,9 @@ TEST(ParseTest, Parse_PraseOutputRedirectionCorrectlyWithAppend) {
   std::string str = "ls -l >> a.txt";
   std::vector<std::string> vec;
   vec.emplace_back("-l");
-  std::vector<CommandParseResult> command_parse_result_list =
+  std::vector<command_parse_result> command_parse_result_list =
       parser.ParseUserInputLine(str);
-  CommandParseResult command_parse_result = command_parse_result_list[0];
+  command_parse_result command_parse_result = command_parse_result_list[0];
 
   EXPECT_EQ(command_parse_result.command, "ls");
   EXPECT_EQ(command_parse_result.args, vec);
@@ -57,9 +57,9 @@ TEST(ParseTest, Parse_PraseInputRedirectionCorrectly) {
   Parser parser(build_in);
   std::string str = "bc < a.input";
   std::vector<std::string> vec;
-  std::vector<CommandParseResult> command_parse_result_list =
+  std::vector<command_parse_result> command_parse_result_list =
       parser.ParseUserInputLine(str);
-  CommandParseResult command_parse_result = command_parse_result_list[0];
+  command_parse_result command_parse_result = command_parse_result_list[0];
 
   EXPECT_EQ(command_parse_result.command, "bc");
   EXPECT_EQ(command_parse_result.args, vec);
@@ -72,9 +72,9 @@ TEST(ParseTest, Parse_PraseInputAndOutputRedirectionCorrectly) {
   Parser parser(build_in);
   std::string str = "bc < a.input > a.txt";
   std::vector<std::string> vec;
-  std::vector<CommandParseResult> command_parse_result_list =
+  std::vector<command_parse_result> command_parse_result_list =
       parser.ParseUserInputLine(str);
-  CommandParseResult command_parse_result = command_parse_result_list[0];
+  command_parse_result command_parse_result = command_parse_result_list[0];
 
   EXPECT_EQ(command_parse_result.command, "bc");
   EXPECT_EQ(command_parse_result.args, vec);
@@ -89,9 +89,9 @@ TEST(ParseTest, Parse_OutputCorrectlyNotContainAnyRedirection) {
   std::string str = "ls -a";
   std::vector<std::string> vec;
   vec.emplace_back("-a");
-  std::vector<CommandParseResult> command_parse_result_list =
+  std::vector<command_parse_result> command_parse_result_list =
       parser.ParseUserInputLine(str);
-  CommandParseResult command_parse_result = command_parse_result_list[0];
+  command_parse_result command_parse_result = command_parse_result_list[0];
 
   EXPECT_EQ(command_parse_result.command, "ls");
   EXPECT_EQ(command_parse_result.args, vec);
@@ -106,11 +106,11 @@ TEST(ParseTest, Parse_CorrectlyParseTwoCommandsAtTheSameTime) {
   std::vector<std::string> vec_first_command_args;
   std::vector<std::string> vec_second_command_args;
   vec_second_command_args.emplace_back("PM");
-  std::vector<CommandParseResult> command_parse_result_list =
+  std::vector<command_parse_result> command_parse_result_list =
       parser.ParseUserInputLine(str);
-  CommandParseResult command_parse_result_with_first =
+  command_parse_result command_parse_result_with_first =
       command_parse_result_list[0];
-  CommandParseResult command_parse_result_with_second =
+  command_parse_result command_parse_result_with_second =
       command_parse_result_list[1];
 
   EXPECT_EQ(command_parse_result_with_first.command, "ls");
@@ -131,11 +131,11 @@ TEST(ParseTest, Parse_CorrectlyParseTwoCommandsWithBuildInCommand) {
   std::vector<std::string> vec_first_command_args;
   std::vector<std::string> vec_second_command_args;
   vec_second_command_args.emplace_back("ls");
-  std::vector<CommandParseResult> command_parse_result_list =
+  std::vector<command_parse_result> command_parse_result_list =
       parser.ParseUserInputLine(str);
-  CommandParseResult command_parse_result_with_first =
+  command_parse_result command_parse_result_with_first =
       command_parse_result_list[0];
-  CommandParseResult command_parse_result_with_second =
+  command_parse_result command_parse_result_with_second =
       command_parse_result_list[1];
 
   EXPECT_EQ(command_parse_result_with_first.command, "alias");
@@ -158,13 +158,13 @@ TEST(ParseTest, Parse_CorrectlyParseMoreCommandsAtTheSameTime) {
   std::vector<std::string> vec_third_command_args;
   vec_first_command_args.emplace_back("/etc/passwd");
   vec_second_command_args.emplace_back("sh");
-  std::vector<CommandParseResult> command_parse_result_list =
+  std::vector<command_parse_result> command_parse_result_list =
       parser.ParseUserInputLine(str);
-  CommandParseResult command_parse_result_with_first =
+  command_parse_result command_parse_result_with_first =
       command_parse_result_list[0];
-  CommandParseResult command_parse_result_with_second =
+  command_parse_result command_parse_result_with_second =
       command_parse_result_list[1];
-  CommandParseResult command_parse_result_with_third =
+  command_parse_result command_parse_result_with_third =
       command_parse_result_list[2];
 
   EXPECT_EQ(command_parse_result_with_first.command, "cat");

@@ -10,12 +10,12 @@
 #include <memory>
 #include <vector>
 
-#include "xcshell/CommandParseResult.h"
+#include "xcshell/command_parse_result.h"
 #include "xcshell/constants.h"
 #include "xcshell/utils.h"
 
 void CommandExecutor::OutputRedirect(
-    const CommandParseResult &command_parse_result) {
+    const command_parse_result &command_parse_result) {
   if (command_parse_result.output_is_append) {
     int fd_out = open(command_parse_result.output_redirect_file.c_str(),
                       O_WRONLY | O_APPEND | O_CREAT, 0664);
@@ -30,14 +30,14 @@ void CommandExecutor::OutputRedirect(
 }
 
 void CommandExecutor::InputRedirect(
-    const CommandParseResult &command_parse_result) {
+    const command_parse_result &command_parse_result) {
   int fd_in = open(command_parse_result.input_redirect_file.c_str(), O_RDONLY);
   dup2(fd_in, STDIN_FILENO);
   close(fd_in);
 }
 
 int CommandExecutor::ProcessChild(
-    const CommandParseResult &command_parse_result,
+    const command_parse_result &command_parse_result,
     const std::vector<std::array<int, 2>> &pipe_fds_list, int cmd_number,
     bool is_last_command) {
   // child
@@ -56,7 +56,7 @@ int CommandExecutor::ProcessChild(
 }
 
 void CommandExecutor::RedirectSelector(
-    const CommandParseResult &command_parse_result,
+    const command_parse_result &command_parse_result,
     const std::vector<std::array<int, 2>> &pipe_fds_list, int cmd_number,
     bool is_last_command) {
   if (!pipe_fds_list.empty()) {
@@ -87,7 +87,7 @@ void CommandExecutor::WaitChildExit(pid_t pid) {
 }
 
 std::vector<std::array<int, 2>> CommandExecutor::CreatePipe(
-    const std::vector<CommandParseResult> &command_parse_result_list) {
+    const std::vector<command_parse_result> &command_parse_result_list) {
   std::vector<std::array<int, 2>> pipe_fds_list;
   auto pipe_number = command_parse_result_list.size() - 1;
   for (int i = 0; i < pipe_number; i++) {
@@ -102,10 +102,10 @@ std::vector<std::array<int, 2>> CommandExecutor::CreatePipe(
 }
 
 int CommandExecutor::Execute(const std::string &line) {
-  std::vector<CommandParseResult> command_parse_result_list =
+  std::vector<command_parse_result> command_parse_result_list =
       parser_.ParseUserInputLine(line);
   int save_fd = dup(STDOUT_FILENO);
-  struct CommandParseResult *built_In_Command_ptr = nullptr;
+  struct command_parse_result *built_In_Command_ptr = nullptr;
   auto pipe_fds_list = CreatePipe(command_parse_result_list);
   for (int i = 0; i < command_parse_result_list.size(); i++) {
     bool is_last_command = i == command_parse_result_list.size() - 1;
@@ -143,7 +143,7 @@ int CommandExecutor::GetErrorInformation() {
 }
 
 void CommandExecutor::BuildInCommandExecute(
-    int save_fd, CommandParseResult *built_In_Command_ptr,
+    int save_fd, command_parse_result *built_In_Command_ptr,
     const std::vector<std::array<int, 2>> &pipe_fds_list) {
   if (built_In_Command_ptr != nullptr) {
     PipeRedirectFirst(pipe_fds_list);

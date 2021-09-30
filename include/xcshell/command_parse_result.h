@@ -5,7 +5,7 @@
 #include <utility>
 #include <vector>
 
-struct CommandParseResult {
+struct command_parse_result {
   std::string command;
   std::vector<std::string> args;
   std::string input_redirect_file;
