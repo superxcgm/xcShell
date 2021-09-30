@@ -140,6 +140,9 @@ std::string utils::RemoveQuote(const std::string& str) {
   return str;
 }
 
+// Todo:
+//  1. Split should not trim, it's not Split's responsibility.
+//  2. Merge SplitWithSymbol and Split
 std::vector<std::string> utils::SpiltWithSymbol(const std::string& str,
                                                 const std::string& symbol) {
   std::vector<std::string> str_list;
@@ -162,6 +165,7 @@ std::string utils::GetRandomString(int len) {
       "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890";
   std::string rand_string;
   rand_string.resize(len);
+//  Todo: Replace c style random with C++ 11 style
   srand(time(nullptr));
   for (int i = 0; i < len; i++) {
     rand_string[i] = charset[rand() % charset.length()];
@@ -172,6 +176,7 @@ std::string utils::GetRandomString(int len) {
 std::string utils::GetCommandExecuteResult(CommandExecutor* commandExecutor,
                                            const std::string& command) {
   std::string result;
+  // Todo: these redirect should replace with command redirection once Execute can redirect stderr
   int save_fd_out = dup(STDOUT_FILENO);
   int save_fd_err = dup(STDERR_FILENO);
   std::string temporary_file_correct =
@@ -187,6 +192,7 @@ std::string utils::GetCommandExecuteResult(CommandExecutor* commandExecutor,
   dup2(fd_out_error, STDERR_FILENO);
   close(fd_out_error);
   commandExecutor->Execute(command);
+  // Todo: use ReadFileText directly
   std::ifstream fin(temporary_file_correct);
   while (fin >> result) {
   }
@@ -198,6 +204,7 @@ std::string utils::GetCommandExecuteResult(CommandExecutor* commandExecutor,
 }
 
 std::string utils::GetBranchName(CommandExecutor* commandExecutor) {
+  // Todo: Use more fast approach (Read .git/HEAD directly), instead of use Execute
   auto branch_name = utils::GetCommandExecuteResult(
       commandExecutor, R"(git branch | grep "^\*" | sed 's/^..//')");
   std::string red_font_attributes = "\033[31m";
