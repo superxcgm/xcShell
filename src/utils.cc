@@ -210,9 +210,9 @@ std::string utils::GetCommandExecuteResult(CommandExecutor* commandExecutor,
   std::string temporary_file_error =
       "xcShell_temp_error_" + GetRandomString(10) + ".txt";
   int fd_out_correct =
-      open(temporary_file_correct.c_str(), O_WRONLY | O_APPEND | O_CREAT, 0664);
+      open(temporary_file_correct.c_str(), O_WRONLY | O_TRUNC | O_CREAT, 0664);
   int fd_out_error =
-      open(temporary_file_error.c_str(), O_WRONLY | O_APPEND | O_CREAT, 0664);
+      open(temporary_file_error.c_str(), O_WRONLY | O_TRUNC | O_CREAT, 0664);
   dup2(fd_out_correct, STDOUT_FILENO);
   close(fd_out_correct);
   dup2(fd_out_error, STDERR_FILENO);
