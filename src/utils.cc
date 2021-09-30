@@ -140,7 +140,7 @@ std::string utils::RemoveQuote(const std::string& str) {
   return str;
 }
 
-char* LeftTrim(char* str) {
+char* utils::LeftTrim(char* str) {
   if (str == nullptr || *str == '\0') {
     return str;
   }
@@ -154,7 +154,7 @@ char* LeftTrim(char* str) {
   return str;
 }
 
-char* RightTrim(char* str) {
+char* utils::RightTrim(char* str) {
   if (str == nullptr || *str == '\0') {
     return str;
   }
@@ -167,7 +167,7 @@ char* RightTrim(char* str) {
   return str;
 }
 
-char* Trim(char* str) {
+char* utils::Trim(char* str) {
   str = RightTrim(str);
   str = LeftTrim(str);
   return str;
