@@ -140,51 +140,20 @@ std::string utils::RemoveQuote(const std::string& str) {
   return str;
 }
 
-char* utils::LeftTrim(char* str) {
-  if (str == nullptr || *str == '\0') {
-    return str;
-  }
-  int len = 0;
-  char* p = str;
-  while (*p != '\0' && isspace(*p)) {
-    ++p;
-    ++len;
-  }
-  memmove(str, p, strlen(str) - len + 1);
-  return str;
-}
-
-char* utils::RightTrim(char* str) {
-  if (str == nullptr || *str == '\0') {
-    return str;
-  }
-  auto len = strlen(str);
-  char* p = str + len - 1;
-  while (p >= str && isspace(*p)) {
-    *p = '\0';
-    --p;
-  }
-  return str;
-}
-
-char* utils::Trim(char* str) {
-  str = RightTrim(str);
-  str = LeftTrim(str);
-  return str;
-}
-
 std::vector<std::string> utils::SpiltWithSymbol(const std::string& str,
                                                 const std::string& symbol) {
   std::vector<std::string> str_list;
-  char* save_ptr = nullptr;
-  char* p = const_cast<char*>(str.c_str());
-  char* input = strdup(p);
-  while ((input = strtok_r(input, symbol.c_str(), &save_ptr)) != nullptr) {
-    input = Trim(input);
-    str_list.emplace_back(input);
-    input = nullptr;
+  size_t left = 0;
+  size_t idx;
+  for (idx = str.find(symbol); idx != std::string::npos;
+       idx = str.find(symbol, idx + 1)) {
+    str_list.push_back(Trim(str.substr(left, idx - left)));
+    left = idx + 1;
   }
-  free(input);
+
+  if (left < str.size() - 1) {
+    str_list.push_back(Trim(str.substr(left, str.size() - left)));
+  }
   return str_list;
 }
 
@@ -238,4 +207,23 @@ std::string utils::GetBranchName(CommandExecutor* commandExecutor) {
            close_all_attributes;
   }
   return "";
+}
+
+std::string utils::Trim(const std::string& str) {
+  return RightTrim(LeftTrim(str));
+}
+std::string utils::LeftTrim(const std::string& str) {
+  int i = 0;
+  while (i < str.size() && str[i] == ' ') {
+    i++;
+  }
+  return str.substr(i);
+}
+
+std::string utils::RightTrim(const std::string& str) {
+  int i = str.size() - 1;
+  while (i >= 0 && str[i] == ' ') {
+    i--;
+  }
+  return str.substr(0, i + 1);
 }

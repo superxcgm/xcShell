@@ -134,43 +134,51 @@ TEST(UtilsTest, SpiltWithSymbol_ShouldReturnInputLineListIfHaveMutilPipe) {
 }
 
 TEST(UtilsTest, LeftTrim_ShouldReturnOriginStringIfNoHeadingSpace) {
-  char str[] = "hello";
+  std::string str = "hello";
+
   auto actual = utils::LeftTrim(str);
-  const char *expected = str;
-  EXPECT_TRUE(strcmp(actual, expected) == 0);
+
+  EXPECT_EQ(actual, str);
 }
 
 TEST(UtilsTest, LeftTrim_ShouldRemoveHeadingSpace) {
-  char str[] = "  hello";
-  const char *expected = "hello";
-  auto actual = utils::LeftTrim(str);
-  EXPECT_TRUE(strcmp(actual, expected) == 0);
-}
+  std::string str = "  hello";
+  std::string expected = "hello";
 
+  auto actual = utils::LeftTrim(str);
+
+  EXPECT_EQ(actual, expected);
+}
 TEST(UtilsTest, RightTrim_ShouldReturnOriginStringIfNoTrailingSpace) {
-  char str[] = "hello";
+  std::string str = "hello";
+
   auto actual = utils::RightTrim(str);
-  const char *expected = str;
-  EXPECT_TRUE(strcmp(actual, expected) == 0);
+
+  EXPECT_EQ(actual, str);
 }
 
 TEST(UtilsTest, RightTrim_ShouldRemoveTrailingSpace) {
-  char str[] = "hello  ";
+  std::string str = "hello  ";
+  std::string expected = "hello";
+
   auto actual = utils::RightTrim(str);
-  const char *expected = "hello";
-  EXPECT_TRUE(strcmp(actual, expected) == 0);
+
+  EXPECT_EQ(actual, expected);
 }
 
 TEST(UtilsTest, Trim_ShouldReturnOriginStringIfNoHeadingNorTrailingSpace) {
-  char str[] = "hello";
+  std::string str = "hello";
+
   auto actual = utils::Trim(str);
-  const char *expected = str;
-  EXPECT_TRUE(strcmp(actual, expected) == 0);
+
+  EXPECT_EQ(actual, str);
 }
 
 TEST(UtilsTest, Trim_ShouldRemoveHeadingAndTrailingSpace) {
-  char str[] = "  hello  ";
+  std::string str = "  hello  ";
+  std::string expected = "hello";
+
   auto actual = utils::Trim(str);
-  const char *expected = "hello";
-  EXPECT_TRUE(strcmp(actual, expected) == 0);
+
+  EXPECT_EQ(actual, expected);
 }

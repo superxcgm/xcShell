@@ -18,9 +18,9 @@ std::string ExpandPath(const std::string &path);
 std::string RemoveQuote(const std::string &str);
 void PrintSystemError(std::ostream &os_err);
 std::string ReadFileText(const std::string &file_name);
-char *RightTrim(char *str);
-char *LeftTrim(char *str);
-char *Trim(char *str);
+std::string LeftTrim(const std::string &str);
+std::string RightTrim(const std::string &str);
+std::string Trim(const std::string &str);
 std::string GetCommandExecuteResult(CommandExecutor *commandExecutor,
                                     const std::string &command);
 std::string GetBranchName(CommandExecutor *commandExecutor);
