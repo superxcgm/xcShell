@@ -42,7 +42,6 @@ int CommandExecutor::ProcessChild(
     const CommandParseResult &command_parse_result,
     const std::vector<std::array<int, 2>> &pipe_fds_list, int cmd_number,
     bool is_last_command) {
-  // child
   ResetSignalHandlerForInterrupt();
   RedirectSelector(command_parse_result, pipe_fds_list, cmd_number,
                    is_last_command);
@@ -155,6 +154,7 @@ void CommandExecutor::BuildInCommandExecute(
     built_In_Command_ptr = nullptr;
     dup2(save_fd, STDOUT_FILENO);
   }
+  close(save_fd);
 }
 
 void CommandExecutor::ProcessFather(

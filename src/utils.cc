@@ -1,5 +1,7 @@
 #include "xcshell/utils.h"
 
+#include <spdlog/spdlog.h>
+
 #include <fcntl.h>
 #include <pwd.h>
 #include <unistd.h>
@@ -175,40 +177,35 @@ std::string utils::GetRandomString(int len) {
 
 std::string utils::GetCommandExecuteResult(CommandExecutor* commandExecutor,
                                            const std::string& command) {
-  std::string result;
+
   // Todo: these redirect should replace with command redirection
   //  once Execute can redirect stderr
-  int save_fd_out = dup(STDOUT_FILENO);
   int save_fd_err = dup(STDERR_FILENO);
-  std::string temporary_file_correct =
+  std::string temp_file_stdout =
       "xcShell_temp_correct_" + utils::GetRandomString(10) + ".txt";
-  std::string temporary_file_error =
+  std::string temp_file_stderr =
       "xcShell_temp_error_" + utils::GetRandomString(10) + ".txt";
-  int fd_out_correct =
-      open(temporary_file_correct.c_str(), O_WRONLY | O_TRUNC | O_CREAT, 0664);
   int fd_out_error =
-      open(temporary_file_error.c_str(), O_WRONLY | O_TRUNC | O_CREAT, 0664);
-  dup2(fd_out_correct, STDOUT_FILENO);
-  close(fd_out_correct);
+      open(temp_file_stderr.c_str(), O_WRONLY | O_TRUNC | O_CREAT, 0664);
   dup2(fd_out_error, STDERR_FILENO);
   close(fd_out_error);
-  commandExecutor->Execute(command);
-  // Todo: use ReadFileText directly
-  std::ifstream fin(temporary_file_correct);
-  while (fin >> result) {
-  }
-  dup2(save_fd_out, STDOUT_FILENO);
+  commandExecutor->Execute(command + " > " + temp_file_stdout);
+  std::string branch_name = ReadFileText(temp_file_stdout);
+  // remove \n
+  branch_name = branch_name.substr(0, branch_name.size() - 1);
   dup2(save_fd_err, STDERR_FILENO);
-  remove(temporary_file_correct.c_str());
-  remove(temporary_file_error.c_str());
-  return result;
+  close(save_fd_err);
+  remove(temp_file_stdout.c_str());
+  remove(temp_file_stderr.c_str());
+  return branch_name;
 }
 
 std::string utils::GetBranchName(CommandExecutor* commandExecutor) {
   // Todo: Use more fast approach (Read .git/HEAD directly)
   //  instead of use Execute
   auto branch_name = utils::GetCommandExecuteResult(
-      commandExecutor, R"(git branch | grep "^\*" | sed 's/^..//')");
+      commandExecutor, "git branch --show-current");
+  spdlog::debug("current branch_name: {}", branch_name);
   std::string red_font_attributes = "\033[31m";
   std::string close_all_attributes = "\033[0m";
   if (!branch_name.empty()) {
