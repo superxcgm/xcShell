@@ -20,9 +20,11 @@ void Shell::Init() {
   InitLog();
   spdlog::info("Try to init xcShell");
   auto global_config = utils::ReadFileText(GLOBAL_CONFIG_FILE);
+  spdlog::info("Loading global config: {}", global_config);
   ExecuteConfig(global_config);
 
   auto user_config = utils::ReadFileText(utils::ExpandPath(USER_CONFIG_FILE));
+  spdlog::info("Loading user config: {}", user_config);
   ExecuteConfig(user_config);
 
   IgnoreSignalInterrupt();
@@ -36,6 +38,7 @@ void Shell::Process() {
       break;
     }
     if (strlen(line_ptr) > 0) {
+      spdlog::info("Get user input: {}", line_ptr);
       add_history(line_ptr);
     }
     std::string line = line_ptr;
@@ -45,6 +48,7 @@ void Shell::Process() {
     }
     command_executor_.Execute(line);
   }
+  spdlog::default_logger()->flush();
 }
 
 int Shell::Exit() {
@@ -91,5 +95,7 @@ void Shell::IgnoreSignalInterrupt() {
 
 void Shell::InitLog() {
   auto logger = spdlog::basic_logger_mt("file_logger", "/tmp/xcShell.log");
+  logger->set_level(spdlog::level::debug);
   spdlog::set_default_logger(logger);
+  spdlog::flush_every(std::chrono::seconds(3));
 }
