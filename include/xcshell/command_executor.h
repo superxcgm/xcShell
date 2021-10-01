@@ -52,6 +52,8 @@ class CommandExecutor {
   static std::vector<std::array<int, 2>> CreatePipe(
       const std::vector<CommandParseResult> &command_parse_result_list);
   static int GetErrorInformation();
+  void LogCommandParseResultList(
+      const std::vector<CommandParseResult> &command_parse_result_list);
 };
 
 #endif  // INCLUDE_XCSHELL_COMMAND_EXECUTOR_H_

@@ -18,14 +18,14 @@ list(APPEND TEST_SOURCES ${BUILD_IN_TEST_SOURCES})
 list(FILTER TEST_SOURCES INCLUDE REGEX "^.*_test.cc$")
 
 find_package(readline REQUIRED)
-target_link_libraries(${PROJECT_NAME} readline::readline)
+find_package(spdlog REQUIRED)
+target_link_libraries(${PROJECT_NAME} readline::readline spdlog::spdlog)
 
 if (NOT "${TEST_SOURCES}" STREQUAL "")
     list(FILTER EXE_SOURCES EXCLUDE REGEX "main.cc")
     add_executable(${PROJECT_NAME}_test ${EXE_SOURCES} ${TEST_SOURCES} test/test_main.cc)
     find_package(GTest REQUIRED)
-    target_link_libraries(${PROJECT_NAME}_test GTest::GTest)
-    target_link_libraries(${PROJECT_NAME}_test readline::readline)
+    target_link_libraries(${PROJECT_NAME}_test GTest::GTest readline::readline spdlog::spdlog)
 endif ()
 
 add_custom_target(lint COMMAND cpplint --recursive ../)
