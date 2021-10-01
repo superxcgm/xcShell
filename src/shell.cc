@@ -27,6 +27,7 @@ void Shell::Init() {
   ExecuteConfig(user_config);
 
   IgnoreSignalInterrupt();
+  srand(time(nullptr));
 }
 
 void Shell::Process() {

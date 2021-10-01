@@ -182,3 +182,9 @@ TEST(UtilsTest, Trim_ShouldRemoveHeadingAndTrailingSpace) {
 
   EXPECT_EQ(actual, expected);
 }
+
+TEST(UtilsTest, GenerateTmpFileName_ShouldGenerateFileInTmpDir) {
+  auto filename = utils::GenerateTmpFileName();
+
+  EXPECT_TRUE(filename.find("/tmp/") == 0);
+}

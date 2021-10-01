@@ -168,7 +168,6 @@ std::string utils::GetRandomString(int len) {
   std::string rand_string;
   rand_string.resize(len);
 //  Todo: Replace c style random with C++ 11 style
-  srand(time(nullptr));
   for (int i = 0; i < len; i++) {
     rand_string[i] = charset[rand() % charset.length()];
   }
@@ -181,10 +180,8 @@ std::string utils::GetCommandExecuteResult(CommandExecutor* commandExecutor,
   // Todo: these redirect should replace with command redirection
   //  once Execute can redirect stderr
   int save_fd_err = dup(STDERR_FILENO);
-  std::string temp_file_stdout =
-      "xcShell_temp_correct_" + utils::GetRandomString(10) + ".txt";
-  std::string temp_file_stderr =
-      "xcShell_temp_error_" + utils::GetRandomString(10) + ".txt";
+  std::string temp_file_stdout = GenerateTmpFileName();
+  std::string temp_file_stderr = GenerateTmpFileName();
   int fd_out_error =
       open(temp_file_stderr.c_str(), O_WRONLY | O_TRUNC | O_CREAT, 0664);
   dup2(fd_out_error, STDERR_FILENO);
@@ -232,4 +229,7 @@ std::string utils::RightTrim(const std::string& str) {
     i--;
   }
   return str.substr(0, i + 1);
+}
+std::string utils::GenerateTmpFileName() {
+  return "/tmp/xcShell_tmp_" + GetRandomString(10);
 }
