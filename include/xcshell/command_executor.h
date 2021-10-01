@@ -53,7 +53,7 @@ class CommandExecutor {
       const std::vector<CommandParseResult> &command_parse_result_list);
   static int GetErrorInformation();
   void LogCommandParseResultList(
-      std::vector<CommandParseResult> &command_parse_result_list);
+      const std::vector<CommandParseResult> &command_parse_result_list);
 };
 
 #endif  // INCLUDE_XCSHELL_COMMAND_EXECUTOR_H_

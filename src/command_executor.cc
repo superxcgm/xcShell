@@ -1,5 +1,7 @@
 #include "xcshell/command_executor.h"
 
+#include <spdlog/spdlog.h>
+
 #include <fcntl.h>
 #include <sys/wait.h>
 #include <unistd.h>
@@ -9,7 +11,6 @@
 #include <iostream>
 #include <memory>
 #include <vector>
-#include <spdlog/spdlog.h>
 
 #include "xcshell/CommandParseResult.h"
 #include "xcshell/constants.h"
@@ -229,7 +230,7 @@ void CommandExecutor::PipeRedirectFirst(
   close(pipe_fds_list[0][1]);
 }
 void CommandExecutor::LogCommandParseResultList(
-    std::vector<CommandParseResult> &command_parse_result_list) {
+    const std::vector<CommandParseResult> &command_parse_result_list) {
   spdlog::debug("Command parse result list, size: {}",
                 command_parse_result_list.size());
   for (int i = 0; i < command_parse_result_list.size(); i++) {

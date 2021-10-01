@@ -7,11 +7,10 @@
 #include <editline/readline.h>
 #endif
 
-#include <csignal>
-#include <sstream>
-
 #include <spdlog/spdlog.h>
 #include <spdlog/sinks/basic_file_sink.h>
+#include <csignal>
+#include <sstream>
 
 #include "xcshell/constants.h"
 #include "xcshell/utils.h"
