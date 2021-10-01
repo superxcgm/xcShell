@@ -176,7 +176,6 @@ std::string utils::GetRandomString(int len) {
 
 std::string utils::GetCommandExecuteResult(CommandExecutor* commandExecutor,
                                            const std::string& command) {
-
   // Todo: these redirect should replace with command redirection
   //  once Execute can redirect stderr
   int save_fd_err = dup(STDERR_FILENO);
