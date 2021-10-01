@@ -64,7 +64,7 @@ std::string Shell::GeneratePrompt() {
   } else {
     prompt_line = utils::GetLastDir(pwd);
   }
-  prompt_line.append(utils::GetBranchName(&command_executor_));
+//  prompt_line.append(utils::GetBranchName(&command_executor_));
   return prompt_line + " > ";
 }
 

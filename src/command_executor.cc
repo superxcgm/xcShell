@@ -129,12 +129,14 @@ int CommandExecutor::Execute(const std::string &line) {
         return ProcessChild(command_parse_result_list[i], pipe_fds_list, i,
                             is_last_command);
       } else if (i + 1 == command_parse_result_list.size()) {
+        spdlog::debug("Father wait on last command.");
         // Reading end is received
         BuildInCommandExecute(save_fd, built_In_Command_ptr, pipe_fds_list);
         ProcessFather(pipe_fds_list, pid);
       }
     }
   }
+  close(save_fd);
   return 0;
 }
 
@@ -154,7 +156,6 @@ void CommandExecutor::BuildInCommandExecute(
     built_In_Command_ptr = nullptr;
     dup2(save_fd, STDOUT_FILENO);
   }
-  close(save_fd);
 }
 
 void CommandExecutor::ProcessFather(
