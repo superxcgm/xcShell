@@ -8,7 +8,7 @@
 #include <vector>
 
 #include "build_in/build_in.h"
-#include "xcshell/CommandParseResult.h"
+#include "xcshell/command_parse_result.h"
 #include "xcshell/parser.h"
 
 class CommandExecutor {

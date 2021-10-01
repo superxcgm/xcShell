@@ -12,7 +12,7 @@
 #include <memory>
 #include <vector>
 
-#include "xcshell/CommandParseResult.h"
+#include "xcshell/command_parse_result.h"
 #include "xcshell/constants.h"
 #include "xcshell/utils.h"
 
@@ -42,7 +42,6 @@ int CommandExecutor::ProcessChild(
     const CommandParseResult &command_parse_result,
     const std::vector<std::array<int, 2>> &pipe_fds_list, int cmd_number,
     bool is_last_command) {
-  // child
   ResetSignalHandlerForInterrupt();
   RedirectSelector(command_parse_result, pipe_fds_list, cmd_number,
                    is_last_command);
@@ -130,12 +129,14 @@ int CommandExecutor::Execute(const std::string &line) {
         return ProcessChild(command_parse_result_list[i], pipe_fds_list, i,
                             is_last_command);
       } else if (i + 1 == command_parse_result_list.size()) {
+        spdlog::debug("Father wait on last command.");
         // Reading end is received
         BuildInCommandExecute(save_fd, built_In_Command_ptr, pipe_fds_list);
         ProcessFather(pipe_fds_list, pid);
       }
     }
   }
+  close(save_fd);
   return 0;
 }
 

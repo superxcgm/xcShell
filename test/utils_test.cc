@@ -132,3 +132,59 @@ TEST(UtilsTest, SpiltWithSymbol_ShouldReturnInputLineListIfHaveMutilPipe) {
       utils::SpiltWithSymbol("cat /etc/passwd | grep sh | less", "|");
   EXPECT_EQ(input_line, expected);
 }
+
+TEST(UtilsTest, LeftTrim_ShouldReturnOriginStringIfNoHeadingSpace) {
+  std::string str = "hello";
+
+  auto actual = utils::LeftTrim(str);
+
+  EXPECT_EQ(actual, str);
+}
+
+TEST(UtilsTest, LeftTrim_ShouldRemoveHeadingSpace) {
+  std::string str = "  hello";
+  std::string expected = "hello";
+
+  auto actual = utils::LeftTrim(str);
+
+  EXPECT_EQ(actual, expected);
+}
+TEST(UtilsTest, RightTrim_ShouldReturnOriginStringIfNoTrailingSpace) {
+  std::string str = "hello";
+
+  auto actual = utils::RightTrim(str);
+
+  EXPECT_EQ(actual, str);
+}
+
+TEST(UtilsTest, RightTrim_ShouldRemoveTrailingSpace) {
+  std::string str = "hello  ";
+  std::string expected = "hello";
+
+  auto actual = utils::RightTrim(str);
+
+  EXPECT_EQ(actual, expected);
+}
+
+TEST(UtilsTest, Trim_ShouldReturnOriginStringIfNoHeadingNorTrailingSpace) {
+  std::string str = "hello";
+
+  auto actual = utils::Trim(str);
+
+  EXPECT_EQ(actual, str);
+}
+
+TEST(UtilsTest, Trim_ShouldRemoveHeadingAndTrailingSpace) {
+  std::string str = "  hello  ";
+  std::string expected = "hello";
+
+  auto actual = utils::Trim(str);
+
+  EXPECT_EQ(actual, expected);
+}
+
+TEST(UtilsTest, GenerateTmpFileName_ShouldGenerateFileInTmpDir) {
+  auto filename = utils::GenerateTmpFileName();
+
+  EXPECT_EQ(filename.find("/tmp/"), 0);
+}

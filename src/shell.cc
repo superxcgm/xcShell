@@ -27,6 +27,7 @@ void Shell::Init() {
   ExecuteConfig(user_config);
 
   IgnoreSignalInterrupt();
+  srand(time(nullptr));
 }
 
 void Shell::Process() {
@@ -58,14 +59,16 @@ int Shell::Exit() {
 std::string Shell::GeneratePrompt() {
   auto pwd = utils::GetCurrentWorkingDirectory(std::cerr);
   auto home = utils::GetHomeDir();
-  std::string dir;
+  std::string prompt_line;
   if (home == pwd) {
-    dir = "~";
+    prompt_line = "~";
   } else {
-    dir = utils::GetLastDir(pwd);
+    prompt_line = utils::GetLastDir(pwd);
   }
-  return dir + " > ";
+  prompt_line.append(utils::GetBranchName(&command_executor_));
+  return prompt_line + " > ";
 }
+
 void Shell::ExecuteConfig(const std::string &config_string) {
   if (config_string.empty()) {
     return;
@@ -78,7 +81,6 @@ void Shell::ExecuteConfig(const std::string &config_string) {
     if (line.empty()) {
       continue;
     }
-
     command_executor_.Execute(line);
   }
 }

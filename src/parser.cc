@@ -4,7 +4,7 @@
 #include <string>
 #include <vector>
 
-#include "xcshell/CommandParseResult.h"
+#include "xcshell/command_parse_result.h"
 #include "xcshell/constants.h"
 #include "xcshell/utils.h"
 

@@ -1,5 +1,5 @@
-#ifndef INCLUDE_XCSHELL_COMMANDPARSERESULT_H_
-#define INCLUDE_XCSHELL_COMMANDPARSERESULT_H_
+#ifndef INCLUDE_XCSHELL_COMMAND_PARSE_RESULT_H_
+#define INCLUDE_XCSHELL_COMMAND_PARSE_RESULT_H_
 
 #include <string>
 #include <utility>
@@ -12,4 +12,5 @@ struct CommandParseResult {
   std::string output_redirect_file;
   bool output_is_append = false;
 };
-#endif  // INCLUDE_XCSHELL_COMMANDPARSERESULT_H_
+
+#endif  // INCLUDE_XCSHELL_COMMAND_PARSE_RESULT_H_
