@@ -19,6 +19,7 @@ class Shell {
   std::string GeneratePrompt();
   void ExecuteConfig(const std::string &config_string);
   static void IgnoreSignalInterrupt();
+  void InitLog();
 
   CommandExecutor command_executor_;
 };

@@ -1,5 +1,7 @@
 #include "xcshell/command_executor.h"
 
+#include <spdlog/spdlog.h>
+
 #include <fcntl.h>
 #include <sys/wait.h>
 #include <unistd.h>
@@ -104,6 +106,7 @@ std::vector<std::array<int, 2>> CommandExecutor::CreatePipe(
 int CommandExecutor::Execute(const std::string &line) {
   std::vector<CommandParseResult> command_parse_result_list =
       parser_.ParseUserInputLine(line);
+  LogCommandParseResultList(command_parse_result_list);
   int save_fd = dup(STDOUT_FILENO);
   struct CommandParseResult *built_In_Command_ptr = nullptr;
   auto pipe_fds_list = CreatePipe(command_parse_result_list);
@@ -225,4 +228,17 @@ void CommandExecutor::PipeRedirectFirst(
   close(pipe_fds_list[0][0]);
   dup2(pipe_fds_list[0][1], STDOUT_FILENO);
   close(pipe_fds_list[0][1]);
+}
+void CommandExecutor::LogCommandParseResultList(
+    const std::vector<CommandParseResult> &command_parse_result_list) {
+  spdlog::debug("Command parse result list, size: {}",
+                command_parse_result_list.size());
+  for (int i = 0; i < command_parse_result_list.size(); i++) {
+    std::string args;
+    for (auto &arg : command_parse_result_list[i].args) {
+      args.append(arg + ", ");
+    }
+    spdlog::debug("Command parse result list: {}, command: {}, args: {}",
+                  i, command_parse_result_list[i].command, args);
+  }
 }
