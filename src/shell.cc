@@ -10,10 +10,15 @@
 #include <csignal>
 #include <sstream>
 
+#include <spdlog/spdlog.h>
+#include <spdlog/sinks/basic_file_sink.h>
+
 #include "xcshell/constants.h"
 #include "xcshell/utils.h"
 
 void Shell::Init() {
+  InitLog();
+  spdlog::info("Try to init xcShell");
   auto global_config = utils::ReadFileText(GLOBAL_CONFIG_FILE);
   ExecuteConfig(global_config);
 
@@ -82,4 +87,9 @@ void Shell::IgnoreSignalInterrupt() {
   if (result) {
     utils::PrintSystemError(std::cerr);
   }
+}
+
+void Shell::InitLog() {
+  auto logger = spdlog::basic_logger_mt("file_logger", "/tmp/xcShell.log");
+  spdlog::set_default_logger(logger);
 }
