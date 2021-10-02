@@ -12,6 +12,7 @@
 #include <fstream>
 #include <sstream>
 #include <string>
+#include <random>
 
 std::string utils::ExpandPath(const std::string& path) {
   if (path[0] == '~') {
@@ -149,11 +150,12 @@ std::vector<std::string> utils::Split(const std::string& str,
 std::string utils::GetRandomString(int len) {
   static std::string charset =
       "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890";
+  static std::default_random_engine e(time(nullptr));
+  static std::uniform_int_distribution<unsigned> u(0, charset.size() - 1);
   std::string rand_string;
   rand_string.resize(len);
-  //  Todo: Replace c style random with C++ 11 style
   for (int i = 0; i < len; i++) {
-    rand_string[i] = charset[rand() % charset.length()];
+    rand_string[i] = charset[u(e)];
   }
   return rand_string;
 }
