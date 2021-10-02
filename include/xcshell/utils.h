@@ -8,9 +8,9 @@
 
 namespace utils {
 std::vector<std::string> Split(const std::string &str);
+std::vector<std::string> Split(const std::string &str,
+                               const std::string &delim);
 std::vector<std::string> SplitArgs(const std::string &str);
-std::vector<std::string> SpiltWithSymbol(const std::string &str,
-                                         const std::string &symbol);
 std::string GetCurrentWorkingDirectory(std::ostream &os_err);
 std::string GetLastDir(const std::string &path);
 std::string GetHomeDir();

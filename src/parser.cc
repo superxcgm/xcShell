@@ -43,7 +43,7 @@ std::vector<CommandParseResult> Parser::ParseUserInputLine(
     const std::string &input_line) {
   std::vector<CommandParseResult> command_parse_result_list;
   std::vector<std::string> command_and_suffix_list =
-      utils::SpiltWithSymbol(input_line, REDIRECT_PIPE);
+      utils::Split(input_line, REDIRECT_PIPE);
   for (const auto &command_and_suffix : command_and_suffix_list) {
     auto [command, commandSuffix] = getCommandAndSuffix(utils::Trim(command_and_suffix));
 

@@ -32,20 +32,7 @@ std::string utils::ReadFileText(const std::string& file_name) {
 }
 
 std::vector<std::string> utils::Split(const std::string& str) {
-  std::stringstream ss(str);
-  std::vector<std::string> parts;
-
-  while (ss) {
-    std::string part;
-    ss >> part;
-    parts.push_back(part);
-  }
-
-  if (parts[parts.size() - 1].empty()) {
-    parts.pop_back();
-  }
-
-  return parts;
+  return Split(str, " ");
 }
 std::string utils::GetCurrentWorkingDirectory(std::ostream& os_err) {
   char buf[BUFSIZ];
@@ -142,15 +129,13 @@ std::string utils::RemoveQuote(const std::string& str) {
   return str;
 }
 
-// Todo:
-//  2. Merge SplitWithSymbol and Split
-std::vector<std::string> utils::SpiltWithSymbol(const std::string& str,
-                                                const std::string& symbol) {
+std::vector<std::string> utils::Split(const std::string& str,
+                                                const std::string& delim) {
   std::vector<std::string> str_list;
   size_t left = 0;
   size_t idx;
-  for (idx = str.find(symbol); idx != std::string::npos;
-       idx = str.find(symbol, idx + 1)) {
+  for (idx = str.find(delim); idx != std::string::npos;
+       idx = str.find(delim, idx + 1)) {
     str_list.push_back(str.substr(left, idx - left));
     left = idx + 1;
   }
