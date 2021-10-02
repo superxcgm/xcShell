@@ -36,8 +36,8 @@ void CommandExecutor::InputRedirect(
     const CommandParseResult &command_parse_result) {
   int fd_in = utils::SystemCallExitOnFailed(
       open(command_parse_result.input_redirect_file.c_str(), O_RDONLY));
-  dup2(fd_in, STDIN_FILENO);
-  utils::SystemCallExitOnFailed(close(fd_in));
+  utils::SystemCallExitOnFailed(dup2(fd_in, STDIN_FILENO));
+  close(fd_in);
 }
 
 int CommandExecutor::ProcessChild(
