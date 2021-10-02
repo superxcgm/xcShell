@@ -127,9 +127,9 @@ TEST(UtilsTest, Split_ShouldReturnInputLineListIfHavePipeSymbol) {
 }
 
 TEST(UtilsTest, Split_ShouldReturnInputLineListIfHaveMutilPipe) {
-  std::vector<std::string> expected = {"cat /etc/passwd ", " grep sh ", " less"};
-  auto input_line =
-      utils::Split("cat /etc/passwd | grep sh | less", "|");
+  std::vector<std::string> expected = {"cat /etc/passwd ", " grep sh ",
+                                       " less"};
+  auto input_line = utils::Split("cat /etc/passwd | grep sh | less", "|");
   EXPECT_EQ(input_line, expected);
 }
 

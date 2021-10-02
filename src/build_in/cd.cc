@@ -28,10 +28,6 @@ int Cd::Execute(const std::vector<std::string> &args, std::ostream &os,
 
   pre = utils::GetCurrentWorkingDirectory(os_err);
 
-  int ret = chdir(path.c_str());
-  if (ret == ERROR_CODE_SYSTEM) {
-    utils::PrintSystemError(os_err);
-    return ERROR_CODE_DEFAULT;
-  }
+  utils::SystemCallExitOnFailed(chdir(path.c_str()));
   return 0;
 }

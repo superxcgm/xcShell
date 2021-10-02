@@ -1,8 +1,7 @@
 #include "xcshell/command_executor.h"
 
-#include <spdlog/spdlog.h>
-
 #include <fcntl.h>
+#include <spdlog/spdlog.h>
 #include <sys/wait.h>
 #include <unistd.h>
 
@@ -19,23 +18,26 @@
 void CommandExecutor::OutputRedirect(
     const CommandParseResult &command_parse_result) {
   if (command_parse_result.output_is_append) {
-    int fd_out = open(command_parse_result.output_redirect_file.c_str(),
-                      O_WRONLY | O_APPEND | O_CREAT, 0664);
-    dup2(fd_out, STDOUT_FILENO);
+    int fd_out = utils::SystemCallExitOnFailed(
+        open(command_parse_result.output_redirect_file.c_str(),
+             O_WRONLY | O_APPEND | O_CREAT, 0664));
+    utils::SystemCallExitOnFailed(dup2(fd_out, STDOUT_FILENO));
     close(fd_out);
   } else {
-    int fd_out = open(command_parse_result.output_redirect_file.c_str(),
-                      O_WRONLY | O_TRUNC | O_CREAT, 0664);
-    dup2(fd_out, STDOUT_FILENO);
+    int fd_out = utils::SystemCallExitOnFailed(
+        open(command_parse_result.output_redirect_file.c_str(),
+             O_WRONLY | O_TRUNC | O_CREAT, 0664));
+    utils::SystemCallExitOnFailed(dup2(fd_out, STDOUT_FILENO));
     close(fd_out);
   }
 }
 
 void CommandExecutor::InputRedirect(
     const CommandParseResult &command_parse_result) {
-  int fd_in = open(command_parse_result.input_redirect_file.c_str(), O_RDONLY);
+  int fd_in = utils::SystemCallExitOnFailed(
+      open(command_parse_result.input_redirect_file.c_str(), O_RDONLY));
   dup2(fd_in, STDIN_FILENO);
-  close(fd_in);
+  utils::SystemCallExitOnFailed(close(fd_in));
 }
 
 int CommandExecutor::ProcessChild(
@@ -47,12 +49,8 @@ int CommandExecutor::ProcessChild(
                    is_last_command);
   auto argv =
       BuildArgv(command_parse_result.command, command_parse_result.args);
-  auto ret = execvp(command_parse_result.command.c_str(), &argv[0]);
-  // should not execute to here if success
-  if (ret == ERROR_CODE_SYSTEM) {
-    utils::PrintSystemError(std::cerr);
-    exit(ERROR_CODE_DEFAULT);
-  }
+  utils::SystemCallExitOnFailed(
+      execvp(command_parse_result.command.c_str(), &argv[0]));
   return ERROR_CODE_DEFAULT;
 }
 
@@ -93,10 +91,7 @@ std::vector<std::array<int, 2>> CommandExecutor::CreatePipe(
   auto pipe_number = command_parse_result_list.size() - 1;
   for (int i = 0; i < pipe_number; i++) {
     int pipe_fds[2];
-    if (pipe(pipe_fds) == ERROR_CODE_SYSTEM) {
-      utils::PrintSystemError(std::cerr);
-      exit(ERROR_CODE_DEFAULT);
-    }
+    utils::SystemCallExitOnFailed(pipe(pipe_fds));
     pipe_fds_list.push_back({pipe_fds[0], pipe_fds[1]});
   }
   return pipe_fds_list;
@@ -106,7 +101,7 @@ int CommandExecutor::Execute(const std::string &line) {
   std::vector<CommandParseResult> command_parse_result_list =
       parser_.ParseUserInputLine(line);
   LogCommandParseResultList(command_parse_result_list);
-  int save_fd = dup(STDOUT_FILENO);
+  int save_fd = utils::SystemCallExitOnFailed(dup(STDOUT_FILENO));
   struct CommandParseResult *built_In_Command_ptr = nullptr;
   auto pipe_fds_list = CreatePipe(command_parse_result_list);
   std::vector<pid_t> child_pids;
@@ -122,10 +117,7 @@ int CommandExecutor::Execute(const std::string &line) {
                           command_parse_result_list[i].args);
       }
     } else {
-      pid_t pid = fork();
-      if (pid == ERROR_CODE_SYSTEM) {
-        return GetErrorInformation();
-      }
+      pid_t pid = utils::SystemCallExitOnFailed(fork());
       if (pid == 0) {
         close(save_fd);
         return ProcessChild(command_parse_result_list[i], pipe_fds_list, i,
@@ -143,12 +135,6 @@ int CommandExecutor::Execute(const std::string &line) {
   return 0;
 }
 
-int CommandExecutor::GetErrorInformation() {
-  // error
-  utils::PrintSystemError(std::cerr);
-  return ERROR_CODE_DEFAULT;
-}
-
 void CommandExecutor::BuildInCommandExecute(
     int save_fd, CommandParseResult *built_In_Command_ptr,
     const std::vector<std::array<int, 2>> &pipe_fds_list) {
@@ -162,7 +148,8 @@ void CommandExecutor::BuildInCommandExecute(
 }
 
 void CommandExecutor::CloseAllPipeAndWaitChildProcess(
-    const std::vector<std::array<int, 2>> &pipe_fds_list, const std::vector<pid_t> &child_pids) {
+    const std::vector<std::array<int, 2>> &pipe_fds_list,
+    const std::vector<pid_t> &child_pids) {
   for (auto &pipe_fds : pipe_fds_list) {
     close(pipe_fds[0]);
     close(pipe_fds[1]);
@@ -205,7 +192,8 @@ void CommandExecutor::PipeRedirectEnd(
     close(pipe_fds_list[i][1]);
   }
   close(pipe_fds_list[cmd_number - 1][1]);
-  dup2(pipe_fds_list[cmd_number - 1][0], STDIN_FILENO);
+  utils::SystemCallExitOnFailed(
+      dup2(pipe_fds_list[cmd_number - 1][0], STDIN_FILENO));
   close(pipe_fds_list[cmd_number - 1][0]);
 }
 
@@ -218,10 +206,12 @@ void CommandExecutor::PipeRedirectMiddle(
     }
   }
   close(pipe_fds_list[cmd_number - 1][1]);
-  dup2(pipe_fds_list[cmd_number - 1][0], STDIN_FILENO);
+  utils::SystemCallExitOnFailed(
+      dup2(pipe_fds_list[cmd_number - 1][0], STDIN_FILENO));
   close(pipe_fds_list[cmd_number - 1][0]);
   close(pipe_fds_list[cmd_number][0]);
-  dup2(pipe_fds_list[cmd_number][1], STDOUT_FILENO);
+  utils::SystemCallExitOnFailed(
+      dup2(pipe_fds_list[cmd_number][1], STDOUT_FILENO));
   close(pipe_fds_list[cmd_number][1]);
 }
 
@@ -232,7 +222,7 @@ void CommandExecutor::PipeRedirectFirst(
     close(pipe_fds_list[i][1]);
   }
   close(pipe_fds_list[0][0]);
-  dup2(pipe_fds_list[0][1], STDOUT_FILENO);
+  utils::SystemCallExitOnFailed(dup2(pipe_fds_list[0][1], STDOUT_FILENO));
   close(pipe_fds_list[0][1]);
 }
 void CommandExecutor::LogCommandParseResultList(
@@ -244,7 +234,7 @@ void CommandExecutor::LogCommandParseResultList(
     for (auto &arg : command_parse_result_list[i].args) {
       args.append(arg + ", ");
     }
-    spdlog::debug("Command parse result list: {}, command: {}, args: {}",
-                  i, command_parse_result_list[i].command, args);
+    spdlog::debug("Command parse result list: {}, command: {}, args: {}", i,
+                  command_parse_result_list[i].command, args);
   }
 }

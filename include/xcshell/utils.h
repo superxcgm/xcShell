@@ -26,6 +26,7 @@ std::string GetCommandExecuteResult(CommandExecutor *commandExecutor,
 std::string GetBranchName(CommandExecutor *commandExecutor);
 std::string GetRandomString(int len);
 std::string GenerateTmpFileName();
+int SystemCallExitOnFailed(int return_value);
 }  // namespace utils
 
 #endif  // INCLUDE_XCSHELL_UTILS_H_

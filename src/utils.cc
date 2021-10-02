@@ -1,10 +1,10 @@
 #include "xcshell/utils.h"
 
-#include <spdlog/spdlog.h>
-
 #include <fcntl.h>
 #include <pwd.h>
+#include <spdlog/spdlog.h>
 #include <unistd.h>
+#include <xcshell/constants.h>
 
 #include <cstdio>
 #include <cstdlib>
@@ -130,7 +130,7 @@ std::string utils::RemoveQuote(const std::string& str) {
 }
 
 std::vector<std::string> utils::Split(const std::string& str,
-                                                const std::string& delim) {
+                                      const std::string& delim) {
   std::vector<std::string> str_list;
   size_t left = 0;
   size_t idx;
@@ -151,7 +151,7 @@ std::string utils::GetRandomString(int len) {
       "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890";
   std::string rand_string;
   rand_string.resize(len);
-//  Todo: Replace c style random with C++ 11 style
+  //  Todo: Replace c style random with C++ 11 style
   for (int i = 0; i < len; i++) {
     rand_string[i] = charset[rand() % charset.length()];
   }
@@ -162,18 +162,18 @@ std::string utils::GetCommandExecuteResult(CommandExecutor* commandExecutor,
                                            const std::string& command) {
   // Todo: these redirect should replace with command redirection
   //  once Execute can redirect stderr
-  int save_fd_err = dup(STDERR_FILENO);
+  int save_fd_err = SystemCallExitOnFailed(dup(STDERR_FILENO));
   std::string temp_file_stdout = GenerateTmpFileName();
   std::string temp_file_stderr = GenerateTmpFileName();
-  int fd_out_error =
-      open(temp_file_stderr.c_str(), O_WRONLY | O_TRUNC | O_CREAT, 0664);
-  dup2(fd_out_error, STDERR_FILENO);
+  int fd_out_error = SystemCallExitOnFailed(
+      open(temp_file_stderr.c_str(), O_WRONLY | O_TRUNC | O_CREAT, 0664));
+  SystemCallExitOnFailed(dup2(fd_out_error, STDERR_FILENO));
   close(fd_out_error);
   commandExecutor->Execute(command + " > " + temp_file_stdout);
   std::string branch_name = ReadFileText(temp_file_stdout);
   // remove \n
   branch_name = branch_name.substr(0, branch_name.size() - 1);
-  dup2(save_fd_err, STDERR_FILENO);
+  SystemCallExitOnFailed(dup2(save_fd_err, STDERR_FILENO));
   close(save_fd_err);
   remove(temp_file_stdout.c_str());
   remove(temp_file_stderr.c_str());
@@ -215,4 +215,11 @@ std::string utils::RightTrim(const std::string& str) {
 }
 std::string utils::GenerateTmpFileName() {
   return "/tmp/xcShell_tmp_" + GetRandomString(10);
+}
+int utils::SystemCallExitOnFailed(int return_value) {
+  if (return_value == ERROR_CODE_SYSTEM) {
+    utils::PrintSystemError(std::cerr);
+    exit(ERROR_CODE_DEFAULT);
+  }
+  return return_value;
 }

@@ -45,7 +45,8 @@ std::vector<CommandParseResult> Parser::ParseUserInputLine(
   std::vector<std::string> command_and_suffix_list =
       utils::Split(input_line, REDIRECT_PIPE);
   for (const auto &command_and_suffix : command_and_suffix_list) {
-    auto [command, commandSuffix] = getCommandAndSuffix(utils::Trim(command_and_suffix));
+    auto [command, commandSuffix] =
+        getCommandAndSuffix(utils::Trim(command_and_suffix));
 
     command_parse_result_list.push_back(
         buildParseResultWithRedirect(commandSuffix, command));
