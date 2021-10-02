@@ -38,8 +38,9 @@ class CommandExecutor {
       const CommandParseResult &command_parse_result,
       const std::vector<std::array<int, 2>> &pipe_fds_list, int cmd_number,
       bool is_last_command);
-  static void ProcessFather(
-      const std::vector<std::array<int, 2>> &pipe_fds_list, pid_t pid);
+  static void CloseAllPipeAndWaitChildProcess(
+      const std::vector<std::array<int, 2>> &pipe_fds_list,
+      const std::vector<pid_t> &child_pids);
   static void PipeRedirectFirst(
       const std::vector<std::array<int, 2>> &pipe_fds_list);
   static void PipeRedirectMiddle(
@@ -51,7 +52,6 @@ class CommandExecutor {
       const std::vector<std::array<int, 2>> &pipe_fds_list);
   static std::vector<std::array<int, 2>> CreatePipe(
       const std::vector<CommandParseResult> &command_parse_result_list);
-  static int GetErrorInformation();
   void LogCommandParseResultList(
       const std::vector<CommandParseResult> &command_parse_result_list);
 };

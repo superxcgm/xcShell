@@ -120,16 +120,16 @@ TEST(UtilsTest, ExpandPath_ShouldReturnReplacedPathIfStartWithTilde) {
   EXPECT_TRUE(replaced.find("~") == std::string::npos);
 }
 
-TEST(UtilsTest, SpiltWithSymbol_ShouldReturnInputLineListIfHavePipeSymbol) {
-  std::vector<std::string> expected = {"ls -l", "grep 'hello'"};
-  auto input_line = utils::SpiltWithSymbol("ls -l | grep 'hello'", "|");
+TEST(UtilsTest, Split_ShouldReturnInputLineListIfHavePipeSymbol) {
+  std::vector<std::string> expected = {"ls -l ", " grep 'hello'"};
+  auto input_line = utils::Split("ls -l | grep 'hello'", "|");
   EXPECT_EQ(input_line, expected);
 }
 
-TEST(UtilsTest, SpiltWithSymbol_ShouldReturnInputLineListIfHaveMutilPipe) {
-  std::vector<std::string> expected = {"cat /etc/passwd", "grep sh", "less"};
-  auto input_line =
-      utils::SpiltWithSymbol("cat /etc/passwd | grep sh | less", "|");
+TEST(UtilsTest, Split_ShouldReturnInputLineListIfHaveMutilPipe) {
+  std::vector<std::string> expected = {"cat /etc/passwd ", " grep sh ",
+                                       " less"};
+  auto input_line = utils::Split("cat /etc/passwd | grep sh | less", "|");
   EXPECT_EQ(input_line, expected);
 }
 

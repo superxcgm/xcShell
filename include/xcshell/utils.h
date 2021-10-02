@@ -8,9 +8,9 @@
 
 namespace utils {
 std::vector<std::string> Split(const std::string &str);
+std::vector<std::string> Split(const std::string &str,
+                               const std::string &delim);
 std::vector<std::string> SplitArgs(const std::string &str);
-std::vector<std::string> SpiltWithSymbol(const std::string &str,
-                                         const std::string &symbol);
 std::string GetCurrentWorkingDirectory(std::ostream &os_err);
 std::string GetLastDir(const std::string &path);
 std::string GetHomeDir();
@@ -26,6 +26,7 @@ std::string GetCommandExecuteResult(CommandExecutor *commandExecutor,
 std::string GetBranchName(CommandExecutor *commandExecutor);
 std::string GetRandomString(int len);
 std::string GenerateTmpFileName();
+int SystemCallExitOnFailed(int return_value);
 }  // namespace utils
 
 #endif  // INCLUDE_XCSHELL_UTILS_H_
