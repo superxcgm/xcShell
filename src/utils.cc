@@ -143,7 +143,6 @@ std::string utils::RemoveQuote(const std::string& str) {
 }
 
 // Todo:
-//  1. Split should not trim, it's not Split's responsibility.
 //  2. Merge SplitWithSymbol and Split
 std::vector<std::string> utils::SpiltWithSymbol(const std::string& str,
                                                 const std::string& symbol) {
@@ -152,12 +151,12 @@ std::vector<std::string> utils::SpiltWithSymbol(const std::string& str,
   size_t idx;
   for (idx = str.find(symbol); idx != std::string::npos;
        idx = str.find(symbol, idx + 1)) {
-    str_list.push_back(Trim(str.substr(left, idx - left)));
+    str_list.push_back(str.substr(left, idx - left));
     left = idx + 1;
   }
 
   if (left < str.size() - 1) {
-    str_list.push_back(Trim(str.substr(left, str.size() - left)));
+    str_list.push_back(str.substr(left, str.size() - left));
   }
   return str_list;
 }
