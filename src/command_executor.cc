@@ -109,6 +109,7 @@ int CommandExecutor::Execute(const std::string &line) {
   int save_fd = dup(STDOUT_FILENO);
   struct CommandParseResult *built_In_Command_ptr = nullptr;
   auto pipe_fds_list = CreatePipe(command_parse_result_list);
+  std::vector<pid_t> child_pids;
   for (int i = 0; i < command_parse_result_list.size(); i++) {
     bool is_last_command = i == command_parse_result_list.size() - 1;
     if (build_in_.Exist(command_parse_result_list[i].command)) {
@@ -129,14 +130,15 @@ int CommandExecutor::Execute(const std::string &line) {
         close(save_fd);
         return ProcessChild(command_parse_result_list[i], pipe_fds_list, i,
                             is_last_command);
-      } else if (i + 1 == command_parse_result_list.size()) {
-        spdlog::debug("Father wait on last command.");
-        // Reading end is received
-        BuildInCommandExecute(save_fd, built_In_Command_ptr, pipe_fds_list);
-        ProcessFather(pipe_fds_list, pid);
+      } else {
+        child_pids.push_back(pid);
       }
     }
   }
+  spdlog::debug("Father wait on last command.");
+  // Reading end is received
+  BuildInCommandExecute(save_fd, built_In_Command_ptr, pipe_fds_list);
+  CloseAllPipeAndWaitChildProcess(pipe_fds_list, child_pids);
   close(save_fd);
   return 0;
 }
@@ -159,13 +161,15 @@ void CommandExecutor::BuildInCommandExecute(
   }
 }
 
-void CommandExecutor::ProcessFather(
-    const std::vector<std::array<int, 2>> &pipe_fds_list, pid_t pid) {
+void CommandExecutor::CloseAllPipeAndWaitChildProcess(
+    const std::vector<std::array<int, 2>> &pipe_fds_list, const std::vector<pid_t> &child_pids) {
   for (auto &pipe_fds : pipe_fds_list) {
     close(pipe_fds[0]);
     close(pipe_fds[1]);
   }
-  WaitChildExit(pid);
+  for (auto pid : child_pids) {
+    WaitChildExit(pid);
+  }
 }
 
 std::vector<char *> CommandExecutor::BuildArgv(
