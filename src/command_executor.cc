@@ -126,6 +126,7 @@ int CommandExecutor::Execute(const std::string &line) {
         return GetErrorInformation();
       }
       if (pid == 0) {
+        close(save_fd);
         return ProcessChild(command_parse_result_list[i], pipe_fds_list, i,
                             is_last_command);
       } else if (i + 1 == command_parse_result_list.size()) {
