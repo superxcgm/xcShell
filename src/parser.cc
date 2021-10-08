@@ -1,12 +1,41 @@
 #include "xcshell/parser.h"
 
 #include <algorithm>
+#include <array>
 #include <string>
 #include <vector>
 
 #include "xcshell/command_parse_result.h"
 #include "xcshell/constants.h"
 #include "xcshell/utils.h"
+
+bool IsRedirect(const std::string &command_with_arg) {
+  if (command_with_arg == REDIRECT_OUTPUT_OVERWRITE ||
+      command_with_arg == REDIRECT_INPUT ||
+      command_with_arg == REDIRECT_OUTPUT_APPEND ||
+      command_with_arg == REDIRECT_ERROR_OUTPUT_OVERWRITE ||
+      command_with_arg == REDIRECT_ERROR_OUTPUT_APPEND) {
+    return true;
+  }
+  return false;
+}
+
+bool IsErrorRedirect(const std::string &command_with_arg) {
+  if (command_with_arg == REDIRECT_ERROR_OUTPUT_APPEND ||
+      command_with_arg == REDIRECT_ERROR_OUTPUT_OVERWRITE ||
+      command_with_arg == REDIRECT_ERROR_AND_OUTPUT) {
+    return true;
+  }
+  return false;
+}
+
+bool IsRedirectOverwrite(const std::string &command_with_arg) {
+  if (command_with_arg == REDIRECT_ERROR_OUTPUT_APPEND ||
+      command_with_arg == REDIRECT_OUTPUT_APPEND) {
+    return true;
+  }
+  return false;
+}
 
 CommandParseResult Parser::BuildParseResultWithRedirect(
     const std::vector<std::string> &command_with_args,
@@ -19,11 +48,7 @@ CommandParseResult Parser::BuildParseResultWithRedirect(
   bool is_error_redirect;
   for (int i = 0; i < command_with_args.size(); i++) {
     auto command_with_arg = command_with_args[i];
-    if (command_with_arg == REDIRECT_OUTPUT_OVERWRITE ||
-        command_with_arg == REDIRECT_INPUT ||
-        command_with_arg == REDIRECT_OUTPUT_APPEND ||
-        command_with_arg == REDIRECT_ERROR_OUTPUT_OVERWRITE ||
-        command_with_arg == REDIRECT_ERROR_OUTPUT_APPEND) {
+    if (IsRedirect(command_with_arg)) {
       args_end = true;
     }
     if (!args_end) {
@@ -39,13 +64,10 @@ CommandParseResult Parser::BuildParseResultWithRedirect(
         input_file = command_with_args[i + 1];
       }
     }
-    if (command_with_arg == REDIRECT_ERROR_OUTPUT_APPEND ||
-        command_with_arg == REDIRECT_OUTPUT_APPEND) {
+    if (IsRedirectOverwrite(command_with_arg)) {
       is_overwrite = true;
     }
-    if (command_with_arg == REDIRECT_ERROR_OUTPUT_APPEND ||
-        command_with_arg == REDIRECT_ERROR_OUTPUT_OVERWRITE ||
-        command_with_arg == REDIRECT_ERROR_AND_OUTPUT) {
+    if (IsErrorRedirect(command_with_arg)) {
       is_error_redirect = true;
     }
   }
