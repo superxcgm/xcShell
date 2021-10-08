@@ -1,0 +1,8 @@
+echo "hello world" > redirect.out
+cat redirect.out
+echo "hello world" >> redirect.out
+cat redirect.out
+echo "1 + 1" > bc.input
+bc < bc.input
+bc < bc.input > bc.output
+cat bc.output

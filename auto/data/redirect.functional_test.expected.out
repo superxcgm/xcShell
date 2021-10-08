@@ -1,0 +1,14 @@
+xcShell_functional_test > echo "hello world" > redirect.out
+xcShell_functional_test > cat redirect.out
+hello world
+xcShell_functional_test > echo "hello world" >> redirect.out
+xcShell_functional_test > cat redirect.out
+hello world
+hello world
+xcShell_functional_test > echo "1 + 1" > bc.input
+xcShell_functional_test > bc < bc.input
+2
+xcShell_functional_test > bc < bc.input > bc.output
+xcShell_functional_test > cat bc.output
+2
+xcShell_functional_test > 
