@@ -8,7 +8,7 @@
 #include "xcshell/constants.h"
 #include "xcshell/utils.h"
 
-CommandParseResult buildParseResultWithRedirect(
+CommandParseResult Parser::BuildParseResultWithRedirect(
     const std::vector<std::string> &command_with_args,
     const std::string &command) {
   std::vector<std::string> args;
@@ -34,18 +34,19 @@ CommandParseResult buildParseResultWithRedirect(
           command_with_arg == REDIRECT_ERROR_OUTPUT_OVERWRITE ||
           command_with_arg == REDIRECT_ERROR_OUTPUT_APPEND) {
         output_file = command_with_args[i + 1];
-        if (command_with_arg == REDIRECT_ERROR_OUTPUT_APPEND ||
-            command_with_arg == REDIRECT_OUTPUT_APPEND) {
-          is_overwrite = true;
-        }
-        if (command_with_arg == REDIRECT_ERROR_OUTPUT_APPEND ||
-            command_with_arg == REDIRECT_ERROR_OUTPUT_OVERWRITE) {
-          is_error_redirect = true;
-        }
       }
       if (command_with_arg == REDIRECT_INPUT) {
         input_file = command_with_args[i + 1];
       }
+    }
+    if (command_with_arg == REDIRECT_ERROR_OUTPUT_APPEND ||
+        command_with_arg == REDIRECT_OUTPUT_APPEND) {
+      is_overwrite = true;
+    }
+    if (command_with_arg == REDIRECT_ERROR_OUTPUT_APPEND ||
+        command_with_arg == REDIRECT_ERROR_OUTPUT_OVERWRITE ||
+        command_with_arg == REDIRECT_ERROR_AND_OUTPUT) {
+      is_error_redirect = true;
     }
   }
   return {command,     args,         input_file,
@@ -59,15 +60,15 @@ std::vector<CommandParseResult> Parser::ParseUserInputLine(
       utils::Split(input_line, REDIRECT_PIPE);
   for (const auto &command_and_suffix : command_and_suffix_list) {
     auto [command, commandSuffix] =
-        getCommandAndSuffix(utils::Trim(command_and_suffix));
+        GetCommandAndSuffix(utils::Trim(command_and_suffix));
 
     command_parse_result_list.push_back(
-        buildParseResultWithRedirect(commandSuffix, command));
+        BuildParseResultWithRedirect(commandSuffix, command));
   }
 
   return command_parse_result_list;
 }
-std::tuple<std::string, std::vector<std::string>> Parser::getCommandAndSuffix(
+std::tuple<std::string, std::vector<std::string>> Parser::GetCommandAndSuffix(
     const std::string &input_line) {
   auto parts = utils::SplitArgs(input_line);
   const std::string init_command = parts[0];

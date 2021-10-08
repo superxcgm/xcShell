@@ -15,23 +15,6 @@
 #include "xcshell/constants.h"
 #include "xcshell/utils.h"
 
-void CommandExecutor::OutPutErrorRedirect(
-    const CommandParseResult &command_parse_result) {
-  if (command_parse_result.output_is_append) {
-    int fd_error_out = utils::SystemCallExitOnFailed(
-        open(command_parse_result.output_redirect_file.c_str(),
-             O_WRONLY | O_APPEND | O_CREAT, 0664));
-    utils::SystemCallExitOnFailed(dup2(fd_error_out, STDERR_FILENO));
-    close(fd_error_out);
-  } else {
-    int fd_error_out = utils::SystemCallExitOnFailed(
-        open(command_parse_result.output_redirect_file.c_str(),
-             O_WRONLY | O_TRUNC | O_CREAT, 0664));
-    utils::SystemCallExitOnFailed(dup2(fd_error_out, STDERR_FILENO));
-    close(fd_error_out);
-  }
-}
-
 void CommandExecutor::OutputRedirect(
     const CommandParseResult &command_parse_result) {
   if (command_parse_result.output_is_append) {
@@ -39,13 +22,22 @@ void CommandExecutor::OutputRedirect(
         open(command_parse_result.output_redirect_file.c_str(),
              O_WRONLY | O_APPEND | O_CREAT, 0664));
     utils::SystemCallExitOnFailed(dup2(fd_out, STDOUT_FILENO));
+    StandardErrorOutputRedirect(command_parse_result, fd_out);
     close(fd_out);
   } else {
     int fd_out = utils::SystemCallExitOnFailed(
         open(command_parse_result.output_redirect_file.c_str(),
              O_WRONLY | O_TRUNC | O_CREAT, 0664));
     utils::SystemCallExitOnFailed(dup2(fd_out, STDOUT_FILENO));
+    StandardErrorOutputRedirect(command_parse_result, fd_out);
     close(fd_out);
+  }
+}
+
+void CommandExecutor::StandardErrorOutputRedirect(
+    const CommandParseResult &command_parse_result, int fd_out) {
+  if (command_parse_result.is_error_redirect) {
+    utils::SystemCallExitOnFailed(dup2(fd_out, STDERR_FILENO));
   }
 }
 
@@ -83,9 +75,6 @@ void CommandExecutor::RedirectSelector(
   }
   if (!command_parse_result.output_redirect_file.empty()) {
     OutputRedirect(command_parse_result);
-  }
-  if (command_parse_result.is_redirect_error) {
-    OutPutErrorRedirect(command_parse_result);
   }
 }
 

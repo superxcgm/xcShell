@@ -10,9 +10,9 @@
 #include <cstdlib>
 #include <cstring>
 #include <fstream>
+#include <random>
 #include <sstream>
 #include <string>
-#include <random>
 
 std::string utils::ExpandPath(const std::string& path) {
   if (path[0] == '~') {

@@ -182,3 +182,112 @@ TEST(ParseTest, Parse_CorrectlyParseMoreCommandsAtTheSameTime) {
   EXPECT_EQ(command_parse_result_with_third.output_redirect_file, "");
   EXPECT_EQ(command_parse_result_with_third.input_redirect_file, "");
 }
+
+TEST(ParseTest, Parse_PraseStandardtErrorRedirectionCorrectlyWithOverwrite) {
+  BuildIn build_in;
+  Parser parser(build_in);
+  std::string str = "echo '1 / 0' | bc 2> a.txt";
+  std::vector<std::string> vec_first_command_args;
+  std::vector<std::string> vec_second_command_args;
+  std::vector<std::string> vec_third_command_args;
+  vec_first_command_args.emplace_back("1 / 0");
+  std::vector<CommandParseResult> command_parse_result_list =
+      parser.ParseUserInputLine(str);
+  CommandParseResult command_parse_result_with_first =
+      command_parse_result_list[0];
+  CommandParseResult command_parse_result_with_second =
+      command_parse_result_list[1];
+
+  EXPECT_EQ(command_parse_result_with_first.command, "echo");
+  EXPECT_EQ(command_parse_result_with_first.args, vec_first_command_args);
+  EXPECT_EQ(command_parse_result_with_first.output_redirect_file, "");
+  EXPECT_EQ(command_parse_result_with_first.input_redirect_file, "");
+
+  EXPECT_EQ(command_parse_result_with_second.command, "bc");
+  EXPECT_EQ(command_parse_result_with_second.args, vec_second_command_args);
+  EXPECT_EQ(command_parse_result_with_second.output_redirect_file, "a.txt");
+  EXPECT_EQ(command_parse_result_with_second.input_redirect_file, "");
+  EXPECT_EQ(command_parse_result_with_second.is_error_redirect, true);
+}
+
+TEST(ParseTest, Parse_PraseStandardtErrorRedirectionCorrectlyWithAppend) {
+  BuildIn build_in;
+  Parser parser(build_in);
+  std::string str = "echo '1 / 0' | bc 2>> a.txt";
+  std::vector<std::string> vec_first_command_args;
+  std::vector<std::string> vec_second_command_args;
+  std::vector<std::string> vec_third_command_args;
+  vec_first_command_args.emplace_back("1 / 0");
+  std::vector<CommandParseResult> command_parse_result_list =
+      parser.ParseUserInputLine(str);
+  CommandParseResult command_parse_result_with_first =
+      command_parse_result_list[0];
+  CommandParseResult command_parse_result_with_second =
+      command_parse_result_list[1];
+
+  EXPECT_EQ(command_parse_result_with_first.command, "echo");
+  EXPECT_EQ(command_parse_result_with_first.args, vec_first_command_args);
+  EXPECT_EQ(command_parse_result_with_first.output_redirect_file, "");
+  EXPECT_EQ(command_parse_result_with_first.input_redirect_file, "");
+
+  EXPECT_EQ(command_parse_result_with_second.command, "bc");
+  EXPECT_EQ(command_parse_result_with_second.args, vec_second_command_args);
+  EXPECT_EQ(command_parse_result_with_second.output_redirect_file, "a.txt");
+  EXPECT_EQ(command_parse_result_with_second.input_redirect_file, "");
+  EXPECT_EQ(command_parse_result_with_second.is_error_redirect, true);
+}
+
+TEST(ParseTest,
+     Parse_PraseStandardtErrorAndOutputRedirectCorrectWithOverwrite) {
+  BuildIn build_in;
+  Parser parser(build_in);
+  std::string str = "echo '1 / 0' | bc > a.txt 2>&1";
+  std::vector<std::string> vec_first_command_args;
+  std::vector<std::string> vec_second_command_args;
+  std::vector<std::string> vec_third_command_args;
+  vec_first_command_args.emplace_back("1 / 0");
+  std::vector<CommandParseResult> command_parse_result_list =
+      parser.ParseUserInputLine(str);
+  CommandParseResult command_parse_result_with_first =
+      command_parse_result_list[0];
+  CommandParseResult command_parse_result_with_second =
+      command_parse_result_list[1];
+
+  EXPECT_EQ(command_parse_result_with_first.command, "echo");
+  EXPECT_EQ(command_parse_result_with_first.args, vec_first_command_args);
+  EXPECT_EQ(command_parse_result_with_first.output_redirect_file, "");
+  EXPECT_EQ(command_parse_result_with_first.input_redirect_file, "");
+
+  EXPECT_EQ(command_parse_result_with_second.command, "bc");
+  EXPECT_EQ(command_parse_result_with_second.args, vec_second_command_args);
+  EXPECT_EQ(command_parse_result_with_second.output_redirect_file, "a.txt");
+  EXPECT_EQ(command_parse_result_with_second.input_redirect_file, "");
+  EXPECT_EQ(command_parse_result_with_second.is_error_redirect, true);
+}
+
+TEST(ParseTest, Parse_PraseStandardtErrorAndOutputRedirectCorrectWithAppend) {
+  BuildIn build_in;
+  Parser parser(build_in);
+  std::string str = "echo '1 / 0' | bc >> a.txt 2>&1";
+  std::vector<std::string> vec_first_command_args;
+  std::vector<std::string> vec_second_command_args;
+  std::vector<std::string> vec_third_command_args;
+  vec_first_command_args.emplace_back("1 / 0");
+  std::vector<CommandParseResult> command_parse_result_list =
+      parser.ParseUserInputLine(str);
+  CommandParseResult command_parse_result_with_first =
+      command_parse_result_list[0];
+  CommandParseResult command_parse_result_with_second =
+      command_parse_result_list[1];
+
+  EXPECT_EQ(command_parse_result_with_first.command, "echo");
+  EXPECT_EQ(command_parse_result_with_first.args, vec_first_command_args);
+  EXPECT_EQ(command_parse_result_with_first.output_redirect_file, "");
+  EXPECT_EQ(command_parse_result_with_first.input_redirect_file, "");
+
+  EXPECT_EQ(command_parse_result_with_second.command, "bc");
+  EXPECT_EQ(command_parse_result_with_second.args, vec_second_command_args);
+  EXPECT_EQ(command_parse_result_with_second.output_redirect_file, "a.txt");
+  EXPECT_EQ(command_parse_result_with_second.input_redirect_file, "");
+  EXPECT_EQ(command_parse_result_with_second.is_error_redirect, true);
+}
