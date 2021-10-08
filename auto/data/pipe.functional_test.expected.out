@@ -1,5 +1,9 @@
 xcShell_functional_test > touch hello
+xcShell_functional_test > touch hello_world
 xcShell_functional_test > touch world
 xcShell_functional_test > ls | grep 'hello'
 hello
+hello_world
+xcShell_functional_test > ls | grep 'hello' | grep 'world'
+hello_world
 xcShell_functional_test > 

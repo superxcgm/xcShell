@@ -1,3 +1,5 @@
 touch hello
+touch hello_world
 touch world
 ls | grep 'hello'
+ls | grep 'hello' | grep 'world'
