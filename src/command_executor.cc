@@ -15,6 +15,23 @@
 #include "xcshell/constants.h"
 #include "xcshell/utils.h"
 
+void CommandExecutor::OutPutErrorRedirect(
+    const CommandParseResult &command_parse_result) {
+  if (command_parse_result.output_is_append) {
+    int fd_error_out = utils::SystemCallExitOnFailed(
+        open(command_parse_result.output_redirect_file.c_str(),
+             O_WRONLY | O_APPEND | O_CREAT, 0664));
+    utils::SystemCallExitOnFailed(dup2(fd_error_out, STDERR_FILENO));
+    close(fd_error_out);
+  } else {
+    int fd_error_out = utils::SystemCallExitOnFailed(
+        open(command_parse_result.output_redirect_file.c_str(),
+             O_WRONLY | O_TRUNC | O_CREAT, 0664));
+    utils::SystemCallExitOnFailed(dup2(fd_error_out, STDERR_FILENO));
+    close(fd_error_out);
+  }
+}
+
 void CommandExecutor::OutputRedirect(
     const CommandParseResult &command_parse_result) {
   if (command_parse_result.output_is_append) {
@@ -66,6 +83,9 @@ void CommandExecutor::RedirectSelector(
   }
   if (!command_parse_result.output_redirect_file.empty()) {
     OutputRedirect(command_parse_result);
+  }
+  if (command_parse_result.is_redirect_error) {
+    OutPutErrorRedirect(command_parse_result);
   }
 }
 

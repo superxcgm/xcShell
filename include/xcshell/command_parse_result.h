@@ -11,6 +11,7 @@ struct CommandParseResult {
   std::string input_redirect_file;
   std::string output_redirect_file;
   bool output_is_append = false;
+  bool is_redirect_error = false;
 };
 
 #endif  // INCLUDE_XCSHELL_COMMAND_PARSE_RESULT_H_

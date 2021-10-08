@@ -16,32 +16,40 @@ CommandParseResult buildParseResultWithRedirect(
   std::string output_file;
   std::string input_file;
   bool is_overwrite;
+  bool is_error_redirect;
   for (int i = 0; i < command_with_args.size(); i++) {
     auto command_with_arg = command_with_args[i];
     if (command_with_arg == REDIRECT_OUTPUT_OVERWRITE ||
-        command_with_arg == REDIRECT_OUTPUT_HIDE_APPEND ||
-        command_with_arg == REDIRECT_OUTPUT_HIDE_OVERWRITE ||
         command_with_arg == REDIRECT_INPUT ||
-        command_with_arg == REDIRECT_OUTPUT_APPEND) {
+        command_with_arg == REDIRECT_OUTPUT_APPEND ||
+        command_with_arg == REDIRECT_ERROR_OUTPUT_OVERWRITE ||
+        command_with_arg == REDIRECT_ERROR_OUTPUT_APPEND) {
       args_end = true;
     }
     if (!args_end) {
       args.push_back(command_with_arg);
     } else if ((i + 1) < command_with_args.size()) {
       if (command_with_arg == REDIRECT_OUTPUT_OVERWRITE ||
-          command_with_arg == REDIRECT_OUTPUT_HIDE_OVERWRITE ||
           command_with_arg == REDIRECT_OUTPUT_APPEND ||
-          command_with_arg == REDIRECT_OUTPUT_HIDE_APPEND) {
+          command_with_arg == REDIRECT_ERROR_OUTPUT_OVERWRITE ||
+          command_with_arg == REDIRECT_ERROR_OUTPUT_APPEND) {
         output_file = command_with_args[i + 1];
-        is_overwrite = command_with_arg == REDIRECT_OUTPUT_APPEND ||
-                       REDIRECT_OUTPUT_HIDE_APPEND;
+        if (command_with_arg == REDIRECT_ERROR_OUTPUT_APPEND ||
+            command_with_arg == REDIRECT_OUTPUT_APPEND) {
+          is_overwrite = true;
+        }
+        if (command_with_arg == REDIRECT_ERROR_OUTPUT_APPEND ||
+            command_with_arg == REDIRECT_ERROR_OUTPUT_OVERWRITE) {
+          is_error_redirect = true;
+        }
       }
       if (command_with_arg == REDIRECT_INPUT) {
         input_file = command_with_args[i + 1];
       }
     }
   }
-  return {command, args, input_file, output_file, is_overwrite};
+  return {command,     args,         input_file,
+          output_file, is_overwrite, is_error_redirect};
 }
 
 std::vector<CommandParseResult> Parser::ParseUserInputLine(
