@@ -23,7 +23,7 @@ run () {
     #  echo $input_file
     #  echo $output_file
     #  echo $expected_file
-    ./xcShell < "$input_file" > "$output_file" 2>&1
+    ./xcShell --no-load-config < "$input_file" > "$output_file" 2>&1
     if diff "$output_file" "$expected_file" > "$diff_file" ; then
       echo -e "  Test $input_file \e[32mpass\e[0m. "
       rm "$diff_file"

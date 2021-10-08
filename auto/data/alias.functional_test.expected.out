@@ -1,0 +1,20 @@
+xcShell_functional_test > mkdir alias_dir
+xcShell_functional_test > cd alias_dir
+alias_dir > touch hello
+alias_dir > mkdir subdir
+alias_dir > alias
+alias_dir > alias ls='ls -G'
+alias_dir > ls
+hello
+subdir
+alias_dir > alias ll='ls -lh'
+alias_dir > ll
+total 4.0K
+-rw-rw-r-- 1 yujia    0 Oct  8 22:36 hello
+drwxrwxr-x 2 yujia 4.0K Oct  8 22:36 subdir
+alias_dir > alias
+ll='ls -lh'
+ls='ls -G'
+alias_dir > alias ls
+ls='ls -G'
+alias_dir > 
