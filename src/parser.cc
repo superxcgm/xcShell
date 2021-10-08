@@ -1,7 +1,6 @@
 #include "xcshell/parser.h"
 
 #include <algorithm>
-#include <array>
 #include <string>
 #include <vector>
 
@@ -9,9 +8,35 @@
 #include "xcshell/constants.h"
 #include "xcshell/utils.h"
 
-bool IsRedirect(const std::string &command_with_arg) {
+void Parser::IsRedirect(const std::string &command_with_arg, bool &args_end) {
   if (command_with_arg == REDIRECT_OUTPUT_OVERWRITE ||
       command_with_arg == REDIRECT_INPUT ||
+      command_with_arg == REDIRECT_OUTPUT_APPEND ||
+      command_with_arg == REDIRECT_ERROR_OUTPUT_OVERWRITE ||
+      command_with_arg == REDIRECT_ERROR_OUTPUT_APPEND) {
+    args_end = true;
+  }
+}
+
+void Parser::IsErrorRedirect(const std::string &command_with_arg,
+                             bool &is_error_direct) {
+  if (command_with_arg == REDIRECT_ERROR_OUTPUT_APPEND ||
+      command_with_arg == REDIRECT_ERROR_OUTPUT_OVERWRITE ||
+      command_with_arg == REDIRECT_ERROR_AND_OUTPUT) {
+    is_error_direct = true;
+  }
+}
+
+void Parser::IsRedirectOverwrite(const std::string &command_with_arg,
+                                 bool &is_overwrite) {
+  if (command_with_arg == REDIRECT_ERROR_OUTPUT_APPEND ||
+      command_with_arg == REDIRECT_OUTPUT_APPEND) {
+    is_overwrite = true;
+  }
+}
+
+bool Parser::IsOutputRedirectSymbol(const std::string &command_with_arg) {
+  if (command_with_arg == REDIRECT_OUTPUT_OVERWRITE ||
       command_with_arg == REDIRECT_OUTPUT_APPEND ||
       command_with_arg == REDIRECT_ERROR_OUTPUT_OVERWRITE ||
       command_with_arg == REDIRECT_ERROR_OUTPUT_APPEND) {
@@ -20,18 +45,8 @@ bool IsRedirect(const std::string &command_with_arg) {
   return false;
 }
 
-bool IsErrorRedirect(const std::string &command_with_arg) {
-  if (command_with_arg == REDIRECT_ERROR_OUTPUT_APPEND ||
-      command_with_arg == REDIRECT_ERROR_OUTPUT_OVERWRITE ||
-      command_with_arg == REDIRECT_ERROR_AND_OUTPUT) {
-    return true;
-  }
-  return false;
-}
-
-bool IsRedirectOverwrite(const std::string &command_with_arg) {
-  if (command_with_arg == REDIRECT_ERROR_OUTPUT_APPEND ||
-      command_with_arg == REDIRECT_OUTPUT_APPEND) {
+bool Parser::IsInputRedirectSymbol(const std::string &command_with_arg) {
+  if (command_with_arg == REDIRECT_INPUT) {
     return true;
   }
   return false;
@@ -48,28 +63,19 @@ CommandParseResult Parser::BuildParseResultWithRedirect(
   bool is_error_redirect;
   for (int i = 0; i < command_with_args.size(); i++) {
     auto command_with_arg = command_with_args[i];
-    if (IsRedirect(command_with_arg)) {
-      args_end = true;
-    }
+    IsRedirect(command_with_arg, args_end);
     if (!args_end) {
       args.push_back(command_with_arg);
     } else if ((i + 1) < command_with_args.size()) {
-      if (command_with_arg == REDIRECT_OUTPUT_OVERWRITE ||
-          command_with_arg == REDIRECT_OUTPUT_APPEND ||
-          command_with_arg == REDIRECT_ERROR_OUTPUT_OVERWRITE ||
-          command_with_arg == REDIRECT_ERROR_OUTPUT_APPEND) {
+      if (IsOutputRedirectSymbol(command_with_arg)) {
         output_file = command_with_args[i + 1];
       }
-      if (command_with_arg == REDIRECT_INPUT) {
+      if (IsInputRedirectSymbol(command_with_arg)) {
         input_file = command_with_args[i + 1];
       }
     }
-    if (IsRedirectOverwrite(command_with_arg)) {
-      is_overwrite = true;
-    }
-    if (IsErrorRedirect(command_with_arg)) {
-      is_error_redirect = true;
-    }
+    IsRedirectOverwrite(command_with_arg, is_overwrite);
+    IsErrorRedirect(command_with_arg, is_error_redirect);
   }
   return {command,     args,         input_file,
           output_file, is_overwrite, is_error_redirect};
