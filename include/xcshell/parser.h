@@ -25,10 +25,8 @@ class Parser {
 
   static bool IsInputRedirectSymbol(const std::string &command_with_arg);
   static bool IsOutputRedirectSymbol(const std::string &command_with_arg);
-  static void IsRedirectOverwrite(const std::string &command_with_arg,
-                                  bool &is_overwrite);
-  static void IsErrorRedirect(const std::string &command_with_arg,
-                              bool &is_error_direct);
-  static void IsRedirect(const std::string &command_with_arg, bool &args_end);
+  static bool IsRedirectOverwrite(const std::string &command_with_arg);
+  static bool IsErrorRedirect(const std::string &command_with_arg);
+  static bool IsRedirect(const std::string &command_with_arg);
 };
 #endif  // INCLUDE_XCSHELL_PARSER_H_
