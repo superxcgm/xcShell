@@ -61,7 +61,7 @@ CommandParseResult Parser::BuildParseResultWithRedirect(
   std::string error_file;
   std::string output_file;
   std::string input_file;
-  bool is_overwrite = false;
+  bool is_append = false;
   bool is_error_redirect = false;
   for (int i = 0; i < command_with_args.size(); i++) {
     auto command_with_arg = command_with_args[i];
@@ -79,11 +79,11 @@ CommandParseResult Parser::BuildParseResultWithRedirect(
         error_file = command_with_args[i + 1];
       }
     }
-    if (IsRedirectAppend(command_with_arg)) is_overwrite = true;
+    if (IsRedirectAppend(command_with_arg)) is_append = true;
     if (IsErrorToStdoutRedirect(command_with_arg)) is_error_redirect = true;
   }
   return {command,    args,         input_file,       output_file,
-          error_file, is_overwrite, is_error_redirect};
+          error_file, is_append, is_error_redirect};
 }
 
 std::vector<CommandParseResult> Parser::ParseUserInputLine(

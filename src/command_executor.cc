@@ -17,42 +17,37 @@
 
 void CommandExecutor::OutputRedirect(
     const CommandParseResult &command_parse_result) {
+  int fd_out;
   if (command_parse_result.output_is_append) {
-    int fd_out = utils::SystemCallExitOnFailed(
+    fd_out = utils::SystemCallExitOnFailed(
         open(command_parse_result.output_redirect_file.c_str(),
              O_WRONLY | O_APPEND | O_CREAT, 0664));
-    utils::SystemCallExitOnFailed(dup2(fd_out, STDOUT_FILENO));
-    if (command_parse_result.is_error_redirect) {
-      utils::SystemCallExitOnFailed(dup2(fd_out, STDERR_FILENO));
-    }
-    close(fd_out);
   } else {
-    int fd_out = utils::SystemCallExitOnFailed(
+    fd_out = utils::SystemCallExitOnFailed(
         open(command_parse_result.output_redirect_file.c_str(),
              O_WRONLY | O_TRUNC | O_CREAT, 0664));
-    utils::SystemCallExitOnFailed(dup2(fd_out, STDOUT_FILENO));
-    if (command_parse_result.is_error_redirect) {
-      utils::SystemCallExitOnFailed(dup2(fd_out, STDERR_FILENO));
-    }
-    close(fd_out);
   }
+  utils::SystemCallExitOnFailed(dup2(fd_out, STDOUT_FILENO));
+  if (command_parse_result.is_error_redirect) {
+    utils::SystemCallExitOnFailed(dup2(fd_out, STDERR_FILENO));
+  }
+  close(fd_out);
 }
 
 void CommandExecutor::ErrorOutputRedirect(
     const CommandParseResult &command_parse_result) {
+  int fd_err;
   if (command_parse_result.output_is_append) {
-    int fd_err = utils::SystemCallExitOnFailed(
+    fd_err = utils::SystemCallExitOnFailed(
         open(command_parse_result.error_redirect_file.c_str(),
              O_WRONLY | O_APPEND | O_CREAT, 0664));
-    utils::SystemCallExitOnFailed(dup2(fd_err, STDERR_FILENO));
-    close(fd_err);
   } else {
-    int fd_err = utils::SystemCallExitOnFailed(
+    fd_err = utils::SystemCallExitOnFailed(
         open(command_parse_result.error_redirect_file.c_str(),
              O_WRONLY | O_TRUNC | O_CREAT, 0664));
-    utils::SystemCallExitOnFailed(dup2(fd_err, STDERR_FILENO));
-    close(fd_err);
   }
+  utils::SystemCallExitOnFailed(dup2(fd_err, STDERR_FILENO));
+  close(fd_err);
 }
 
 void CommandExecutor::InputRedirect(
