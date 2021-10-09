@@ -17,10 +17,8 @@ bool Parser::IsRedirect(const std::string &arg) {
   return false;
 }
 
-bool Parser::IsErrorRedirect(const std::string &arg) {
-  if (arg == REDIRECT_ERROR_OUTPUT_APPEND ||
-      arg == REDIRECT_ERROR_OUTPUT_OVERWRITE ||
-      arg == REDIRECT_ERROR_TO_STDOUT) {
+bool Parser::IsErrorToStdoutRedirect(const std::string &arg) {
+  if (arg == REDIRECT_ERROR_TO_STDOUT) {
     return true;
   }
   return false;
@@ -34,8 +32,14 @@ bool Parser::IsRedirectAppend(const std::string &arg) {
 }
 
 bool Parser::IsOutputRedirectSymbol(const std::string &arg) {
-  if (arg == REDIRECT_OUTPUT_OVERWRITE || arg == REDIRECT_OUTPUT_APPEND ||
-      arg == REDIRECT_ERROR_OUTPUT_OVERWRITE ||
+  if (arg == REDIRECT_OUTPUT_OVERWRITE || arg == REDIRECT_OUTPUT_APPEND) {
+    return true;
+  }
+  return false;
+}
+
+bool Parser::IsErrorRedirectSymbol(const std::string &arg) {
+  if (arg == REDIRECT_ERROR_OUTPUT_OVERWRITE ||
       arg == REDIRECT_ERROR_OUTPUT_APPEND) {
     return true;
   }
@@ -54,6 +58,7 @@ CommandParseResult Parser::BuildParseResultWithRedirect(
     const std::string &command) {
   std::vector<std::string> args;
   bool args_end = false;
+  std::string error_file;
   std::string output_file;
   std::string input_file;
   bool is_overwrite = false;
@@ -70,12 +75,15 @@ CommandParseResult Parser::BuildParseResultWithRedirect(
       if (IsInputRedirectSymbol(command_with_arg)) {
         input_file = command_with_args[i + 1];
       }
+      if (IsErrorRedirectSymbol(command_with_arg)) {
+        error_file = command_with_args[i + 1];
+      }
     }
     if (IsRedirectAppend(command_with_arg)) is_overwrite = true;
-    if (IsErrorRedirect(command_with_arg)) is_error_redirect = true;
+    if (IsErrorToStdoutRedirect(command_with_arg)) is_error_redirect = true;
   }
-  return {command,     args,         input_file,
-          output_file, is_overwrite, is_error_redirect};
+  return {command,    args,         input_file,       output_file,
+          error_file, is_overwrite, is_error_redirect};
 }
 
 std::vector<CommandParseResult> Parser::ParseUserInputLine(

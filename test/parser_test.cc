@@ -205,10 +205,11 @@ TEST(ParseTest, Parse_PraseStandardtErrorRedirectionCorrectlyWithOverwrite) {
 
   EXPECT_EQ(command_parse_result_with_second.command, "bc");
   EXPECT_EQ(command_parse_result_with_second.args, vec_second_command_args);
-  EXPECT_EQ(command_parse_result_with_second.output_redirect_file, "a.txt");
+  EXPECT_EQ(command_parse_result_with_second.output_redirect_file, "");
   EXPECT_EQ(command_parse_result_with_second.input_redirect_file, "");
+  EXPECT_EQ(command_parse_result_with_second.error_redirect_file, "a.txt");
   EXPECT_EQ(command_parse_result_with_second.output_is_append, false);
-  EXPECT_EQ(command_parse_result_with_second.is_error_redirect, true);
+  EXPECT_EQ(command_parse_result_with_second.is_error_redirect, false);
 }
 
 TEST(ParseTest, Parse_PraseStandardtErrorRedirectionCorrectlyWithAppend) {
@@ -233,14 +234,14 @@ TEST(ParseTest, Parse_PraseStandardtErrorRedirectionCorrectlyWithAppend) {
 
   EXPECT_EQ(command_parse_result_with_second.command, "bc");
   EXPECT_EQ(command_parse_result_with_second.args, vec_second_command_args);
-  EXPECT_EQ(command_parse_result_with_second.output_redirect_file, "a.txt");
+  EXPECT_EQ(command_parse_result_with_second.output_redirect_file, "");
   EXPECT_EQ(command_parse_result_with_second.input_redirect_file, "");
+  EXPECT_EQ(command_parse_result_with_second.error_redirect_file, "a.txt");
   EXPECT_EQ(command_parse_result_with_second.output_is_append, true);
-  EXPECT_EQ(command_parse_result_with_second.is_error_redirect, true);
+  EXPECT_EQ(command_parse_result_with_second.is_error_redirect, false);
 }
 
-TEST(ParseTest,
-     Parse_PraseStandardtErrorAndOutputRedirectCorrectWithOverwrite) {
+TEST(ParseTest, Parse_PraseStandardtErrorToStdoutRedirectCorrectWithOverwrite) {
   BuildIn build_in;
   Parser parser(build_in);
   std::string str = "echo '1 / 0' | bc > a.txt 2>&1";
@@ -268,7 +269,7 @@ TEST(ParseTest,
   EXPECT_EQ(command_parse_result_with_second.is_error_redirect, true);
 }
 
-TEST(ParseTest, Parse_PraseStandardtErrorAndOutputRedirectCorrectWithAppend) {
+TEST(ParseTest, Parse_PraseStandardtErrorToStdoutRedirectCorrectWithAppend) {
   BuildIn build_in;
   Parser parser(build_in);
   std::string str = "echo '1 / 0' | bc >> a.txt 2>&1";
@@ -294,4 +295,22 @@ TEST(ParseTest, Parse_PraseStandardtErrorAndOutputRedirectCorrectWithAppend) {
   EXPECT_EQ(command_parse_result_with_second.input_redirect_file, "");
   EXPECT_EQ(command_parse_result_with_second.output_is_append, true);
   EXPECT_EQ(command_parse_result_with_second.is_error_redirect, true);
+}
+
+TEST(ParseTest, Parse_PraseStandardtErrorAndOutputRedirectCorrectWithAppend) {
+  BuildIn build_in;
+  Parser parser(build_in);
+  std::string str = "./a.out > std.out 2> err.out";
+  std::vector<std::string> vec_first_command_args;
+  std::vector<CommandParseResult> command_parse_result_list =
+      parser.ParseUserInputLine(str);
+  CommandParseResult command_parse_result_with_first =
+      command_parse_result_list[0];
+
+  EXPECT_EQ(command_parse_result_with_first.command, "./a.out");
+  EXPECT_EQ(command_parse_result_with_first.args, vec_first_command_args);
+  EXPECT_EQ(command_parse_result_with_first.output_redirect_file, "std.out");
+  EXPECT_EQ(command_parse_result_with_first.input_redirect_file, "");
+  EXPECT_EQ(command_parse_result_with_first.error_redirect_file, "err.out");
+  EXPECT_EQ(command_parse_result_with_first.is_error_redirect, false);
 }

@@ -55,7 +55,7 @@ class CommandExecutor {
   void LogCommandParseResultList(
       const std::vector<CommandParseResult> &command_parse_result_list);
   static void StandardErrorOutputRedirect(
-      const CommandParseResult &command_parse_result, int fd_out);
+      const CommandParseResult &command_parse_result);
 };
 
 #endif  // INCLUDE_XCSHELL_COMMAND_EXECUTOR_H_
