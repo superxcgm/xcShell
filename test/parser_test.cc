@@ -297,7 +297,7 @@ TEST(ParseTest, Parse_PraseStandardtErrorToStdoutRedirectCorrectWithAppend) {
   EXPECT_EQ(command_parse_result_with_second.is_error_redirect, true);
 }
 
-TEST(ParseTest, Parse_PraseStandardtErrorAndOutputRedirectCorrectWithAppend) {
+TEST(ParseTest, Parse_PraseStandardtErrorAndOutputRedirectCorrectWithOverwrite) {
   BuildIn build_in;
   Parser parser(build_in);
   std::string str = "./a.out > std.out 2> err.out";
