@@ -14,6 +14,8 @@ run () {
 
   cd /tmp/xcShell_functional_test
 
+  ret_code=0
+
   for input_file in *.functional_test.in
   do
     echo "Run test $input_file"
@@ -28,9 +30,13 @@ run () {
       echo -e "  Test $input_file \e[32mpass\e[0m. "
       rm "$diff_file"
     else
-      echo -e "  Test $input_file \e[31mfailed\e[0m. You can checkout $diff_file for more detail"
+      echo -e "  Test $input_file \e[31mfailed\e[0m. "
+      cat $diff_file
+      ret_code=1
     fi
   done
+
+  exit $ret_code
 }
 
 usage() {
