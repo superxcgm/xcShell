@@ -1,7 +1,6 @@
 xcShell_functional_test > mkdir git_test
 xcShell_functional_test > cd git_test
 git_test > git init > /dev/null 2>&1
-Initialized empty Git repository in /tmp/xcShell_functional_test/git_test/.git/
 git_test[31m git(master)[0m > git checkout -b not_master
 Switched to a new branch 'not_master'
 git_test[31m git(not_master)[0m > mkdir subdir
