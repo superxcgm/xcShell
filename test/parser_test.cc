@@ -207,6 +207,7 @@ TEST(ParseTest, Parse_PraseStandardtErrorRedirectionCorrectlyWithOverwrite) {
   EXPECT_EQ(command_parse_result_with_second.args, vec_second_command_args);
   EXPECT_EQ(command_parse_result_with_second.output_redirect_file, "a.txt");
   EXPECT_EQ(command_parse_result_with_second.input_redirect_file, "");
+  EXPECT_EQ(command_parse_result_with_second.output_is_append, false);
   EXPECT_EQ(command_parse_result_with_second.is_error_redirect, true);
 }
 
@@ -234,6 +235,7 @@ TEST(ParseTest, Parse_PraseStandardtErrorRedirectionCorrectlyWithAppend) {
   EXPECT_EQ(command_parse_result_with_second.args, vec_second_command_args);
   EXPECT_EQ(command_parse_result_with_second.output_redirect_file, "a.txt");
   EXPECT_EQ(command_parse_result_with_second.input_redirect_file, "");
+  EXPECT_EQ(command_parse_result_with_second.output_is_append, true);
   EXPECT_EQ(command_parse_result_with_second.is_error_redirect, true);
 }
 
@@ -262,6 +264,7 @@ TEST(ParseTest,
   EXPECT_EQ(command_parse_result_with_second.args, vec_second_command_args);
   EXPECT_EQ(command_parse_result_with_second.output_redirect_file, "a.txt");
   EXPECT_EQ(command_parse_result_with_second.input_redirect_file, "");
+  EXPECT_EQ(command_parse_result_with_second.output_is_append, false);
   EXPECT_EQ(command_parse_result_with_second.is_error_redirect, true);
 }
 
@@ -289,5 +292,6 @@ TEST(ParseTest, Parse_PraseStandardtErrorAndOutputRedirectCorrectWithAppend) {
   EXPECT_EQ(command_parse_result_with_second.args, vec_second_command_args);
   EXPECT_EQ(command_parse_result_with_second.output_redirect_file, "a.txt");
   EXPECT_EQ(command_parse_result_with_second.input_redirect_file, "");
+  EXPECT_EQ(command_parse_result_with_second.output_is_append, true);
   EXPECT_EQ(command_parse_result_with_second.is_error_redirect, true);
 }

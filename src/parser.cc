@@ -60,8 +60,8 @@ CommandParseResult Parser::BuildParseResultWithRedirect(
   bool args_end = false;
   std::string output_file;
   std::string input_file;
-  bool is_overwrite = false;
-  bool is_error_redirect = false;
+  bool is_overwrite;
+  bool is_error_redirect;
   for (int i = 0; i < command_with_args.size(); i++) {
     auto command_with_arg = command_with_args[i];
     if (IsRedirect(command_with_arg)) {
@@ -76,9 +76,9 @@ CommandParseResult Parser::BuildParseResultWithRedirect(
       if (IsInputRedirectSymbol(command_with_arg)) {
         input_file = command_with_args[i + 1];
       }
-    }
-    if (IsRedirectOverwrite(command_with_arg)) {
-      is_overwrite = true;
+      if (IsRedirectOverwrite(command_with_arg)) {
+        is_overwrite = true;
+      }
     }
     if (IsErrorRedirect(command_with_arg)) {
       is_error_redirect = true;
