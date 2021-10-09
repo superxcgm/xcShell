@@ -6,3 +6,14 @@ echo "1 + 1" > bc.input
 bc < bc.input
 bc < bc.input > bc.output
 cat bc.output
+echo '1 / 0' | bc 2> a.out
+cat a.out
+echo '1 / 0' | bc 2>> a.out
+cat a.out
+echo '1 / 0' | bc > a.out 2>&1
+cat a.out
+echo '1 / 0' | bc >> a.out 2>&1
+cat a.out
+echo -e '1 + 1 \n 1 / 0' | bc > a.out 2> b.out
+cat a.out
+cat b.out
