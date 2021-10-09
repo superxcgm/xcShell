@@ -60,8 +60,8 @@ CommandParseResult Parser::BuildParseResultWithRedirect(
   bool args_end = false;
   std::string output_file;
   std::string input_file;
-  bool is_overwrite;
-  bool is_error_redirect;
+  bool is_overwrite = false;
+  bool is_error_redirect = false;
   for (int i = 0; i < command_with_args.size(); i++) {
     auto command_with_arg = command_with_args[i];
     if (IsRedirect(command_with_arg)) {
