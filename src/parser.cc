@@ -8,35 +8,81 @@
 #include "xcshell/constants.h"
 #include "xcshell/utils.h"
 
-CommandParseResult buildParseResultWithRedirect(
+bool Parser::IsRedirect(const std::string &arg) {
+  if (arg == REDIRECT_OUTPUT_OVERWRITE || arg == REDIRECT_INPUT ||
+      arg == REDIRECT_OUTPUT_APPEND || arg == REDIRECT_ERROR_OUTPUT_OVERWRITE ||
+      arg == REDIRECT_ERROR_OUTPUT_APPEND || arg == REDIRECT_ERROR_TO_STDOUT) {
+    return true;
+  }
+  return false;
+}
+
+bool Parser::IsErrorToStdoutRedirect(const std::string &arg) {
+  if (arg == REDIRECT_ERROR_TO_STDOUT) {
+    return true;
+  }
+  return false;
+}
+
+bool Parser::IsOutputRedirectSymbol(const std::string &arg) {
+  if (arg == REDIRECT_OUTPUT_OVERWRITE || arg == REDIRECT_OUTPUT_APPEND) {
+    return true;
+  }
+  return false;
+}
+
+bool Parser::IsErrorRedirectSymbol(const std::string &arg) {
+  if (arg == REDIRECT_ERROR_OUTPUT_OVERWRITE ||
+      arg == REDIRECT_ERROR_OUTPUT_APPEND || arg == REDIRECT_ERROR_TO_STDOUT) {
+    return true;
+  }
+  return false;
+}
+
+bool Parser::IsInputRedirectSymbol(const std::string &arg) {
+  if (arg == REDIRECT_INPUT) {
+    return true;
+  }
+  return false;
+}
+
+CommandParseResult Parser::BuildParseResultWithRedirect(
     const std::vector<std::string> &command_with_args,
     const std::string &command) {
   std::vector<std::string> args;
   bool args_end = false;
+  bool stderr_is_append = false;
+  std::string error_file;
   std::string output_file;
   std::string input_file;
-  bool is_overwrite;
+  bool is_append = false;
   for (int i = 0; i < command_with_args.size(); i++) {
     auto command_with_arg = command_with_args[i];
-    if (command_with_arg == REDIRECT_OUTPUT_OVERWRITE ||
-        command_with_arg == REDIRECT_INPUT ||
-        command_with_arg == REDIRECT_OUTPUT_APPEND) {
-      args_end = true;
-    }
+    if (IsRedirect(command_with_arg)) args_end = true;
     if (!args_end) {
       args.push_back(command_with_arg);
     } else if ((i + 1) < command_with_args.size()) {
-      if (command_with_arg == REDIRECT_OUTPUT_OVERWRITE ||
-          command_with_arg == REDIRECT_OUTPUT_APPEND) {
+      if (IsOutputRedirectSymbol(command_with_arg)) {
         output_file = command_with_args[i + 1];
-        is_overwrite = command_with_arg == REDIRECT_OUTPUT_APPEND;
       }
-      if (command_with_arg == REDIRECT_INPUT) {
+      if (IsInputRedirectSymbol(command_with_arg)) {
         input_file = command_with_args[i + 1];
       }
+      if (IsErrorRedirectSymbol(command_with_arg)) {
+        error_file = command_with_args[i + 1];
+      }
+    }
+    if (command_with_arg == REDIRECT_OUTPUT_APPEND) is_append = true;
+    if (command_with_arg == REDIRECT_ERROR_OUTPUT_APPEND) {
+      stderr_is_append = true;
+    }
+    if (IsErrorToStdoutRedirect(command_with_arg)) {
+      error_file = output_file;
+      stderr_is_append = is_append;
     }
   }
-  return {command, args, input_file, output_file, is_overwrite};
+  return {command,    args,      input_file,      output_file,
+          error_file, is_append, stderr_is_append};
 }
 
 std::vector<CommandParseResult> Parser::ParseUserInputLine(
@@ -46,15 +92,15 @@ std::vector<CommandParseResult> Parser::ParseUserInputLine(
       utils::Split(input_line, REDIRECT_PIPE);
   for (const auto &command_and_suffix : command_and_suffix_list) {
     auto [command, commandSuffix] =
-        getCommandAndSuffix(utils::Trim(command_and_suffix));
+        GetCommandAndSuffix(utils::Trim(command_and_suffix));
 
     command_parse_result_list.push_back(
-        buildParseResultWithRedirect(commandSuffix, command));
+        BuildParseResultWithRedirect(commandSuffix, command));
   }
-
   return command_parse_result_list;
 }
-std::tuple<std::string, std::vector<std::string>> Parser::getCommandAndSuffix(
+
+std::tuple<std::string, std::vector<std::string>> Parser::GetCommandAndSuffix(
     const std::string &input_line) {
   auto parts = utils::SplitArgs(input_line);
   const std::string init_command = parts[0];

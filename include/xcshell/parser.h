@@ -17,7 +17,16 @@ class Parser {
 
  private:
   BuildIn &build_in_;
-  std::tuple<std::string, std::vector<std::string>> getCommandAndSuffix(
+  std::tuple<std::string, std::vector<std::string>> GetCommandAndSuffix(
       const std::string &input_line);
+  static CommandParseResult BuildParseResultWithRedirect(
+      const std::vector<std::string> &command_with_args,
+      const std::string &command);
+
+  static bool IsInputRedirectSymbol(const std::string &arg);
+  static bool IsOutputRedirectSymbol(const std::string &arg);
+  static bool IsErrorRedirectSymbol(const std::string &arg);
+  static bool IsErrorToStdoutRedirect(const std::string &arg);
+  static bool IsRedirect(const std::string &arg);
 };
 #endif  // INCLUDE_XCSHELL_PARSER_H_

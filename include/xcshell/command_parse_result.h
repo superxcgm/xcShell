@@ -10,7 +10,9 @@ struct CommandParseResult {
   std::vector<std::string> args;
   std::string input_redirect_file;
   std::string output_redirect_file;
-  bool output_is_append = false;
+  std::string error_redirect_file;
+  bool output_is_append;
+  bool stderr_is_append;
 };
 
 #endif  // INCLUDE_XCSHELL_COMMAND_PARSE_RESULT_H_
