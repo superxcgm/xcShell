@@ -23,10 +23,10 @@ class Parser {
       const std::vector<std::string> &command_with_args,
       const std::string &command);
 
-  static bool IsInputRedirectSymbol(const std::string &command_with_arg);
-  static bool IsOutputRedirectSymbol(const std::string &command_with_arg);
-  static bool IsRedirectOverwrite(const std::string &command_with_arg);
-  static bool IsErrorRedirect(const std::string &command_with_arg);
-  static bool IsRedirect(const std::string &command_with_arg);
+  static bool IsInputRedirectSymbol(const std::string &arg);
+  static bool IsOutputRedirectSymbol(const std::string &arg);
+  static bool IsRedirectAppend(const std::string &arg);
+  static bool IsErrorRedirect(const std::string &arg);
+  static bool IsRedirect(const std::string &arg);
 };
 #endif  // INCLUDE_XCSHELL_PARSER_H_
