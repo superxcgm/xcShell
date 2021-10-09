@@ -26,7 +26,6 @@ class Parser {
   static bool IsInputRedirectSymbol(const std::string &arg);
   static bool IsOutputRedirectSymbol(const std::string &arg);
   static bool IsErrorRedirectSymbol(const std::string &arg);
-  static bool IsRedirectAppend(const std::string &arg);
   static bool IsErrorToStdoutRedirect(const std::string &arg);
   static bool IsRedirect(const std::string &arg);
 };

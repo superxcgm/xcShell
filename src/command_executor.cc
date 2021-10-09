@@ -15,37 +15,31 @@
 #include "xcshell/constants.h"
 #include "xcshell/utils.h"
 
+int CommandExecutor::GetFileDescriptor(const std::string &file_name,
+                                       bool is_append) {
+  int fd;
+  if (is_append) {
+    fd = utils::SystemCallExitOnFailed(
+        open(file_name.c_str(), O_WRONLY | O_APPEND | O_CREAT, 0664));
+  } else {
+    fd = utils::SystemCallExitOnFailed(
+        open(file_name.c_str(), O_WRONLY | O_TRUNC | O_CREAT, 0664));
+  }
+  return fd;
+}
+
 void CommandExecutor::OutputRedirect(
     const CommandParseResult &command_parse_result) {
-  int fd_out;
-  if (command_parse_result.output_is_append) {
-    fd_out = utils::SystemCallExitOnFailed(
-        open(command_parse_result.output_redirect_file.c_str(),
-             O_WRONLY | O_APPEND | O_CREAT, 0664));
-  } else {
-    fd_out = utils::SystemCallExitOnFailed(
-        open(command_parse_result.output_redirect_file.c_str(),
-             O_WRONLY | O_TRUNC | O_CREAT, 0664));
-  }
+  int fd_out = GetFileDescriptor(command_parse_result.output_redirect_file,
+                                 command_parse_result.output_is_append);
   utils::SystemCallExitOnFailed(dup2(fd_out, STDOUT_FILENO));
-  if (command_parse_result.is_error_redirect) {
-    utils::SystemCallExitOnFailed(dup2(fd_out, STDERR_FILENO));
-  }
   close(fd_out);
 }
 
 void CommandExecutor::ErrorOutputRedirect(
     const CommandParseResult &command_parse_result) {
-  int fd_err;
-  if (command_parse_result.output_is_append) {
-    fd_err = utils::SystemCallExitOnFailed(
-        open(command_parse_result.error_redirect_file.c_str(),
-             O_WRONLY | O_APPEND | O_CREAT, 0664));
-  } else {
-    fd_err = utils::SystemCallExitOnFailed(
-        open(command_parse_result.error_redirect_file.c_str(),
-             O_WRONLY | O_TRUNC | O_CREAT, 0664));
-  }
+  int fd_err = GetFileDescriptor(command_parse_result.error_redirect_file,
+                                 command_parse_result.stderr_is_append);
   utils::SystemCallExitOnFailed(dup2(fd_err, STDERR_FILENO));
   close(fd_err);
 }

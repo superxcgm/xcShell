@@ -209,7 +209,7 @@ TEST(ParseTest, Parse_PraseStandardtErrorRedirectionCorrectlyWithOverwrite) {
   EXPECT_EQ(command_parse_result_with_second.input_redirect_file, "");
   EXPECT_EQ(command_parse_result_with_second.error_redirect_file, "a.txt");
   EXPECT_EQ(command_parse_result_with_second.output_is_append, false);
-  EXPECT_EQ(command_parse_result_with_second.is_error_redirect, false);
+  EXPECT_EQ(command_parse_result_with_second.stderr_is_append, false);
 }
 
 TEST(ParseTest, Parse_PraseStandardtErrorRedirectionCorrectlyWithAppend) {
@@ -237,8 +237,8 @@ TEST(ParseTest, Parse_PraseStandardtErrorRedirectionCorrectlyWithAppend) {
   EXPECT_EQ(command_parse_result_with_second.output_redirect_file, "");
   EXPECT_EQ(command_parse_result_with_second.input_redirect_file, "");
   EXPECT_EQ(command_parse_result_with_second.error_redirect_file, "a.txt");
-  EXPECT_EQ(command_parse_result_with_second.output_is_append, true);
-  EXPECT_EQ(command_parse_result_with_second.is_error_redirect, false);
+  EXPECT_EQ(command_parse_result_with_second.output_is_append, false);
+  EXPECT_EQ(command_parse_result_with_second.stderr_is_append, true);
 }
 
 TEST(ParseTest, Parse_PraseStandardtErrorToStdoutRedirectCorrectWithOverwrite) {
@@ -266,7 +266,7 @@ TEST(ParseTest, Parse_PraseStandardtErrorToStdoutRedirectCorrectWithOverwrite) {
   EXPECT_EQ(command_parse_result_with_second.output_redirect_file, "a.txt");
   EXPECT_EQ(command_parse_result_with_second.input_redirect_file, "");
   EXPECT_EQ(command_parse_result_with_second.output_is_append, false);
-  EXPECT_EQ(command_parse_result_with_second.is_error_redirect, true);
+  EXPECT_EQ(command_parse_result_with_second.stderr_is_append, false);
 }
 
 TEST(ParseTest, Parse_PraseStandardtErrorToStdoutRedirectCorrectWithAppend) {
@@ -294,7 +294,7 @@ TEST(ParseTest, Parse_PraseStandardtErrorToStdoutRedirectCorrectWithAppend) {
   EXPECT_EQ(command_parse_result_with_second.output_redirect_file, "a.txt");
   EXPECT_EQ(command_parse_result_with_second.input_redirect_file, "");
   EXPECT_EQ(command_parse_result_with_second.output_is_append, true);
-  EXPECT_EQ(command_parse_result_with_second.is_error_redirect, true);
+  EXPECT_EQ(command_parse_result_with_second.stderr_is_append, true);
 }
 
 TEST(ParseTest,
@@ -313,5 +313,5 @@ TEST(ParseTest,
   EXPECT_EQ(command_parse_result_with_first.output_redirect_file, "std.out");
   EXPECT_EQ(command_parse_result_with_first.input_redirect_file, "");
   EXPECT_EQ(command_parse_result_with_first.error_redirect_file, "err.out");
-  EXPECT_EQ(command_parse_result_with_first.is_error_redirect, false);
+  EXPECT_EQ(command_parse_result_with_first.stderr_is_append, false);
 }

@@ -25,6 +25,7 @@ class CommandExecutor {
                           const std::vector<std::array<int, 2>> &pipe_fds_list,
                           int cmd_number, bool is_last_command);
   static void WaitChildExit(pid_t pid);
+  static int GetFileDescriptor(const std::string &file_name, bool is_append);
   static void OutputRedirect(const CommandParseResult &command_parse_result);
   static void InputRedirect(const CommandParseResult &command_parse_result);
   static void PipeRedirect(const std::vector<std::array<int, 2>> &pipe_fds_list,

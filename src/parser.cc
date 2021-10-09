@@ -11,7 +11,7 @@
 bool Parser::IsRedirect(const std::string &arg) {
   if (arg == REDIRECT_OUTPUT_OVERWRITE || arg == REDIRECT_INPUT ||
       arg == REDIRECT_OUTPUT_APPEND || arg == REDIRECT_ERROR_OUTPUT_OVERWRITE ||
-      arg == REDIRECT_ERROR_OUTPUT_APPEND) {
+      arg == REDIRECT_ERROR_OUTPUT_APPEND || arg == REDIRECT_ERROR_TO_STDOUT) {
     return true;
   }
   return false;
@@ -19,13 +19,6 @@ bool Parser::IsRedirect(const std::string &arg) {
 
 bool Parser::IsErrorToStdoutRedirect(const std::string &arg) {
   if (arg == REDIRECT_ERROR_TO_STDOUT) {
-    return true;
-  }
-  return false;
-}
-
-bool Parser::IsRedirectAppend(const std::string &arg) {
-  if (arg == REDIRECT_ERROR_OUTPUT_APPEND || arg == REDIRECT_OUTPUT_APPEND) {
     return true;
   }
   return false;
@@ -40,7 +33,7 @@ bool Parser::IsOutputRedirectSymbol(const std::string &arg) {
 
 bool Parser::IsErrorRedirectSymbol(const std::string &arg) {
   if (arg == REDIRECT_ERROR_OUTPUT_OVERWRITE ||
-      arg == REDIRECT_ERROR_OUTPUT_APPEND) {
+      arg == REDIRECT_ERROR_OUTPUT_APPEND || arg == REDIRECT_ERROR_TO_STDOUT) {
     return true;
   }
   return false;
@@ -58,11 +51,11 @@ CommandParseResult Parser::BuildParseResultWithRedirect(
     const std::string &command) {
   std::vector<std::string> args;
   bool args_end = false;
+  bool stderr_is_append = false;
   std::string error_file;
   std::string output_file;
   std::string input_file;
   bool is_append = false;
-  bool is_error_redirect = false;
   for (int i = 0; i < command_with_args.size(); i++) {
     auto command_with_arg = command_with_args[i];
     if (IsRedirect(command_with_arg)) args_end = true;
@@ -79,11 +72,17 @@ CommandParseResult Parser::BuildParseResultWithRedirect(
         error_file = command_with_args[i + 1];
       }
     }
-    if (IsRedirectAppend(command_with_arg)) is_append = true;
-    if (IsErrorToStdoutRedirect(command_with_arg)) is_error_redirect = true;
+    if (command_with_arg == REDIRECT_OUTPUT_APPEND) is_append = true;
+    if (command_with_arg == REDIRECT_ERROR_OUTPUT_APPEND) {
+      stderr_is_append = true;
+    }
+    if (IsErrorToStdoutRedirect(command_with_arg)) {
+      error_file = output_file;
+      stderr_is_append = is_append;
+    }
   }
-  return {command,    args,         input_file,       output_file,
-          error_file, is_append, is_error_redirect};
+  return {command,    args,      input_file,      output_file,
+          error_file, is_append, stderr_is_append};
 }
 
 std::vector<CommandParseResult> Parser::ParseUserInputLine(
