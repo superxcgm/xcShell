@@ -6,6 +6,7 @@ alias
 alias ls='ls -G'
 ls
 alias ll='ls -lh'
-ll
+alias cdsub='cd subdir'
+cdsub
 alias
 alias ls
