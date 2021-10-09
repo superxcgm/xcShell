@@ -1,6 +1,6 @@
 mkdir git_test
 cd git_test
-git init
+git init | grep -v 'hint:'
 git checkout -b not_master
 mkdir subdir
 cd subdir
