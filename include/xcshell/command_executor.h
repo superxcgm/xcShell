@@ -54,7 +54,7 @@ class CommandExecutor {
       const std::vector<CommandParseResult> &command_parse_result_list);
   void LogCommandParseResultList(
       const std::vector<CommandParseResult> &command_parse_result_list);
-  static void StandardErrorOutputRedirect(
+  static void ErrorOutputRedirect(
       const CommandParseResult &command_parse_result);
 };
 

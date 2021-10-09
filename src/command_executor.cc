@@ -38,7 +38,7 @@ void CommandExecutor::OutputRedirect(
   }
 }
 
-void CommandExecutor::StandardErrorOutputRedirect(
+void CommandExecutor::ErrorOutputRedirect(
     const CommandParseResult &command_parse_result) {
   if (command_parse_result.output_is_append) {
     int fd_err = utils::SystemCallExitOnFailed(
@@ -91,7 +91,7 @@ void CommandExecutor::RedirectSelector(
     OutputRedirect(command_parse_result);
   }
   if (!command_parse_result.error_redirect_file.empty()) {
-    StandardErrorOutputRedirect(command_parse_result);
+    ErrorOutputRedirect(command_parse_result);
   }
 }
 
