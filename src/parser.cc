@@ -64,7 +64,9 @@ CommandParseResult Parser::BuildParseResultWithRedirect(
   bool is_error_redirect;
   for (int i = 0; i < command_with_args.size(); i++) {
     auto command_with_arg = command_with_args[i];
-    if (IsRedirect(command_with_arg)) args_end = true;
+    if (IsRedirect(command_with_arg)) {
+      args_end = true;
+    }
     if (!args_end) {
       args.push_back(command_with_arg);
     } else if ((i + 1) < command_with_args.size()) {
@@ -75,8 +77,12 @@ CommandParseResult Parser::BuildParseResultWithRedirect(
         input_file = command_with_args[i + 1];
       }
     }
-    if (IsRedirectOverwrite(command_with_arg)) is_overwrite = true;
-    if (IsErrorRedirect(command_with_arg)) is_error_redirect = true;
+    if (IsRedirectOverwrite(command_with_arg)) {
+      is_overwrite = true;
+    }
+    if (IsErrorRedirect(command_with_arg)) {
+      is_error_redirect = true;
+    }
   }
   return {command,     args,         input_file,
           output_file, is_overwrite, is_error_redirect};
