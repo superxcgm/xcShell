@@ -6,4 +6,4 @@ cd ~
 cd -
 cd ..
 cd .
-cd /proc
+cd /not-exist
