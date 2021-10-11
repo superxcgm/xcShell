@@ -210,6 +210,12 @@ std::string utils::RightTrim(const std::string& str) {
 std::string utils::GenerateTmpFileName() {
   return "/tmp/xcShell_tmp_" + GetRandomString(10);
 }
+int utils::SystemCallNotExitOnFailed(int return_value) {
+  if (return_value == ERROR_CODE_SYSTEM) {
+    utils::PrintSystemError(std::cerr);
+  }
+  return return_value;
+}
 int utils::SystemCallExitOnFailed(int return_value) {
   if (return_value == ERROR_CODE_SYSTEM) {
     utils::PrintSystemError(std::cerr);
