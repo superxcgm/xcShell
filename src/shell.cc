@@ -55,7 +55,7 @@ void Shell::Process() {
     if (line.empty()) {
       continue;
     }
-    utils::SystemCallExitOnFailed(command_executor_.Execute(line));
+    utils::SystemCallNotExitOnFailed(command_executor_.Execute(line));
   }
   spdlog::default_logger()->flush();
 }
