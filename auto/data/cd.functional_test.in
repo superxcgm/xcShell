@@ -1,0 +1,8 @@
+mkdir cd_dir
+cd cd_dir
+cd
+cd -
+cd ~
+cd -
+cd ..
+cd .

@@ -1,0 +1,7 @@
+mkdir git_test
+cd git_test
+git init > /dev/null 2>&1
+git checkout -b not_master
+mkdir subdir
+cd subdir
+cd ../.git

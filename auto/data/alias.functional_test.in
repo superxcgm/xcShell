@@ -1,0 +1,12 @@
+mkdir alias_dir
+cd alias_dir
+touch hello
+mkdir subdir
+alias
+alias ls='ls -G'
+ls
+alias ll='ls -lh'
+alias cdsub='cd subdir'
+cdsub
+alias
+alias ls

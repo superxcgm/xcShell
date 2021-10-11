@@ -1,0 +1,19 @@
+xcShell_functional_test > mkdir alias_dir
+xcShell_functional_test > cd alias_dir
+alias_dir > touch hello
+alias_dir > mkdir subdir
+alias_dir > alias
+alias_dir > alias ls='ls -G'
+alias_dir > ls
+hello
+subdir
+alias_dir > alias ll='ls -lh'
+alias_dir > alias cdsub='cd subdir'
+alias_dir > cdsub
+subdir > alias
+cdsub='cd subdir'
+ll='ls -lh'
+ls='ls -G'
+subdir > alias ls
+ls='ls -G'
+subdir > 

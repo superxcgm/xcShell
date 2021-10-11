@@ -23,5 +23,7 @@ jobs:
       - uses: actions/checkout@v2
       - name: build & test
         run: ./auto/test.sh
+      - name: functional test
+        run: ./auto/functional_test.sh run
       - name: lint
         run: ./auto/lint.sh

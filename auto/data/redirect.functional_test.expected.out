@@ -1,0 +1,35 @@
+xcShell_functional_test > echo "hello world" > redirect.out
+xcShell_functional_test > cat redirect.out
+hello world
+xcShell_functional_test > echo "hello world" >> redirect.out
+xcShell_functional_test > cat redirect.out
+hello world
+hello world
+xcShell_functional_test > echo "1 + 1" > bc.input
+xcShell_functional_test > bc < bc.input
+2
+xcShell_functional_test > bc < bc.input > bc.output
+xcShell_functional_test > cat bc.output
+2
+xcShell_functional_test > echo '1 / 0' | bc 2> a.out
+xcShell_functional_test > cat a.out
+Runtime error (func=(main), adr=3): Divide by zero
+xcShell_functional_test > echo '1 / 0' | bc 2>> a.out
+xcShell_functional_test > cat a.out
+Runtime error (func=(main), adr=3): Divide by zero
+Runtime error (func=(main), adr=3): Divide by zero
+xcShell_functional_test > echo '1 / 0' | bc > a.out 2>&1
+xcShell_functional_test > cat a.out
+Runtime error (func=(main), adr=3): Divide by zero
+xcShell_functional_test > echo '1 / 0' | bc >> a.out 2>&1
+xcShell_functional_test > cat a.out
+Runtime error (func=(main), adr=3): Divide by zero
+Runtime error (func=(main), adr=3): Divide by zero
+xcShell_functional_test > echo '1 + 1' > bc.in
+xcShell_functional_test > echo '1 / 0' >> bc.in
+xcShell_functional_test > bc < bc.in > a.out 2> b.out
+xcShell_functional_test > cat a.out
+2
+xcShell_functional_test > cat b.out
+Runtime error (func=(main), adr=3): Divide by zero
+xcShell_functional_test > 
