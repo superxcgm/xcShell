@@ -141,7 +141,7 @@ std::vector<std::string> utils::Split(const std::string& str,
     left = idx + 1;
   }
 
-  if (left < str.size() - 1) {
+  if (left < str.size()) {
     str_list.push_back(str.substr(left, str.size() - left));
   }
   return str_list;
