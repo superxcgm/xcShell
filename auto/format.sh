@@ -1,8 +1,8 @@
-#!/bin/sh
+#!/bin/bash
 
 set -e
 
-mkdir -p build
+./auto/build.sh
+
 cd build
-cmake ..
 cmake --build . --target format

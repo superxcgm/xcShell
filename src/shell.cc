@@ -15,16 +15,26 @@
 #include "xcshell/constants.h"
 #include "xcshell/utils.h"
 
-void Shell::Init() {
+void Shell::Init(int argc, char **argv) {
   InitLog();
   spdlog::info("Try to init xcShell");
-  auto global_config = utils::ReadFileText(GLOBAL_CONFIG_FILE);
-  spdlog::info("Loading global config: {}", global_config);
-  ExecuteConfig(global_config);
+  bool load_config = true;
+  if (argc > 1) {
+    std::string option = argv[1];
+    if (option == "--no-load-config") {
+      load_config = false;
+    }
+  }
 
-  auto user_config = utils::ReadFileText(utils::ExpandPath(USER_CONFIG_FILE));
-  spdlog::info("Loading user config: {}", user_config);
-  ExecuteConfig(user_config);
+  if (load_config) {
+    auto global_config = utils::ReadFileText(GLOBAL_CONFIG_FILE);
+    spdlog::info("Loading global config: {}", global_config);
+    ExecuteConfig(global_config);
+
+    auto user_config = utils::ReadFileText(utils::ExpandPath(USER_CONFIG_FILE));
+    spdlog::info("Loading user config: {}", user_config);
+    ExecuteConfig(user_config);
+  }
 
   IgnoreSignalInterrupt();
 }

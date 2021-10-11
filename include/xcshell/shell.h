@@ -9,7 +9,7 @@
 
 class Shell {
  public:
-  void Init();
+  void Init(int i, char** pString);
 
   void Process();
 

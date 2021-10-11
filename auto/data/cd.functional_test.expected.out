@@ -1,0 +1,9 @@
+xcShell_functional_test > mkdir cd_dir
+xcShell_functional_test > cd cd_dir
+cd_dir > cd
+~ > cd -
+cd_dir > cd ~
+~ > cd -
+cd_dir > cd ..
+xcShell_functional_test > cd .
+xcShell_functional_test > 
