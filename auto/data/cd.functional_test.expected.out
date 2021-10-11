@@ -6,4 +6,6 @@ cd_dir > cd ~
 ~ > cd -
 cd_dir > cd ..
 xcShell_functional_test > cd .
-xcShell_functional_test > 
+xcShell_functional_test > cd /proc
+No such file or directory
+xcShell_functional_test >
