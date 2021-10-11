@@ -131,7 +131,6 @@ int CommandExecutor::Execute(const std::string &line) {
       if (!pipe_fds_list.empty()) {
         built_In_Command_ptr = &command_parse_result_list[i];
       } else {
-        close(save_fd);
         build_in_.Execute(command_parse_result_list[i].command,
                           command_parse_result_list[i].args);
       }

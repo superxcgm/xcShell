@@ -7,8 +7,9 @@
 #include <editline/readline.h>
 #endif
 
-#include <spdlog/spdlog.h>
 #include <spdlog/sinks/basic_file_sink.h>
+#include <spdlog/spdlog.h>
+
 #include <csignal>
 #include <sstream>
 
@@ -55,7 +56,7 @@ void Shell::Process() {
     if (line.empty()) {
       continue;
     }
-    utils::SystemCallNotExitOnFailed(command_executor_.Execute(line));
+    command_executor_.Execute(line);
   }
   spdlog::default_logger()->flush();
 }
