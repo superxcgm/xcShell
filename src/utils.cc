@@ -219,7 +219,7 @@ int utils::SystemCallNotExitOnFailed(int return_value) {
 int utils::SystemCallExitOnFailed(int return_value) {
   if (return_value == ERROR_CODE_SYSTEM) {
     utils::PrintSystemError(std::cerr);
-    exit(ERROR_CODE_DEFAULT);
+    _exit(ERROR_CODE_DEFAULT);
   }
   return return_value;
 }
