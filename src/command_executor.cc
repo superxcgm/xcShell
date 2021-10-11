@@ -19,10 +19,10 @@ int CommandExecutor::GetFileDescriptor(const std::string &file_name,
                                        bool is_append) {
   int fd;
   if (is_append) {
-    fd = utils::SystemCallExitOnFailed(
+    fd = utils::SystemCallNotExitOnFailed(
         open(file_name.c_str(), O_WRONLY | O_APPEND | O_CREAT, 0664));
   } else {
-    fd = utils::SystemCallExitOnFailed(
+    fd = utils::SystemCallNotExitOnFailed(
         open(file_name.c_str(), O_WRONLY | O_TRUNC | O_CREAT, 0664));
   }
   return fd;
@@ -32,7 +32,7 @@ void CommandExecutor::OutputRedirect(
     const CommandParseResult &command_parse_result) {
   int fd_out = GetFileDescriptor(command_parse_result.output_redirect_file,
                                  command_parse_result.output_is_append);
-  utils::SystemCallExitOnFailed(dup2(fd_out, STDOUT_FILENO));
+  utils::SystemCallNotExitOnFailed(dup2(fd_out, STDOUT_FILENO));
   close(fd_out);
 }
 
@@ -40,15 +40,15 @@ void CommandExecutor::ErrorOutputRedirect(
     const CommandParseResult &command_parse_result) {
   int fd_err = GetFileDescriptor(command_parse_result.error_redirect_file,
                                  command_parse_result.stderr_is_append);
-  utils::SystemCallExitOnFailed(dup2(fd_err, STDERR_FILENO));
+  utils::SystemCallNotExitOnFailed(dup2(fd_err, STDERR_FILENO));
   close(fd_err);
 }
 
 void CommandExecutor::InputRedirect(
     const CommandParseResult &command_parse_result) {
-  int fd_in = utils::SystemCallExitOnFailed(
+  int fd_in = utils::SystemCallNotExitOnFailed(
       open(command_parse_result.input_redirect_file.c_str(), O_RDONLY));
-  utils::SystemCallExitOnFailed(dup2(fd_in, STDIN_FILENO));
+  utils::SystemCallNotExitOnFailed(dup2(fd_in, STDIN_FILENO));
   close(fd_in);
 }
 
@@ -106,7 +106,7 @@ std::vector<std::array<int, 2>> CommandExecutor::CreatePipe(
   auto pipe_number = command_parse_result_list.size() - 1;
   for (int i = 0; i < pipe_number; i++) {
     int pipe_fds[2];
-    utils::SystemCallExitOnFailed(pipe(pipe_fds));
+    utils::SystemCallNotExitOnFailed(pipe(pipe_fds));
     pipe_fds_list.push_back({pipe_fds[0], pipe_fds[1]});
   }
   return pipe_fds_list;
@@ -116,7 +116,7 @@ int CommandExecutor::Execute(const std::string &line) {
   std::vector<CommandParseResult> command_parse_result_list =
       parser_.ParseUserInputLine(line);
   LogCommandParseResultList(command_parse_result_list);
-  int save_fd = utils::SystemCallExitOnFailed(dup(STDOUT_FILENO));
+  int save_fd = utils::SystemCallNotExitOnFailed(dup(STDOUT_FILENO));
   struct CommandParseResult *built_In_Command_ptr = nullptr;
   auto pipe_fds_list = CreatePipe(command_parse_result_list);
   std::vector<pid_t> child_pids;
@@ -132,7 +132,7 @@ int CommandExecutor::Execute(const std::string &line) {
                           command_parse_result_list[i].args);
       }
     } else {
-      pid_t pid = utils::SystemCallExitOnFailed(fork());
+      pid_t pid = utils::SystemCallNotExitOnFailed(fork());
       if (pid == 0) {
         close(save_fd);
         return ProcessChild(command_parse_result_list[i], pipe_fds_list, i,
@@ -207,7 +207,7 @@ void CommandExecutor::PipeRedirectEnd(
     close(pipe_fds_list[i][1]);
   }
   close(pipe_fds_list[cmd_number - 1][1]);
-  utils::SystemCallExitOnFailed(
+  utils::SystemCallNotExitOnFailed(
       dup2(pipe_fds_list[cmd_number - 1][0], STDIN_FILENO));
   close(pipe_fds_list[cmd_number - 1][0]);
 }
@@ -221,11 +221,11 @@ void CommandExecutor::PipeRedirectMiddle(
     }
   }
   close(pipe_fds_list[cmd_number - 1][1]);
-  utils::SystemCallExitOnFailed(
+  utils::SystemCallNotExitOnFailed(
       dup2(pipe_fds_list[cmd_number - 1][0], STDIN_FILENO));
   close(pipe_fds_list[cmd_number - 1][0]);
   close(pipe_fds_list[cmd_number][0]);
-  utils::SystemCallExitOnFailed(
+  utils::SystemCallNotExitOnFailed(
       dup2(pipe_fds_list[cmd_number][1], STDOUT_FILENO));
   close(pipe_fds_list[cmd_number][1]);
 }
@@ -237,7 +237,7 @@ void CommandExecutor::PipeRedirectFirst(
     close(pipe_fds_list[i][1]);
   }
   close(pipe_fds_list[0][0]);
-  utils::SystemCallExitOnFailed(dup2(pipe_fds_list[0][1], STDOUT_FILENO));
+  utils::SystemCallNotExitOnFailed(dup2(pipe_fds_list[0][1], STDOUT_FILENO));
   close(pipe_fds_list[0][1]);
 }
 void CommandExecutor::LogCommandParseResultList(
