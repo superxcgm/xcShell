@@ -118,7 +118,10 @@ int CommandExecutor::Execute(const std::string &line) {
   LogCommandParseResultList(command_parse_result_list);
   int save_fd = utils::SystemCallNotExitOnFailed(dup(STDOUT_FILENO));
   struct CommandParseResult *built_In_Command_ptr = nullptr;
-  auto pipe_fds_list = CreatePipe(command_parse_result_list);
+  std::vector<std::array<int, 2>> pipe_fds_list;
+  if (command_parse_result_list.size() > 1) {
+    pipe_fds_list = CreatePipe(command_parse_result_list);
+  }
   std::vector<pid_t> child_pids;
   for (int i = 0; i < command_parse_result_list.size(); i++) {
     bool is_last_command = i == command_parse_result_list.size() - 1;
@@ -128,6 +131,7 @@ int CommandExecutor::Execute(const std::string &line) {
       if (!pipe_fds_list.empty()) {
         built_In_Command_ptr = &command_parse_result_list[i];
       } else {
+        close(save_fd);
         build_in_.Execute(command_parse_result_list[i].command,
                           command_parse_result_list[i].args);
       }

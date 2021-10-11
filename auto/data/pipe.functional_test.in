@@ -3,3 +3,7 @@ touch hello_world
 touch world
 ls | grep 'hello'
 ls | grep 'hello' | grep 'world'
+alias ls='ls -G'
+alias ll='ls -lh'
+alias | grep ls
+alias | grep ls | grep ll
