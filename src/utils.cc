@@ -141,7 +141,7 @@ std::vector<std::string> utils::Split(const std::string& str,
     left = idx + 1;
   }
 
-  if (left < str.size() - 1) {
+  if (left < str.size()) {
     str_list.push_back(str.substr(left, str.size() - left));
   }
   return str_list;
@@ -210,7 +210,7 @@ std::string utils::RightTrim(const std::string& str) {
 std::string utils::GenerateTmpFileName() {
   return "/tmp/xcShell_tmp_" + GetRandomString(10);
 }
-int utils::SystemCallNotExitOnFailed(int return_value) {
+int utils::SystemCallNoExitOnFailed(int return_value) {
   if (return_value == ERROR_CODE_SYSTEM) {
     utils::PrintSystemError(std::cerr);
   }

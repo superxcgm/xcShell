@@ -6,4 +6,11 @@ hello
 hello_world
 xcShell_functional_test > ls | grep 'hello' | grep 'world'
 hello_world
+xcShell_functional_test > alias ls='ls -G'
+xcShell_functional_test > alias ll='ls -lh'
+xcShell_functional_test > alias | grep ls
+ll='ls -lh'
+ls='ls -G'
+xcShell_functional_test > alias | grep ls | grep ll
+ll='ls -lh'
 xcShell_functional_test > 

@@ -133,6 +133,12 @@ TEST(UtilsTest, Split_ShouldReturnInputLineListIfHaveMutilPipe) {
   EXPECT_EQ(input_line, expected);
 }
 
+TEST(UtilsTest, Split_ShouldReturnSingleCharacterIfInputSingleCharacter) {
+  std::vector<std::string> expected = {"x"};
+  auto input_line = utils::Split("x", "|");
+  EXPECT_EQ(input_line, expected);
+}
+
 TEST(UtilsTest, LeftTrim_ShouldReturnOriginStringIfNoHeadingSpace) {
   std::string str = "hello";
 

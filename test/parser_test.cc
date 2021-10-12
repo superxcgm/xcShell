@@ -4,6 +4,19 @@
 
 #include <vector>
 
+TEST(ParseTest, Parse_PraseStringCorrectly) {
+  BuildIn build_in;
+  Parser parser(build_in);
+  std::string str = "x";
+  std::vector<std::string> vec;
+  std::vector<CommandParseResult> command_parse_result_list =
+      parser.ParseUserInputLine(str);
+  CommandParseResult command_parse_result = command_parse_result_list[0];
+
+  EXPECT_EQ(command_parse_result.command, "x");
+  EXPECT_EQ(command_parse_result.args, vec);
+}
+
 TEST(ParseTest, Parse_PraseOutputRedirectionCorrectlyWithOverwrite) {
   BuildIn build_in;
   Parser parser(build_in);
