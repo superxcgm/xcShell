@@ -27,7 +27,6 @@ int Cd::Execute(const std::vector<std::string> &args, std::ostream &os,
   }
 
   pre = utils::GetCurrentWorkingDirectory(os_err);
-
-  utils::SystemCallNoExitOnFailed(chdir(path.c_str()));
+  error_handling_.SystemCallNoExitOnFailed(chdir(path.c_str()));
   return 0;
 }

@@ -9,6 +9,7 @@
 
 #include "build_in/build_in.h"
 #include "xcshell/command_parse_result.h"
+#include "xcshell/error_handling.h"
 #include "xcshell/parser.h"
 
 class CommandExecutor {
@@ -32,6 +33,8 @@ class CommandExecutor {
                            int cmd_number, bool is_last_command);
 
   BuildIn build_in_;
+
+  static ErrorHandling error_handling_;
 
   Parser parser_;
   static void ResetSignalHandlerForInterrupt();
