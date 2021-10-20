@@ -1,5 +1,7 @@
 #include "xcshell/error_handling.h"
 
+#include <errno.h>
+
 #include <iostream>
 
 #include "xcshell/constants.h"
