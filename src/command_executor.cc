@@ -20,11 +20,13 @@ int CommandExecutor::GetFileDescriptor(const std::string &file_name,
                                        bool is_append) {
   int fd;
   if (is_append) {
-    fd = error_handling_.SystemCallExitOnFailed(
-        open(file_name.c_str(), O_WRONLY | O_APPEND | O_CREAT, 0664));
+    fd = error_handling_.ErrorSelector(
+        open(file_name.c_str(), O_WRONLY | O_APPEND | O_CREAT, 0664),
+        FATAL_ERROR);
   } else {
-    fd = error_handling_.SystemCallExitOnFailed(
-        open(file_name.c_str(), O_WRONLY | O_TRUNC | O_CREAT, 0664));
+    fd = error_handling_.ErrorSelector(
+        open(file_name.c_str(), O_WRONLY | O_TRUNC | O_CREAT, 0664),
+        FATAL_ERROR);
   }
   return fd;
 }
@@ -33,7 +35,7 @@ void CommandExecutor::OutputRedirect(
     const CommandParseResult &command_parse_result) {
   int fd_out = GetFileDescriptor(command_parse_result.output_redirect_file,
                                  command_parse_result.output_is_append);
-  error_handling_.SystemCallExitOnFailed(dup2(fd_out, STDOUT_FILENO));
+  error_handling_.ErrorSelector(dup2(fd_out, STDOUT_FILENO), FATAL_ERROR);
   close(fd_out);
 }
 
@@ -41,15 +43,16 @@ void CommandExecutor::ErrorOutputRedirect(
     const CommandParseResult &command_parse_result) {
   int fd_err = GetFileDescriptor(command_parse_result.error_redirect_file,
                                  command_parse_result.stderr_is_append);
-  error_handling_.SystemCallExitOnFailed(dup2(fd_err, STDERR_FILENO));
+  error_handling_.ErrorSelector(dup2(fd_err, STDERR_FILENO), FATAL_ERROR);
   close(fd_err);
 }
 
 void CommandExecutor::InputRedirect(
     const CommandParseResult &command_parse_result) {
-  int fd_in = error_handling_.SystemCallExitOnFailed(
-      open(command_parse_result.input_redirect_file.c_str(), O_RDONLY));
-  error_handling_.SystemCallExitOnFailed(dup2(fd_in, STDIN_FILENO));
+  int fd_in = error_handling_.ErrorSelector(
+      open(command_parse_result.input_redirect_file.c_str(), O_RDONLY),
+      FATAL_ERROR);
+  error_handling_.ErrorSelector(dup2(fd_in, STDIN_FILENO), FATAL_ERROR);
   close(fd_in);
 }
 
@@ -62,8 +65,8 @@ int CommandExecutor::ProcessChild(
                    is_last_command);
   auto argv =
       BuildArgv(command_parse_result.command, command_parse_result.args);
-  error_handling_.SystemCallNoExitOnFailed(
-      execvp(command_parse_result.command.c_str(), &argv[0]));
+  error_handling_.ErrorSelector(
+      execvp(command_parse_result.command.c_str(), &argv[0]), NORMAL_ERROR);
   _exit(ERROR_CODE_DEFAULT);
 }
 
@@ -107,7 +110,7 @@ std::vector<std::array<int, 2>> CommandExecutor::CreatePipe(
   auto pipe_number = command_parse_result_list.size() - 1;
   for (int i = 0; i < pipe_number; i++) {
     int pipe_fds[2];
-    error_handling_.SystemCallExitOnFailed(pipe(pipe_fds));
+    error_handling_.ErrorSelector(pipe(pipe_fds), FATAL_ERROR);
     pipe_fds_list.push_back({pipe_fds[0], pipe_fds[1]});
   }
   return pipe_fds_list;
@@ -117,7 +120,7 @@ int CommandExecutor::Execute(const std::string &line) {
   std::vector<CommandParseResult> command_parse_result_list =
       parser_.ParseUserInputLine(line);
   LogCommandParseResultList(command_parse_result_list);
-  int save_fd = error_handling_.SystemCallExitOnFailed(dup(STDOUT_FILENO));
+  int save_fd = error_handling_.ErrorSelector(dup(STDOUT_FILENO), FATAL_ERROR);
   struct CommandParseResult *built_In_Command_ptr = nullptr;
   std::vector<std::array<int, 2>> pipe_fds_list;
   if (command_parse_result_list.size() > 1) {
@@ -136,7 +139,7 @@ int CommandExecutor::Execute(const std::string &line) {
                           command_parse_result_list[i].args);
       }
     } else {
-      pid_t pid = error_handling_.SystemCallExitOnFailed(fork());
+      pid_t pid = error_handling_.ErrorSelector(fork(), FATAL_ERROR);
       if (pid == 0) {
         close(save_fd);
         return ProcessChild(command_parse_result_list[i], pipe_fds_list, i,
@@ -211,8 +214,8 @@ void CommandExecutor::PipeRedirectEnd(
     close(pipe_fds_list[i][1]);
   }
   close(pipe_fds_list[cmd_number - 1][1]);
-  error_handling_.SystemCallExitOnFailed(
-      dup2(pipe_fds_list[cmd_number - 1][0], STDIN_FILENO));
+  error_handling_.ErrorSelector(
+      dup2(pipe_fds_list[cmd_number - 1][0], STDIN_FILENO), FATAL_ERROR);
   close(pipe_fds_list[cmd_number - 1][0]);
 }
 
@@ -225,12 +228,12 @@ void CommandExecutor::PipeRedirectMiddle(
     }
   }
   close(pipe_fds_list[cmd_number - 1][1]);
-  error_handling_.SystemCallExitOnFailed(
-      dup2(pipe_fds_list[cmd_number - 1][0], STDIN_FILENO));
+  error_handling_.ErrorSelector(
+      dup2(pipe_fds_list[cmd_number - 1][0], STDIN_FILENO), FATAL_ERROR);
   close(pipe_fds_list[cmd_number - 1][0]);
   close(pipe_fds_list[cmd_number][0]);
-  error_handling_.SystemCallExitOnFailed(
-      dup2(pipe_fds_list[cmd_number][1], STDOUT_FILENO));
+  error_handling_.ErrorSelector(
+      dup2(pipe_fds_list[cmd_number][1], STDOUT_FILENO), FATAL_ERROR);
   close(pipe_fds_list[cmd_number][1]);
 }
 
@@ -241,8 +244,8 @@ void CommandExecutor::PipeRedirectFirst(
     close(pipe_fds_list[i][1]);
   }
   close(pipe_fds_list[0][0]);
-  error_handling_.SystemCallExitOnFailed(
-      dup2(pipe_fds_list[0][1], STDOUT_FILENO));
+  error_handling_.ErrorSelector(dup2(pipe_fds_list[0][1], STDOUT_FILENO),
+                                FATAL_ERROR);
   close(pipe_fds_list[0][1]);
 }
 void CommandExecutor::LogCommandParseResultList(
