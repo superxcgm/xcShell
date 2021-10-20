@@ -67,7 +67,7 @@ int Shell::Exit() {
 }
 
 std::string Shell::GeneratePrompt() {
-  auto pwd = utils::GetCurrentWorkingDirectory(std::cerr);
+  auto pwd = utils::GetCurrentWorkingDirectory(std::cerr, error_handling_);
   auto home = utils::GetHomeDir();
   std::string prompt_line;
   if (home == pwd) {
@@ -100,7 +100,7 @@ void Shell::IgnoreSignalInterrupt() {
   new_action.sa_handler = SIG_IGN;
   int result = sigaction(SIGINT, &new_action, nullptr);
   if (result) {
-    utils::PrintSystemError(std::cerr);
+    ErrorHandling::PrintSystemError(std::cerr);
   }
 }
 

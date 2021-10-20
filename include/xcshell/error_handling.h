@@ -5,9 +5,10 @@
 
 class ErrorHandling {
  private:
- public:
   static int SystemCallNoExitOnFailed(int return_value);
   static int SystemCallExitOnFailed();
+
+ public:
   static void PrintSystemError(std::ostream& os_err);
   static int ErrorSelector(int return_value, int error_type);
 };

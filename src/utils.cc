@@ -35,10 +35,11 @@ std::string utils::ReadFileText(const std::string& file_name) {
 std::vector<std::string> utils::Split(const std::string& str) {
   return Split(str, " ");
 }
-std::string utils::GetCurrentWorkingDirectory(std::ostream& os_err) {
+std::string utils::GetCurrentWorkingDirectory(
+    std::ostream& os_err, const ErrorHandling& error_handling_) {
   char buf[BUFSIZ];
   if (getcwd(buf, BUFSIZ) == nullptr) {
-    utils::PrintSystemError(os_err);
+    error_handling_.PrintSystemError(os_err);
     return "";
   }
   return buf;
@@ -62,9 +63,6 @@ std::string utils::GetHomeDir() {
   auto pw = getpwuid(getuid());  // NOLINT
   home_dir = pw->pw_dir;
   return home_dir;
-}
-void utils::PrintSystemError(std::ostream& os_err) {
-  os_err << strerror(errno) << std::endl;
 }
 
 int NextNonSpacePos(int start, const std::string& str) {
@@ -210,4 +208,3 @@ std::string utils::RightTrim(const std::string& str) {
 std::string utils::GenerateTmpFileName() {
   return "/tmp/xcShell_tmp_" + GetRandomString(10);
 }
-
