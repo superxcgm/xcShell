@@ -14,6 +14,7 @@
 #include <sstream>
 
 #include "xcshell/constants.h"
+#include "xcshell/error_handling.h"
 #include "xcshell/utils.h"
 
 void Shell::Init(int argc, char **argv) {

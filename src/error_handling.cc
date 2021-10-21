@@ -26,9 +26,9 @@ int ErrorHandling::ErrorDispatchHandler(int return_value,
                                         ErrorType error_type) {
   if (return_value == ERROR_CODE_SYSTEM) {
     switch (error_type) {
-      case FATAL_ERROR:
+      case ErrorHandling::ErrorType::FATAL_ERROR:
         SystemCallExitOnFailed();
-      case NORMAL_ERROR:
+      case ErrorHandling::ErrorType::NORMAL_ERROR:
         SystemCallNoExitOnFailed();
       default:
         break;

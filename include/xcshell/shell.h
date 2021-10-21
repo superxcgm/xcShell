@@ -6,7 +6,6 @@
 #include <vector>
 
 #include "xcshell/command_executor.h"
-#include "xcshell/error_handling.h"
 
 class Shell {
  public:

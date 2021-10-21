@@ -5,7 +5,6 @@
 #include <vector>
 
 #include "./build_in_command.h"
-#include "xcshell/error_handling.h"
 
 class Cd : public BuildInCommand {
  public:

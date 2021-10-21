@@ -14,19 +14,18 @@
 #include "xcshell/command_parse_result.h"
 #include "xcshell/constants.h"
 #include "xcshell/error_handling.h"
-#include "xcshell/utils.h"
 
 int CommandExecutor::GetFileDescriptor(const std::string &file_name,
                                        bool is_append) {
   int fd;
   if (is_append) {
-    fd = error_handling_.ErrorDispatchHandler(
+    fd = ErrorHandling::ErrorDispatchHandler(
         open(file_name.c_str(), O_WRONLY | O_APPEND | O_CREAT, 0664),
-        ErrorType::FATAL_ERROR);
+        ErrorHandling::ErrorType::FATAL_ERROR);
   } else {
-    fd = error_handling_.ErrorDispatchHandler(
+    fd = ErrorHandling::ErrorDispatchHandler(
         open(file_name.c_str(), O_WRONLY | O_TRUNC | O_CREAT, 0664),
-        ErrorType::FATAL_ERROR);
+        ErrorHandling::ErrorType::FATAL_ERROR);
   }
   return fd;
 }
@@ -35,8 +34,8 @@ void CommandExecutor::OutputRedirect(
     const CommandParseResult &command_parse_result) {
   int fd_out = GetFileDescriptor(command_parse_result.output_redirect_file,
                                  command_parse_result.output_is_append);
-  error_handling_.ErrorDispatchHandler(dup2(fd_out, STDOUT_FILENO),
-                                       ErrorType::FATAL_ERROR);
+  ErrorHandling::ErrorDispatchHandler(dup2(fd_out, STDOUT_FILENO),
+                                      ErrorHandling::ErrorType::FATAL_ERROR);
   close(fd_out);
 }
 
@@ -44,18 +43,18 @@ void CommandExecutor::ErrorOutputRedirect(
     const CommandParseResult &command_parse_result) {
   int fd_err = GetFileDescriptor(command_parse_result.error_redirect_file,
                                  command_parse_result.stderr_is_append);
-  error_handling_.ErrorDispatchHandler(dup2(fd_err, STDERR_FILENO),
-                                       ErrorType::FATAL_ERROR);
+  ErrorHandling::ErrorDispatchHandler(dup2(fd_err, STDERR_FILENO),
+                                      ErrorHandling::ErrorType::FATAL_ERROR);
   close(fd_err);
 }
 
 void CommandExecutor::InputRedirect(
     const CommandParseResult &command_parse_result) {
-  int fd_in = error_handling_.ErrorDispatchHandler(
+  int fd_in = ErrorHandling::ErrorDispatchHandler(
       open(command_parse_result.input_redirect_file.c_str(), O_RDONLY),
-      ErrorType::FATAL_ERROR);
-  error_handling_.ErrorDispatchHandler(dup2(fd_in, STDIN_FILENO),
-                                       ErrorType::FATAL_ERROR);
+      ErrorHandling::ErrorType::FATAL_ERROR);
+  ErrorHandling::ErrorDispatchHandler(dup2(fd_in, STDIN_FILENO),
+                                      ErrorHandling::ErrorType::FATAL_ERROR);
   close(fd_in);
 }
 
@@ -68,9 +67,9 @@ int CommandExecutor::ProcessChild(
                    is_last_command);
   auto argv =
       BuildArgv(command_parse_result.command, command_parse_result.args);
-  error_handling_.ErrorDispatchHandler(
+  ErrorHandling::ErrorDispatchHandler(
       execvp(command_parse_result.command.c_str(), &argv[0]),
-      ErrorType::NORMAL_ERROR);
+      ErrorHandling::ErrorType::NORMAL_ERROR);
   _exit(ERROR_CODE_DEFAULT);
 }
 
@@ -97,7 +96,7 @@ void CommandExecutor::ResetSignalHandlerForInterrupt() {
   new_action.sa_handler = SIG_DFL;
   int result = sigaction(SIGINT, &new_action, nullptr);
   if (result) {
-    error_handling_.PrintSystemError(std::cerr);
+    ErrorHandling::PrintSystemError(std::cerr);
   }
 }
 
@@ -114,8 +113,8 @@ std::vector<std::array<int, 2>> CommandExecutor::CreatePipe(
   auto pipe_number = command_parse_result_list.size() - 1;
   for (int i = 0; i < pipe_number; i++) {
     int pipe_fds[2];
-    error_handling_.ErrorDispatchHandler(pipe(pipe_fds),
-                                         ErrorType::FATAL_ERROR);
+    ErrorHandling::ErrorDispatchHandler(pipe(pipe_fds),
+                                        ErrorHandling::ErrorType::FATAL_ERROR);
     pipe_fds_list.push_back({pipe_fds[0], pipe_fds[1]});
   }
   return pipe_fds_list;
@@ -125,8 +124,8 @@ int CommandExecutor::Execute(const std::string &line) {
   std::vector<CommandParseResult> command_parse_result_list =
       parser_.ParseUserInputLine(line);
   LogCommandParseResultList(command_parse_result_list);
-  int save_fd = error_handling_.ErrorDispatchHandler(dup(STDOUT_FILENO),
-                                                     ErrorType::FATAL_ERROR);
+  int save_fd = ErrorHandling::ErrorDispatchHandler(
+      dup(STDOUT_FILENO), ErrorHandling::ErrorType::FATAL_ERROR);
   struct CommandParseResult *built_In_Command_ptr = nullptr;
   std::vector<std::array<int, 2>> pipe_fds_list;
   if (command_parse_result_list.size() > 1) {
@@ -145,8 +144,8 @@ int CommandExecutor::Execute(const std::string &line) {
                           command_parse_result_list[i].args);
       }
     } else {
-      pid_t pid =
-          error_handling_.ErrorDispatchHandler(fork(), ErrorType::FATAL_ERROR);
+      pid_t pid = ErrorHandling::ErrorDispatchHandler(
+          fork(), ErrorHandling::ErrorType::FATAL_ERROR);
       if (pid == 0) {
         close(save_fd);
         return ProcessChild(command_parse_result_list[i], pipe_fds_list, i,
@@ -221,9 +220,9 @@ void CommandExecutor::PipeRedirectEnd(
     close(pipe_fds_list[i][1]);
   }
   close(pipe_fds_list[cmd_number - 1][1]);
-  error_handling_.ErrorDispatchHandler(
+  ErrorHandling::ErrorDispatchHandler(
       dup2(pipe_fds_list[cmd_number - 1][0], STDIN_FILENO),
-      ErrorType::FATAL_ERROR);
+      ErrorHandling::ErrorType::FATAL_ERROR);
   close(pipe_fds_list[cmd_number - 1][0]);
 }
 
@@ -236,14 +235,14 @@ void CommandExecutor::PipeRedirectMiddle(
     }
   }
   close(pipe_fds_list[cmd_number - 1][1]);
-  error_handling_.ErrorDispatchHandler(
+  ErrorHandling::ErrorDispatchHandler(
       dup2(pipe_fds_list[cmd_number - 1][0], STDIN_FILENO),
-      ErrorType::FATAL_ERROR);
+      ErrorHandling::ErrorType::FATAL_ERROR);
   close(pipe_fds_list[cmd_number - 1][0]);
   close(pipe_fds_list[cmd_number][0]);
-  error_handling_.ErrorDispatchHandler(
+  ErrorHandling::ErrorDispatchHandler(
       dup2(pipe_fds_list[cmd_number][1], STDOUT_FILENO),
-      ErrorType::FATAL_ERROR);
+      ErrorHandling::ErrorType::FATAL_ERROR);
   close(pipe_fds_list[cmd_number][1]);
 }
 
@@ -254,8 +253,8 @@ void CommandExecutor::PipeRedirectFirst(
     close(pipe_fds_list[i][1]);
   }
   close(pipe_fds_list[0][0]);
-  error_handling_.ErrorDispatchHandler(dup2(pipe_fds_list[0][1], STDOUT_FILENO),
-                                       ErrorType::FATAL_ERROR);
+  ErrorHandling::ErrorDispatchHandler(dup2(pipe_fds_list[0][1], STDOUT_FILENO),
+                                      ErrorHandling::ErrorType::FATAL_ERROR);
   close(pipe_fds_list[0][1]);
 }
 void CommandExecutor::LogCommandParseResultList(

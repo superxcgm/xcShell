@@ -9,6 +9,8 @@
 #include <random>
 #include <string>
 
+#include "xcshell/error_handling.h"
+
 std::string utils::ExpandPath(const std::string& path) {
   if (path[0] == '~') {
     return GetHomeDir() + path.substr(1);
