@@ -1,17 +1,12 @@
 #include "xcshell/utils.h"
 
-#include <fcntl.h>
 #include <pwd.h>
 #include <spdlog/spdlog.h>
 #include <unistd.h>
-#include <xcshell/constants.h>
 
 #include <cstdio>
-#include <cstdlib>
-#include <cstring>
 #include <fstream>
 #include <random>
-#include <sstream>
 #include <string>
 
 std::string utils::ExpandPath(const std::string& path) {
@@ -35,11 +30,10 @@ std::string utils::ReadFileText(const std::string& file_name) {
 std::vector<std::string> utils::Split(const std::string& str) {
   return Split(str, " ");
 }
-std::string utils::GetCurrentWorkingDirectory(
-    std::ostream& os_err, const ErrorHandling& error_handling_) {
+std::string utils::GetCurrentWorkingDirectory(std::ostream& os_err) {
   char buf[BUFSIZ];
   if (getcwd(buf, BUFSIZ) == nullptr) {
-    error_handling_.PrintSystemError(os_err);
+    ErrorHandling::PrintSystemError(os_err);
     return "";
   }
   return buf;

@@ -14,9 +14,6 @@
 #define REDIRECT_INPUT "<"
 #define REDIRECT_PIPE "|"
 
-#define FATAL_ERROR 1
-#define NORMAL_ERROR 2
-
 #define GLOBAL_CONFIG_FILE "/etc/xcshrc"
 
 #define USER_CONFIG_FILE "~/.xcshrc"

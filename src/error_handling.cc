@@ -22,12 +22,16 @@ void ErrorHandling::SystemCallExitOnFailed() {
   exit(ERROR_CODE_DEFAULT);
 }
 
-int ErrorHandling::ErrorSelector(int return_value, int error_type) {
+int ErrorHandling::ErrorDispatchHandler(int return_value,
+                                        ErrorType error_type) {
   if (return_value == ERROR_CODE_SYSTEM) {
-    if (error_type == FATAL_ERROR) {
-      SystemCallExitOnFailed();
-    } else if (error_type == NORMAL_ERROR) {
-      SystemCallNoExitOnFailed();
+    switch (error_type) {
+      case FATAL_ERROR:
+        SystemCallExitOnFailed();
+      case NORMAL_ERROR:
+        SystemCallNoExitOnFailed();
+      default:
+        break;
     }
   }
   return return_value;

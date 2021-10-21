@@ -11,8 +11,7 @@ std::vector<std::string> Split(const std::string &str);
 std::vector<std::string> Split(const std::string &str,
                                const std::string &delim);
 std::vector<std::string> SplitArgs(const std::string &str);
-std::string GetCurrentWorkingDirectory(std::ostream &os_err,
-                                       const ErrorHandling &error_handling_);
+std::string GetCurrentWorkingDirectory(std::ostream &os_err);
 std::string GetLastDir(const std::string &path);
 std::string GetHomeDir();
 std::string ExpandPath(const std::string &path);

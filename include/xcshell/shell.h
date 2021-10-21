@@ -23,7 +23,6 @@ class Shell {
   void InitLog();
 
   CommandExecutor command_executor_;
-  ErrorHandling error_handling_;
 };
 
 #endif  // INCLUDE_XCSHELL_SHELL_H_

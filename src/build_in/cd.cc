@@ -26,7 +26,8 @@ int Cd::Execute(const std::vector<std::string> &args, std::ostream &os,
     }
   }
 
-  pre = utils::GetCurrentWorkingDirectory(os_err, error_handling_);
-  error_handling_.ErrorSelector(chdir(path.c_str()), NORMAL_ERROR);
+  pre = utils::GetCurrentWorkingDirectory(os_err);
+  ErrorHandling::ErrorDispatchHandler(chdir(path.c_str()),
+                                      ErrorType::NORMAL_ERROR);
   return 0;
 }
