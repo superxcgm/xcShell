@@ -27,6 +27,14 @@ std::string GetBranchName(CommandExecutor *commandExecutor);
 std::string GetRandomString(int len);
 std::string GenerateTmpFileName();
 void StorageCatalogHistoryInFile(const std::string &pwd);
+std::unordered_map<std::string, int> ReadFileWithMap(
+    const std::string &xcShell_storage_catalog_file, const std::string &pwd);
+void InsertCurrentCatalogInMap(
+    const std::string &pwd,
+     std::unordered_map<std::string, int> *catalog_and_weights_map);
+void UpdateCatalogFileByMap(
+    const std::string &xcShell_storage_catalog_file,
+    const std::unordered_map<std::string, int> &catalog_and_weights_map);
 }  // namespace utils
 
 #endif  // INCLUDE_XCSHELL_UTILS_H_
