@@ -1,18 +1,15 @@
 #include "xcshell/utils.h"
 
-#include <fcntl.h>
 #include <pwd.h>
 #include <spdlog/spdlog.h>
 #include <unistd.h>
-#include <xcshell/constants.h>
 
 #include <cstdio>
-#include <cstdlib>
-#include <cstring>
 #include <fstream>
 #include <random>
-#include <sstream>
 #include <string>
+
+#include "xcshell/error_handling.h"
 
 std::string utils::ExpandPath(const std::string& path) {
   if (path[0] == '~') {
@@ -38,7 +35,7 @@ std::vector<std::string> utils::Split(const std::string& str) {
 std::string utils::GetCurrentWorkingDirectory(std::ostream& os_err) {
   char buf[BUFSIZ];
   if (getcwd(buf, BUFSIZ) == nullptr) {
-    utils::PrintSystemError(os_err);
+    ErrorHandling::PrintSystemError(os_err);
     return "";
   }
   return buf;
@@ -62,9 +59,6 @@ std::string utils::GetHomeDir() {
   auto pw = getpwuid(getuid());  // NOLINT
   home_dir = pw->pw_dir;
   return home_dir;
-}
-void utils::PrintSystemError(std::ostream& os_err) {
-  os_err << strerror(errno) << std::endl;
 }
 
 int NextNonSpacePos(int start, const std::string& str) {
@@ -209,17 +203,4 @@ std::string utils::RightTrim(const std::string& str) {
 }
 std::string utils::GenerateTmpFileName() {
   return "/tmp/xcShell_tmp_" + GetRandomString(10);
-}
-int utils::SystemCallNoExitOnFailed(int return_value) {
-  if (return_value == ERROR_CODE_SYSTEM) {
-    utils::PrintSystemError(std::cerr);
-  }
-  return return_value;
-}
-int utils::SystemCallExitOnFailed(int return_value) {
-  if (return_value == ERROR_CODE_SYSTEM) {
-    utils::PrintSystemError(std::cerr);
-    exit(ERROR_CODE_DEFAULT);
-  }
-  return return_value;
 }

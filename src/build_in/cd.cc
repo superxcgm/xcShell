@@ -5,6 +5,7 @@
 #include <iostream>
 
 #include "xcshell/constants.h"
+#include "xcshell/error_handling.h"
 #include "xcshell/utils.h"
 
 int Cd::Execute(const std::vector<std::string> &args, std::ostream &os,
@@ -27,7 +28,7 @@ int Cd::Execute(const std::vector<std::string> &args, std::ostream &os,
   }
 
   pre = utils::GetCurrentWorkingDirectory(os_err);
-
-  utils::SystemCallNoExitOnFailed(chdir(path.c_str()));
+  ErrorHandling::ErrorDispatchHandler(chdir(path.c_str()),
+                                      ErrorHandling::ErrorType::NORMAL_ERROR);
   return 0;
 }

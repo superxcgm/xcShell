@@ -14,6 +14,7 @@
 #include <sstream>
 
 #include "xcshell/constants.h"
+#include "xcshell/error_handling.h"
 #include "xcshell/utils.h"
 
 void Shell::Init(int argc, char **argv) {
@@ -100,7 +101,7 @@ void Shell::IgnoreSignalInterrupt() {
   new_action.sa_handler = SIG_IGN;
   int result = sigaction(SIGINT, &new_action, nullptr);
   if (result) {
-    utils::PrintSystemError(std::cerr);
+    ErrorHandling::PrintSystemError(std::cerr);
   }
 }
 
