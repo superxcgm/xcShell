@@ -2,6 +2,7 @@
 #define INCLUDE_XCSHELL_UTILS_H_
 
 #include <string>
+#include <unordered_map>
 #include <vector>
 
 #include "xcshell/command_executor.h"
@@ -25,6 +26,7 @@ std::string GetCommandExecuteResult(CommandExecutor *commandExecutor,
 std::string GetBranchName(CommandExecutor *commandExecutor);
 std::string GetRandomString(int len);
 std::string GenerateTmpFileName();
+void StorageCatalogHistoryInFile(const std::string &pwd);
 }  // namespace utils
 
 #endif  // INCLUDE_XCSHELL_UTILS_H_

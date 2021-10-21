@@ -204,3 +204,36 @@ std::string utils::RightTrim(const std::string& str) {
 std::string utils::GenerateTmpFileName() {
   return "/tmp/xcShell_tmp_" + GetRandomString(10);
 }
+
+void utils::StorageCatalogHistoryInFile(const std::string& pwd) {
+  std::string xcShell_storage_catalog_file =
+      "/tmp/xcShell_storage_catalog_file";
+  char buf[BUFSIZ];
+  std::unordered_map<std::string, int> catalog_history_map;
+  std::ifstream in(xcShell_storage_catalog_file);
+  int line = 0;
+  while (in.getline(buf, BUFSIZ)) {
+    std::vector<std::string> contents_and_weights = utils::Split(buf, " ");
+    catalog_history_map.insert(std::make_pair(
+        contents_and_weights[0], atoi(contents_and_weights[1].c_str())));
+    line++;
+  }
+  auto item = catalog_history_map.begin();
+  for (; item != catalog_history_map.end(); item++) {
+    if (item->first == pwd) {
+      item->second++;
+    }
+  }
+  if (catalog_history_map.count(pwd) == 0) {
+    catalog_history_map.insert(std::make_pair(pwd, 1));
+  }
+
+  std::ofstream file_writer(xcShell_storage_catalog_file, std::ios_base::out);
+  std::ofstream os;
+  item = catalog_history_map.begin();
+  os.open(xcShell_storage_catalog_file, std::ios::app);
+  for (; item != catalog_history_map.end(); item++) {
+    os << item->first + " " << item->second << std::endl;
+  }
+  os.close();
+}

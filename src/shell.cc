@@ -11,6 +11,8 @@
 #include <spdlog/spdlog.h>
 
 #include <csignal>
+#include <cstdlib>
+#include <iostream>
 #include <sstream>
 
 #include "xcshell/constants.h"
@@ -69,6 +71,7 @@ int Shell::Exit() {
 
 std::string Shell::GeneratePrompt() {
   auto pwd = utils::GetCurrentWorkingDirectory(std::cerr);
+  utils::StorageCatalogHistoryInFile(pwd);
   auto home = utils::GetHomeDir();
   std::string prompt_line;
   if (home == pwd) {
