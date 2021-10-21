@@ -1,4 +1,4 @@
-#include "xcshell/build_in/cd.h"
+#include "xcshell/build_in/j.h"
 
 #include <unistd.h>
 
@@ -8,8 +8,8 @@
 #include "xcshell/error_handling.h"
 #include "xcshell/utils.h"
 
-int Cd::Execute(const std::vector<std::string> &args, std::ostream &os,
-                std::ostream &os_err) {
+int J::Execute(const std::vector<std::string> &args, std::ostream &os,
+               std::ostream &os_err) {
   static std::string pre;
   if (args.size() > 1) {
     os_err << "invalid args" << std::endl;
