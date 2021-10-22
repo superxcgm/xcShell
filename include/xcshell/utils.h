@@ -27,15 +27,15 @@ std::string GetCommandExecuteResult(CommandExecutor *commandExecutor,
 std::string GetBranchName(CommandExecutor *commandExecutor);
 std::string GetRandomString(int len);
 std::string GenerateTmpFileName();
-void StorageCatalogHistoryInFile(const std::string &pwd);
+void StorageDirectoryHistoryInFile(const std::string &pwd);
 std::unordered_map<std::string, int> ReadFileWithMap(const std::string &pwd);
-void AddCurrentCatalogInMap(
+void AddCurrentDirectoryInMap(
     const std::string &pwd,
-    std::unordered_map<std::string, int> *catalog_and_weights_map);
-void UpdateCatalogFileByVector(
-    const std::vector<std::pair<std::string, int>> &catalog_and_weights_list);
+    std::unordered_map<std::string, int> *directory_and_weights_map);
+void UpdateDirectoryFileByVector(
+    const std::vector<std::pair<std::string, int>> &directory_and_weights_list);
 std::vector<std::pair<std::string, int>> SortWithMapValueByVector(
-    const std::unordered_map<std::string, int> &catalog_and_weights_map);
+    const std::unordered_map<std::string, int> &directory_and_weights_map);
 std::vector<std::pair<std::string, int>> ReadFileWithVector(
     const std::string &pwd);
 }  // namespace utils

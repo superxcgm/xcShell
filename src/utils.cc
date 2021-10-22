@@ -208,33 +208,33 @@ std::string utils::GenerateTmpFileName() {
 }
 
 std::vector<std::pair<std::string, int>> utils::SortWithMapValueByVector(
-    const std::unordered_map<std::string, int>& catalog_and_weights_map) {
-  std::vector<std::pair<std::string, int>> catalog_and_weights_list(
-      catalog_and_weights_map.begin(), catalog_and_weights_map.end());
-  sort(catalog_and_weights_list.begin(), catalog_and_weights_list.end(),
+    const std::unordered_map<std::string, int>& directory_and_weights_map) {
+  std::vector<std::pair<std::string, int>> directory_and_weights_list(
+      directory_and_weights_map.begin(), directory_and_weights_map.end());
+  sort(directory_and_weights_list.begin(), directory_and_weights_list.end(),
        [](const std::pair<std::string, int>& x,
           const std::pair<std::string, int>& y) -> int {
          return x.second > y.second;
        });
-  return catalog_and_weights_list;
+  return directory_and_weights_list;
 }
 
-void utils::StorageCatalogHistoryInFile(const std::string& pwd) {
-  auto catalog_and_weights_map = utils::ReadFileWithMap(pwd);
-  utils::AddCurrentCatalogInMap(pwd, &catalog_and_weights_map);
-  std::vector<std::pair<std::string, int>> catalog_and_weights_list =
-      utils::SortWithMapValueByVector(catalog_and_weights_map);
-  utils::UpdateCatalogFileByVector(catalog_and_weights_list);
+void utils::StorageDirectoryHistoryInFile(const std::string& pwd) {
+  auto directory_and_weights_map = utils::ReadFileWithMap(pwd);
+  utils::AddCurrentDirectoryInMap(pwd, &directory_and_weights_map);
+  std::vector<std::pair<std::string, int>> directory_and_weights_list =
+      utils::SortWithMapValueByVector(directory_and_weights_map);
+  utils::UpdateDirectoryFileByVector(directory_and_weights_list);
 }
 
-void utils::AddCurrentCatalogInMap(
+void utils::AddCurrentDirectoryInMap(
     const std::string& pwd,
-    std::unordered_map<std::string, int>* catalog_and_weights_map) {
-  auto item = catalog_and_weights_map->begin();
-  if (catalog_and_weights_map->count(pwd) == 0) {
-    catalog_and_weights_map->insert(std::make_pair(pwd, 1));
+    std::unordered_map<std::string, int>* directory_and_weights_map) {
+  auto item = directory_and_weights_map->begin();
+  if (directory_and_weights_map->count(pwd) == 0) {
+    directory_and_weights_map->insert(std::make_pair(pwd, 1));
   } else {
-    for (; item != catalog_and_weights_map->end(); item++) {
+    for (; item != directory_and_weights_map->end(); item++) {
       if (item->first == pwd) {
         item->second++;
       }
@@ -245,40 +245,41 @@ void utils::AddCurrentCatalogInMap(
 std::unordered_map<std::string, int> utils::ReadFileWithMap(
     const std::string& pwd) {
   char buf[BUFSIZ];
-  std::unordered_map<std::string, int> catalog_and_weights_map;
-  std::ifstream in(XCSHELL_STORAGE_CATALOG_FILE);
+  std::unordered_map<std::string, int> directory_and_weights_map;
+  std::ifstream in(STORAGE_DIRECTORY_FILE);
   int line = 0;
   while (in.getline(buf, BUFSIZ)) {
-    std::vector<std::string> contents_and_weights = utils::Split(buf, " ");
-    catalog_and_weights_map.insert(std::make_pair(
-        contents_and_weights[0], atoi(contents_and_weights[1].c_str())));
+    std::vector<std::string> directory_and_weights = utils::Split(buf, " ");
+    directory_and_weights_map.insert(std::make_pair(
+        directory_and_weights[0], atoi(directory_and_weights[1].c_str())));
     line++;
   }
-  return catalog_and_weights_map;
+  return directory_and_weights_map;
 }
 
 std::vector<std::pair<std::string, int>> utils::ReadFileWithVector(
     const std::string& pwd) {
   char buf[BUFSIZ];
-  std::vector<std::pair<std::string, int>> catalog_and_weights_list;
-  std::ifstream in(XCSHELL_STORAGE_CATALOG_FILE);
+  std::vector<std::pair<std::string, int>> directory_and_weights_list;
+  std::ifstream in(STORAGE_DIRECTORY_FILE);
   int line = 0;
   while (in.getline(buf, BUFSIZ)) {
-    std::vector<std::string> contents_and_weights = utils::Split(buf, " ");
-    catalog_and_weights_list.emplace_back(std::make_pair(
-        contents_and_weights[0], atoi(contents_and_weights[1].c_str())));
+    std::vector<std::string> directory_and_weights = utils::Split(buf, " ");
+    directory_and_weights_list.emplace_back(std::make_pair(
+        directory_and_weights[0], atoi(directory_and_weights[1].c_str())));
     line++;
   }
-  return catalog_and_weights_list;
+  return directory_and_weights_list;
 }
 
-void utils::UpdateCatalogFileByVector(
-    const std::vector<std::pair<std::string, int>>& catalog_and_weights_list) {
-  std::ofstream file_empty(XCSHELL_STORAGE_CATALOG_FILE, std::ios_base::out);
+void utils::UpdateDirectoryFileByVector(
+    const std::vector<std::pair<std::string, int>>&
+        directory_and_weights_list) {
+  std::ofstream file_empty(STORAGE_DIRECTORY_FILE, std::ios_base::out);
   std::ofstream os;
-  auto item = catalog_and_weights_list.begin();
-  os.open(XCSHELL_STORAGE_CATALOG_FILE, std::ios::app);
-  for (; item != catalog_and_weights_list.end(); item++) {
+  auto item = directory_and_weights_list.begin();
+  os.open(STORAGE_DIRECTORY_FILE, std::ios::app);
+  for (; item != directory_and_weights_list.end(); item++) {
     os << item->first + " " << item->second << std::endl;
   }
   os.close();
