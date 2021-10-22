@@ -3,4 +3,10 @@ xcShell_functional_test > j foo
 foo > j ..
 xcShell_functional_test > j fo
 foo > j ..
+xcShell_functional_test > j /
+/ > j /tmp/xcShell_functional_test/foo
+foo > j ..
+xcShell_functional_test > j /
+/ > j fo
+foo > j ..
 xcShell_functional_test > 

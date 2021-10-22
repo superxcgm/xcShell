@@ -1,3 +1,5 @@
 xcShell_functional_test > x
 No such file or directory
+xcShell_functional_test > cd ~/Documents/
+Documents > cd -
 xcShell_functional_test > 

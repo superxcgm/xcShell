@@ -3,3 +3,9 @@ j foo
 j ..
 j fo
 j ..
+j /
+j /tmp/xcShell_functional_test/foo
+j ..
+j /
+j fo
+j ..
