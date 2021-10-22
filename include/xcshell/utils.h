@@ -35,6 +35,8 @@ void UpdateCatalogFileByVector(
     const std::vector<std::pair<std::string, int>> &catalog_and_weights_list);
 std::vector<std::pair<std::string, int>> SortWithMapValueByVector(
     const std::unordered_map<std::string, int> &catalog_and_weights_map);
+std::vector<std::pair<std::string, int>> ReadFileWithVector(
+    const std::string &pwd);
 }  // namespace utils
 
 #endif  // INCLUDE_XCSHELL_UTILS_H_

@@ -257,6 +257,21 @@ std::unordered_map<std::string, int> utils::ReadFileWithMap(
   return catalog_and_weights_map;
 }
 
+std::vector<std::pair<std::string, int>> utils::ReadFileWithVector(
+    const std::string& pwd) {
+  char buf[BUFSIZ];
+  std::vector<std::pair<std::string, int>> catalog_and_weights_list;
+  std::ifstream in(XCSHELL_STORAGE_CATALOG_FILE);
+  int line = 0;
+  while (in.getline(buf, BUFSIZ)) {
+    std::vector<std::string> contents_and_weights = utils::Split(buf, " ");
+    catalog_and_weights_list.emplace_back(std::make_pair(
+        contents_and_weights[0], atoi(contents_and_weights[1].c_str())));
+    line++;
+  }
+  return catalog_and_weights_list;
+}
+
 void utils::UpdateCatalogFileByVector(
     const std::vector<std::pair<std::string, int>>& catalog_and_weights_list) {
   std::ofstream file_empty(XCSHELL_STORAGE_CATALOG_FILE, std::ios_base::out);
