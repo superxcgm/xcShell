@@ -1,5 +1,5 @@
-#ifndef XCSHELL_J_H
-#define XCSHELL_J_H
+#ifndef INCLUDE_XCSHELL_BUILD_IN_J_H_
+#define INCLUDE_XCSHELL_BUILD_IN_J_H_
 
 #include <string>
 #include <vector>
@@ -13,4 +13,4 @@ class J : public BuildInCommand {
   std::string GetName() { return "j"; }
   ~J() {}
 };
-#endif  // XCSHELL_J_H
+#endif  // INCLUDE_XCSHELL_BUILD_IN_J_H_
