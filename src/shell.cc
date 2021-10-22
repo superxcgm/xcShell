@@ -11,8 +11,6 @@
 #include <spdlog/spdlog.h>
 
 #include <csignal>
-#include <cstdlib>
-#include <iostream>
 #include <sstream>
 
 #include "xcshell/constants.h"

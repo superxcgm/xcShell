@@ -284,3 +284,16 @@ void utils::UpdateDirectoryFileByVector(
   }
   os.close();
 }
+
+std::string utils::GetFuzzyMatchingDirectory(std::string path) {
+  std::vector<std::pair<std::string, int>> directory_and_weights_list =
+      utils::ReadFileWithVector(utils::GetCurrentWorkingDirectory(std::cerr));
+  for (const auto& item : directory_and_weights_list) {
+    std::string last_directory = utils::GetLastDir(item.first);
+    if (last_directory.find(path) != std::string::npos) {
+      path = item.first;
+      break;
+    }
+  }
+  return path;
+}

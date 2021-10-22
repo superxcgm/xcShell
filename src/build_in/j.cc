@@ -26,17 +26,7 @@ int J::Execute(const std::vector<std::string> &args, std::ostream &os,
       path = ".";
     }
   }
-
-  std::vector<std::pair<std::string, int>> catalog_and_weights_list =
-      utils::ReadFileWithVector(utils::GetCurrentWorkingDirectory(std::cerr));
-  for (const auto &item : catalog_and_weights_list) {
-    std::string last_directory = utils::GetLastDir(item.first);
-    if (last_directory.find(path) != std::string::npos) {
-      path = item.first;
-      break;
-    }
-  }
-
+  path = utils::GetFuzzyMatchingDirectory(path);
   pre = utils::GetCurrentWorkingDirectory(os_err);
   ErrorHandling::ErrorDispatchHandler(chdir(path.c_str()),
                                       ErrorHandling::ErrorType::NORMAL_ERROR);

@@ -38,6 +38,7 @@ std::vector<std::pair<std::string, int>> SortWithMapValueByVector(
     const std::unordered_map<std::string, int> &directory_and_weights_map);
 std::vector<std::pair<std::string, int>> ReadFileWithVector(
     const std::string &pwd);
+std::string GetFuzzyMatchingDirectory(std::string path);
 }  // namespace utils
 
 #endif  // INCLUDE_XCSHELL_UTILS_H_
