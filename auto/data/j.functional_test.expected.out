@@ -1,0 +1,6 @@
+xcShell_functional_test > mkdir foo
+xcShell_functional_test > j foo
+foo > j ..
+xcShell_functional_test > j fo
+foo > j ..
+xcShell_functional_test > 
