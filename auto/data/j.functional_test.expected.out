@@ -7,4 +7,6 @@ foo > cd
 foo > j xc
 xcShell_functional_test > j /tmp/xcShell_functional_test/foo
 foo > j xc
+xcShell_functional_test > j /
+/ > j -
 xcShell_functional_test > 

@@ -18,12 +18,15 @@ class J : public BuildInCommand {
   std::string GetFuzzyMatchingDirectory(std::string path);
   const std::string cd_history =
       utils::GetHomeDir().append("/.xcShell/cd_history.txt");
-
+  const std::string cd_history_path =
+      utils::GetHomeDir().append("/.xcShell");
  public:
+  J();
   int Execute(const std::vector<std::string>& args, std::ostream& os,
               std::ostream& os_err);
   std::string GetName() { return "j"; }
   void StorageDirectoryHistoryInFile(const std::string& path);
   ~J() {}
+  void CreateCdHistory() const;
 };
 #endif  // INCLUDE_XCSHELL_BUILD_IN_J_H_

@@ -1,6 +1,5 @@
 #include "xcshell/build_in/j.h"
 
-#include <dirent.h>
 #include <fcntl.h>
 #include <sys/stat.h>
 #include <unistd.h>
@@ -58,13 +57,7 @@ std::vector<std::pair<std::string, int>> J::SortWithMapValueByVector() {
 }
 
 void J::ReadHistoryFile() {
-  std::string home_path = utils::GetHomeDir();
-  if (access((home_path + "/.xcShell").c_str(), F_OK) == -1) {
-    ErrorHandling::ErrorDispatchHandler(
-        mkdir((home_path + "/.xcShell").c_str(), S_IRWXU | O_WRONLY),
-        ErrorHandling::ErrorType::FATAL_ERROR);
-    std::ofstream file(cd_history.c_str());
-  }
+  CreateCdHistory();
   char buf[BUFSIZ];
   std::ifstream in(cd_history.c_str());
   int line = 0;
@@ -76,16 +69,22 @@ void J::ReadHistoryFile() {
   }
 }
 
-void J::UpdateDirectoryFileByVector() {
-  std::string home_path = utils::GetHomeDir();
-  std::ofstream file_empty(cd_history.c_str(), std::ios_base::out);
-  std::ofstream os;
-  auto item = directory_and_weights_list.begin();
-  os.open(cd_history, std::ios::app);
-  for (; item != directory_and_weights_list.end(); item++) {
-    os << item->first + " " << item->second << std::endl;
+void J::CreateCdHistory() const {
+  if (access(cd_history_path.c_str(), F_OK) == -1) {
+    ErrorHandling::ErrorDispatchHandler(mkdir(cd_history_path.c_str(), S_IRWXU),
+                                        ErrorHandling::ErrorType::FATAL_ERROR);
+    std::ofstream file(cd_history.c_str());
   }
-  os.close();
+}
+
+void J::UpdateDirectoryFileByVector() {
+  std::ofstream file_empty(cd_history.c_str(), std::ios_base::out);
+  std::ofstream update_file(cd_history, std::ios::app);
+  auto item = directory_and_weights_list.begin();
+  for (; item != directory_and_weights_list.end(); item++) {
+    update_file << item->first + " " << item->second << std::endl;
+  }
+  update_file.close();
 }
 
 std::string J::GetFuzzyMatchingDirectory(std::string path) {
@@ -97,4 +96,8 @@ std::string J::GetFuzzyMatchingDirectory(std::string path) {
     }
   }
   return path;
+}
+J::J() {
+  ReadHistoryFile();
+  directory_and_weights_list = SortWithMapValueByVector();
 }
