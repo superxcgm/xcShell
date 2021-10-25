@@ -1,5 +1,6 @@
 #include "xcshell/build_in/j.h"
 
+#include <sys/stat.h>
 #include <unistd.h>
 
 #include <fstream>
@@ -37,11 +38,9 @@ int J::Execute(const std::vector<std::string>& args, std::ostream& os,
 }
 
 void J::StorageDirectoryHistoryInFile(const std::string& path) {
-  xcShell_mutex_.lock();
   ReadHistoryFile();
   directory_and_weights_map_[path]++;
   UpdateDirectoryFileByVector();
-  xcShell_mutex_.unlock();
 }
 
 void J::ReadHistoryFile() {
