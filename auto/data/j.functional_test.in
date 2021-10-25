@@ -1,11 +1,11 @@
-j
-j -
 mkdir foo
 j foo
-cd
-j fo
-j xc
-j /tmp/xcShell_functional_test/foo
-j xc
+j ..
+j ~
+j -
 j /
 j -
+cd foo
+cd /tmp/xcShell_functional_test
+j fo
+j xc

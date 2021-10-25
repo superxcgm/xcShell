@@ -1,12 +1,12 @@
-xcShell_functional_test > j
-~ > j -
 xcShell_functional_test > mkdir foo
 xcShell_functional_test > j foo
-foo > cd
-~ > j fo
-foo > j xc
-xcShell_functional_test > j /tmp/xcShell_functional_test/foo
-foo > j xc
+foo > j ..
+xcShell_functional_test > j ~
+~ > j -
 xcShell_functional_test > j /
 / > j -
+xcShell_functional_test > cd foo
+foo > cd /tmp/xcShell_functional_test
+xcShell_functional_test > j fo
+foo > j xc
 xcShell_functional_test > 
