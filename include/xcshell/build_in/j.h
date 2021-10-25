@@ -1,6 +1,7 @@
 #ifndef INCLUDE_XCSHELL_BUILD_IN_J_H_
 #define INCLUDE_XCSHELL_BUILD_IN_J_H_
 
+#include <mutex>
 #include <string>
 #include <utility>
 #include <vector>
