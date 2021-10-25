@@ -1,7 +1,5 @@
 #include "xcshell/build_in/j.h"
 
-#include <fcntl.h>
-#include <sys/stat.h>
 #include <unistd.h>
 
 #include <fstream>
@@ -59,13 +57,14 @@ std::vector<std::pair<std::string, int>> J::SortWithMapValueByVector() {
 }
 
 void J::ReadHistoryFile() {
-  char buf[BUFSIZ];
-  std::ifstream in(cd_history.c_str());
+  std::string buf;
+  std::ifstream in(cd_history.c_str(), std::ios::in);
   int line = 0;
-  while (in.getline(buf, BUFSIZ)) {
+  while (getline(in, buf)) {
     std::vector<std::string> directory_and_weights = utils::Split(buf, " ");
-    directory_and_weights_map.insert(std::make_pair(
-        directory_and_weights[0], atoi(directory_and_weights[1].c_str())));
+    directory_and_weights_map.insert(
+        std::make_pair(directory_and_weights[0],
+                       utils::atoi(directory_and_weights[1].c_str())));
     line++;
   }
 }
