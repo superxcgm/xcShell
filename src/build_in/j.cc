@@ -48,11 +48,11 @@ void J::StorageDirectoryHistoryInFile(const std::string& path) {
 std::vector<std::pair<std::string, int>> J::SortWithMapValueByVector() {
   std::vector<std::pair<std::string, int>> directory_and_weights(
       directory_and_weights_map.begin(), directory_and_weights_map.end());
-  std::sort(directory_and_weights.begin(), directory_and_weights.end(),
-            [](const std::pair<std::string, int>& x,
-               const std::pair<std::string, int>& y) -> int {
-              return x.second > y.second;
-            });
+  std::sort(
+      directory_and_weights_list.begin(), directory_and_weights_list.end(),
+      [=](std::pair<std::string, int>& x, std::pair<std::string, int>& y) {
+        return x.second > y.second;
+      });
   return directory_and_weights;
 }
 
