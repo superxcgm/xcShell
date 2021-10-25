@@ -20,8 +20,7 @@
 
 #define USER_CONFIG_FILE "~/.xcshrc"
 
-const std::string cd_history =
-    utils::GetHomeDir().append("/.xcShell/cd_history.txt");
-const std::string cd_history_path = utils::GetHomeDir().append("/.xcShell");
+#define CD_HISTORY utils::GetHomeDir().append("/.xcShell/cd_history.txt")
+#define CD_HISTORY_PATH utils::GetHomeDir().append("/.xcShell")
 
 #endif  // INCLUDE_XCSHELL_CONSTANTS_H_

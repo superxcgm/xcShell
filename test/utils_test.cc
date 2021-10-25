@@ -194,3 +194,15 @@ TEST(UtilsTest, GenerateTmpFileName_ShouldGenerateFileInTmpDir) {
 
   EXPECT_EQ(filename.find("/tmp/"), 0);
 }
+
+TEST(UtilsTest, Atoi_ShouldReturnNumberIfInputNull) {
+  auto parts = utils::Atoi("");
+
+  EXPECT_EQ(0, parts);
+}
+
+TEST(UtilsTest, Atoi_ShouldReturnNumberWithCorrect) {
+  auto parts = utils::Atoi("5");
+
+  EXPECT_EQ(5, parts);
+}

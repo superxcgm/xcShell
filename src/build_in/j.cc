@@ -58,20 +58,20 @@ std::vector<std::pair<std::string, int>> J::SortWithMapValueByVector() {
 
 void J::ReadHistoryFile() {
   std::string buf;
-  std::ifstream in(cd_history.c_str(), std::ios::in);
+  std::ifstream in(CD_HISTORY.c_str(), std::ios::in);
   int line = 0;
   while (getline(in, buf)) {
     std::vector<std::string> directory_and_weights = utils::Split(buf, " ");
     directory_and_weights_map.insert(
         std::make_pair(directory_and_weights[0],
-                       utils::atoi(directory_and_weights[1].c_str())));
+                       utils::Atoi(directory_and_weights[1].c_str())));
     line++;
   }
 }
 
 void J::UpdateDirectoryFileByVector() {
-  std::ofstream file_empty(cd_history.c_str(), std::ios_base::out);
-  std::ofstream update_file(cd_history, std::ios::app);
+  std::ofstream file_empty(CD_HISTORY.c_str(), std::ios_base::out);
+  std::ofstream update_file(CD_HISTORY, std::ios::app);
   auto item = directory_and_weights_list.begin();
   for (; item != directory_and_weights_list.end(); item++) {
     update_file << item->first + " " << item->second << std::endl;

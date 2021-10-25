@@ -205,7 +205,7 @@ std::string utils::GenerateTmpFileName() {
   return "/tmp/xcShell_tmp_" + GetRandomString(10);
 }
 
-int utils::atoi(const char* str) {
+int utils::Atoi(const char* str) {
   if (nullptr == str) return 0;
   int ret = 0;
   while (0 != *str) {

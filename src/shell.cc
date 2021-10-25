@@ -117,9 +117,9 @@ void Shell::InitLog() {
 }
 
 void Shell::CreateCdHistory() {
-  if (access(cd_history_path.c_str(), F_OK) == -1) {
-    ErrorHandling::ErrorDispatchHandler(mkdir(cd_history_path.c_str(), S_IRWXU),
+  if (access(CD_HISTORY_PATH.c_str(), F_OK) == -1) {
+    ErrorHandling::ErrorDispatchHandler(mkdir(CD_HISTORY_PATH.c_str(), S_IRWXU),
                                         ErrorHandling::ErrorType::FATAL_ERROR);
-    std::ofstream file(cd_history.c_str());
+    std::ofstream file(CD_HISTORY.c_str());
   }
 }
