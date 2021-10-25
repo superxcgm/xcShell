@@ -4,7 +4,6 @@
 
 #include <fstream>
 #include <iostream>
-#include <mutex>
 #include <string>
 #include <unordered_map>
 
@@ -49,12 +48,11 @@ void J::StorageDirectoryHistoryInFile(const std::string& path) {
 std::vector<std::pair<std::string, int>> J::SortWithMapValueByVector() {
   std::vector<std::pair<std::string, int>> directory_and_weights(
       directory_and_weights_map.begin(), directory_and_weights_map.end());
-  sort(directory_and_weights.begin(), directory_and_weights.end(),
-       [](const std::pair<std::string, int>& x,
-          const std::pair<std::string, int>& y) -> int {
-         return x.second > y.second;
-       });
-  sor
+  std::sort(directory_and_weights.begin(), directory_and_weights.end(),
+            [](const std::pair<std::string, int>& x,
+               const std::pair<std::string, int>& y) -> int {
+              return x.second > y.second;
+            });
   return directory_and_weights;
 }
 
