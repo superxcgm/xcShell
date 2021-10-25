@@ -39,10 +39,12 @@ int J::Execute(const std::vector<std::string>& args, std::ostream& os,
 }
 
 void J::StorageDirectoryHistoryInFile(const std::string& path) {
+  xcShell_mutex.lock();
   ReadHistoryFile();
   directory_and_weights_map[path]++;
   directory_and_weights_list = SortWithMapValueByVector();
   UpdateDirectoryFileByVector();
+  xcShell_mutex.unlock();
 }
 
 std::vector<std::pair<std::string, int>> J::SortWithMapValueByVector() {
@@ -57,7 +59,6 @@ std::vector<std::pair<std::string, int>> J::SortWithMapValueByVector() {
 }
 
 void J::ReadHistoryFile() {
-  CreateCdHistory();
   char buf[BUFSIZ];
   std::ifstream in(cd_history.c_str());
   int line = 0;
@@ -66,14 +67,6 @@ void J::ReadHistoryFile() {
     directory_and_weights_map.insert(std::make_pair(
         directory_and_weights[0], atoi(directory_and_weights[1].c_str())));
     line++;
-  }
-}
-
-void J::CreateCdHistory() const {
-  if (access(cd_history_path.c_str(), F_OK) == -1) {
-    ErrorHandling::ErrorDispatchHandler(mkdir(cd_history_path.c_str(), S_IRWXU),
-                                        ErrorHandling::ErrorType::FATAL_ERROR);
-    std::ofstream file(cd_history.c_str());
   }
 }
 
