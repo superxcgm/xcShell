@@ -43,9 +43,11 @@ void J::StorageDirectoryHistoryInFile(const std::string& path) {
   int fd = ErrorHandling::ErrorDispatchHandler(
       open(CD_HISTORY.c_str(), O_WRONLY, 0664),
       ErrorHandling::ErrorType::FATAL_ERROR);
-  flock(fd, LOCK_EX);
+  ErrorHandling::ErrorDispatchHandler(flock(fd, LOCK_EX),
+                                      ErrorHandling::ErrorType::FATAL_ERROR);
   UpdateDirectoryFileByVector();
-  flock(fd, LOCK_UN);
+  ErrorHandling::ErrorDispatchHandler(flock(fd, LOCK_UN),
+                                      ErrorHandling::ErrorType::FATAL_ERROR);
   close(fd);
 }
 
