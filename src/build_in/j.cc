@@ -37,23 +37,11 @@ int J::Execute(const std::vector<std::string>& args, std::ostream& os,
 }
 
 void J::StorageDirectoryHistoryInFile(const std::string& path) {
-  xcShell_mutex.lock();
+  xcShell_mutex_.lock();
   ReadHistoryFile();
-  directory_and_weights_map[path]++;
-  directory_and_weights_list = SortWithMapValueByVector();
+  directory_and_weights_map_[path]++;
   UpdateDirectoryFileByVector();
-  xcShell_mutex.unlock();
-}
-
-std::vector<std::pair<std::string, int>> J::SortWithMapValueByVector() {
-  std::vector<std::pair<std::string, int>> directory_and_weights(
-      directory_and_weights_map.begin(), directory_and_weights_map.end());
-  std::sort(
-      directory_and_weights_list.begin(), directory_and_weights_list.end(),
-      [=](std::pair<std::string, int>& x, std::pair<std::string, int>& y) {
-        return x.second > y.second;
-      });
-  return directory_and_weights;
+  xcShell_mutex_.unlock();
 }
 
 void J::ReadHistoryFile() {
@@ -62,7 +50,7 @@ void J::ReadHistoryFile() {
   int line = 0;
   while (getline(in, buf)) {
     std::vector<std::string> directory_and_weights = utils::Split(buf, " ");
-    directory_and_weights_map.insert(
+    directory_and_weights_map_.insert(
         std::make_pair(directory_and_weights[0],
                        utils::Atoi(directory_and_weights[1].c_str())));
     line++;
@@ -72,15 +60,15 @@ void J::ReadHistoryFile() {
 void J::UpdateDirectoryFileByVector() {
   std::ofstream file_empty(CD_HISTORY.c_str(), std::ios_base::out);
   std::ofstream update_file(CD_HISTORY, std::ios::app);
-  auto item = directory_and_weights_list.begin();
-  for (; item != directory_and_weights_list.end(); item++) {
+  auto item = directory_and_weights_map_.begin();
+  for (; item != directory_and_weights_map_.end(); item++) {
     update_file << item->first + " " << item->second << std::endl;
   }
   update_file.close();
 }
 
 std::string J::GetFuzzyMatchingDirectory(std::string path) {
-  for (const auto& item : directory_and_weights_list) {
+  for (const auto& item : directory_and_weights_map_) {
     std::string last_directory = utils::GetLastDir(item.first);
     if (last_directory.find(path) != std::string::npos) {
       path = item.first;
@@ -89,7 +77,4 @@ std::string J::GetFuzzyMatchingDirectory(std::string path) {
   }
   return path;
 }
-J::J() {
-  ReadHistoryFile();
-  directory_and_weights_list = SortWithMapValueByVector();
-}
+J::J() { ReadHistoryFile(); }

@@ -1,7 +1,6 @@
 #ifndef INCLUDE_XCSHELL_BUILD_IN_J_H_
 #define INCLUDE_XCSHELL_BUILD_IN_J_H_
 
-#include <mutex>
 #include <string>
 #include <utility>
 #include <vector>
@@ -12,10 +11,8 @@
 
 class J : public BuildInCommand {
  private:
-  std::mutex xcShell_mutex;
-  std::vector<std::pair<std::string, int>> directory_and_weights_list;
-  std::unordered_map<std::string, int> directory_and_weights_map;
-  std::vector<std::pair<std::string, int>> SortWithMapValueByVector();
+  std::mutex xcShell_mutex_;
+  std::unordered_map<std::string, int> directory_and_weights_map_;
   void ReadHistoryFile();
   void UpdateDirectoryFileByVector();
   std::string GetFuzzyMatchingDirectory(std::string path);
