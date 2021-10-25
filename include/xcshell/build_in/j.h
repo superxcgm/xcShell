@@ -1,6 +1,8 @@
 #ifndef INCLUDE_XCSHELL_BUILD_IN_J_H_
 #define INCLUDE_XCSHELL_BUILD_IN_J_H_
 
+#include <fcntl.h>
+
 #include <string>
 #include <utility>
 #include <vector>
@@ -11,6 +13,7 @@
 
 class J : public BuildInCommand {
  private:
+  struct flock lock {};
   std::unordered_map<std::string, int> directory_and_weights_map_;
   void ReadHistoryFile();
   void UpdateDirectoryFileByVector();
