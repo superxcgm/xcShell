@@ -18,6 +18,4 @@
 
 #define USER_CONFIG_FILE "~/.xcshrc"
 
-#define STORAGE_DIRECTORY_FILE "/tmp/xcShell_storage_directory_file"
-
 #endif  // INCLUDE_XCSHELL_CONSTANTS_H_

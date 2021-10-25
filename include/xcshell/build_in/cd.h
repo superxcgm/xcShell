@@ -5,9 +5,14 @@
 #include <vector>
 
 #include "./build_in_command.h"
+#include "./j.h"
 
 class Cd : public BuildInCommand {
+ private:
+  J &j_;
+
  public:
+  Cd(J &j) : j_(j) {}
   int Execute(const std::vector<std::string> &args, std::ostream &os,
               std::ostream &os_err);
   std::string GetName() { return "cd"; }

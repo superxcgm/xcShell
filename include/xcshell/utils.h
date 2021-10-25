@@ -2,8 +2,6 @@
 #define INCLUDE_XCSHELL_UTILS_H_
 
 #include <string>
-#include <unordered_map>
-#include <utility>
 #include <vector>
 
 #include "xcshell/command_executor.h"
@@ -27,18 +25,6 @@ std::string GetCommandExecuteResult(CommandExecutor *commandExecutor,
 std::string GetBranchName(CommandExecutor *commandExecutor);
 std::string GetRandomString(int len);
 std::string GenerateTmpFileName();
-void StorageDirectoryHistoryInFile(const std::string &pwd);
-std::unordered_map<std::string, int> ReadFileWithMap(const std::string &pwd);
-void AddCurrentDirectoryInMap(
-    const std::string &pwd,
-    std::unordered_map<std::string, int> *directory_and_weights_map);
-void UpdateDirectoryFileByVector(
-    const std::vector<std::pair<std::string, int>> &directory_and_weights_list);
-std::vector<std::pair<std::string, int>> SortWithMapValueByVector(
-    const std::unordered_map<std::string, int> &directory_and_weights_map);
-std::vector<std::pair<std::string, int>> ReadFileWithVector(
-    const std::string &pwd);
-std::string GetFuzzyMatchingDirectory(std::string path);
 }  // namespace utils
 
 #endif  // INCLUDE_XCSHELL_UTILS_H_

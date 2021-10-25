@@ -30,5 +30,7 @@ int Cd::Execute(const std::vector<std::string> &args, std::ostream &os,
   pre = utils::GetCurrentWorkingDirectory(os_err);
   ErrorHandling::ErrorDispatchHandler(chdir(path.c_str()),
                                       ErrorHandling::ErrorType::NORMAL_ERROR);
+  j_.StorageDirectoryHistoryInFile(
+      utils::GetCurrentWorkingDirectory(std::cerr));
   return 0;
 }
