@@ -25,7 +25,6 @@ std::string GetCommandExecuteResult(CommandExecutor *commandExecutor,
 std::string GetBranchName(CommandExecutor *commandExecutor);
 std::string GetRandomString(int len);
 std::string GenerateTmpFileName();
-int Atoi(const char* str);
 }  // namespace utils
 
 #endif  // INCLUDE_XCSHELL_UTILS_H_

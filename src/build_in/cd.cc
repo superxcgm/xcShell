@@ -17,7 +17,7 @@ int Cd::Execute(const std::vector<std::string> &args, std::ostream &os,
   }
 
   std::string path = args.empty() ? "~" : args[0];
-  if (path.find('~') != -1) {
+  if (path.find('~') != std::string::npos) {
     path = path.replace(path.find('~'), 1, utils::GetHomeDir());
   } else if (path == "-") {
     path = pre;
@@ -31,5 +31,5 @@ int Cd::Execute(const std::vector<std::string> &args, std::ostream &os,
   ErrorHandling::ErrorDispatchHandler(chdir(path.c_str()),
                                       ErrorHandling::ErrorType::NORMAL_ERROR);
   j_.StorageCdHistory(utils::GetCurrentWorkingDirectory(std::cerr));
-  return 0;
+  return SUCCESS;
 }

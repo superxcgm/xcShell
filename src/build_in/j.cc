@@ -16,12 +16,14 @@ int J::Execute(const std::vector<std::string>& args, std::ostream& os,
                std::ostream& os_err) {
   static std::string pre;
   if (args.size() > 1) {
-    os_err << "invalid args" << std::endl;
+    os_err << "invalid args : Command j and cd have similar functions "
+              "and support directory fuzzy matching"
+           << std::endl;
     return ERROR_CODE_DEFAULT;
   }
 
   std::string path = args.empty() ? "~" : args[0];
-  if (path.find('~') != -1) {
+  if (path.find('~') != std::string::npos) {
     path = path.replace(path.find('~'), 1, utils::GetHomeDir());
   } else if (path == "-") {
     path = pre;
@@ -34,14 +36,14 @@ int J::Execute(const std::vector<std::string>& args, std::ostream& os,
   pre = utils::GetCurrentWorkingDirectory(os_err);
   ErrorHandling::ErrorDispatchHandler(chdir(path.c_str()),
                                       ErrorHandling::ErrorType::NORMAL_ERROR);
-  return 0;
+  return SUCCESS;
 }
 
 void J::StorageCdHistory(const std::string& path) {
   ReadCdHistory();
   directory_and_weights_map_[path]++;
   int fd = ErrorHandling::ErrorDispatchHandler(
-      open(CD_HISTORY.c_str(), O_WRONLY, 0664),
+      open(CD_HISTORY.c_str(), O_WRONLY, 0660),
       ErrorHandling::ErrorType::FATAL_ERROR);
   lock.l_type = F_SETLKW;
   fcntl(fd, F_SETLKW, &lock);
@@ -57,31 +59,30 @@ void J::ReadCdHistory() {
   int line = 0;
   while (getline(in, buf)) {
     std::vector<std::string> directory_and_weights = utils::Split(buf, " ");
-    directory_and_weights_map_.insert(
-        std::make_pair(directory_and_weights[0],
-                       utils::Atoi(directory_and_weights[1].c_str())));
+    directory_and_weights_map_.insert(std::make_pair(
+        directory_and_weights[0], std::stoi(directory_and_weights[1])));
     line++;
   }
 }
 
 void J::UpdateCdHistory() {
   std::ofstream file_empty(CD_HISTORY.c_str(), std::ios_base::out);
-  std::ofstream update_file(CD_HISTORY, std::ios::app);
-  auto item = directory_and_weights_map_.begin();
-  for (; item != directory_and_weights_map_.end(); item++) {
-    update_file << item->first + " " << item->second << std::endl;
+  std::ofstream update_file(CD_HISTORY, std::ios::out);
+  for (const auto& [k, v] : directory_and_weights_map_) {
+    update_file << k << " " << v << std::endl;
   }
   update_file.close();
 }
 
 std::string J::GetFuzzyMatchingDirectory(std::string path) {
-  for (const auto& item : directory_and_weights_map_) {
-    std::string last_directory = utils::GetLastDir(item.first);
+  for (const auto& [k, v] : directory_and_weights_map_) {
+    std::string last_directory = utils::GetLastDir(k);
     if (last_directory.find(path) != std::string::npos) {
-      path = item.first;
+      path = k;
       break;
     }
   }
   return path;
 }
+
 J::J() { ReadCdHistory(); }
