@@ -117,10 +117,11 @@ void Shell::InitLog() {
 }
 
 void Shell::CreateCdHistory() {
-  if (access(utils::GetAbsolutePath(CD_HISTORY).c_str(), F_OK) ==
+  const std::string cd_history_path = "~/.xcShell";
+  if (access(utils::GetAbsolutePath(cd_history_path).c_str(), F_OK) ==
       std::string::npos) {
     ErrorHandling::ErrorDispatchHandler(
-        mkdir(utils::GetAbsolutePath(CD_HISTORY).c_str(), S_IRWXU),
+        mkdir(utils::GetAbsolutePath(cd_history_path).c_str(), S_IRWXU),
         ErrorHandling::ErrorType::FATAL_ERROR);
     std::ofstream file(utils::GetAbsolutePath(CD_HISTORY).c_str());
   }

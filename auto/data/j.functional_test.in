@@ -7,5 +7,5 @@ j /
 j -
 cd j_test
 cd /tmp/xcShell_functional_test
-j te
+j j_
 j xc

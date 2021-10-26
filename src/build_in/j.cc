@@ -3,10 +3,10 @@
 #include <fcntl.h>
 #include <unistd.h>
 
+#include <algorithm>
 #include <fstream>
 #include <iostream>
 #include <string>
-#include <unordered_map>
 
 #include "xcshell/constants.h"
 #include "xcshell/error_handling.h"
@@ -78,14 +78,24 @@ void J::UpdateCdHistory() {
 }
 
 std::string J::GetFuzzyMatchingDirectory(std::string path) {
+  std::vector<std::pair<std::string, int>> directory_and_weights_list;
   for (const auto& [k, v] : directory_and_weights_map_) {
     std::string last_directory = utils::GetLastDir(k);
     if (last_directory.find(path) != std::string::npos) {
-      path = k;
-      break;
+      directory_and_weights_list.emplace_back(k, v);
     }
   }
-  return path;
+  if (directory_and_weights_list.empty()) {
+    return path;
+  } else {
+    std::sort(directory_and_weights_list.begin(),
+              directory_and_weights_list.end(),
+              [](const std::pair<std::string, int>& x,
+                 const std::pair<std::string, int>& y) -> int {
+                return x.second > y.second;
+              });
+    return directory_and_weights_list[0].first;
+  }
 }
 
 J::J() { ReadCdHistory(); }

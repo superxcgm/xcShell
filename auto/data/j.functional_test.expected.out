@@ -7,6 +7,6 @@ xcShell_functional_test > j /
 / > j -
 xcShell_functional_test > cd j_test
 j_test > cd /tmp/xcShell_functional_test
-xcShell_functional_test > j te
+xcShell_functional_test > j j_
 j_test > j xc
 xcShell_functional_test > 
