@@ -87,15 +87,14 @@ std::string J::GetFuzzyMatchingDirectory(std::string path) {
   }
   if (directory_and_weights_list.empty()) {
     return path;
-  } else {
-    std::sort(directory_and_weights_list.begin(),
-              directory_and_weights_list.end(),
-              [](const std::pair<std::string, int>& x,
-                 const std::pair<std::string, int>& y) -> int {
-                return x.second > y.second;
-              });
-    return directory_and_weights_list[0].first;
   }
+  std::sort(directory_and_weights_list.begin(),
+            directory_and_weights_list.end(),
+            [](const std::pair<std::string, int>& x,
+               const std::pair<std::string, int>& y) -> int {
+              return x.second > y.second;
+            });
+  return directory_and_weights_list[0].first;
 }
 
 J::J() { ReadCdHistory(); }
