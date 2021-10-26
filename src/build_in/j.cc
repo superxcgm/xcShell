@@ -57,18 +57,14 @@ void J::StorageCdHistory(const std::string& path) {
 void J::ReadCdHistory() {
   std::string buf;
   std::ifstream in(utils::GetAbsolutePath(CD_HISTORY).c_str(), std::ios::in);
-  int line = 0;
   while (getline(in, buf)) {
     std::vector<std::string> directory_and_weights = utils::Split(buf, " ");
     directory_and_weights_map_.insert(std::make_pair(
         directory_and_weights[0], std::stoi(directory_and_weights[1])));
-    line++;
   }
 }
 
 void J::UpdateCdHistory() {
-  std::ofstream file_empty(utils::GetAbsolutePath(CD_HISTORY).c_str(),
-                           std::ios_base::out);
   std::ofstream update_file(utils::GetAbsolutePath(CD_HISTORY).c_str(),
                             std::ios::out);
   for (const auto& [k, v] : directory_and_weights_map_) {
@@ -78,23 +74,20 @@ void J::UpdateCdHistory() {
 }
 
 std::string J::GetFuzzyMatchingDirectory(std::string path) {
-  std::vector<std::pair<std::string, int>> directory_and_weights_list;
+  if (directory_and_weights_map_.empty()) {
+    return path;
+  }
+  int max_value = 0;
   for (const auto& [k, v] : directory_and_weights_map_) {
     std::string last_directory = utils::GetLastDir(k);
     if (last_directory.find(path) != std::string::npos) {
-      directory_and_weights_list.emplace_back(k, v);
+      if (v > max_value) {
+        max_value = v;
+        path = k;
+      }
     }
   }
-  if (directory_and_weights_list.empty()) {
-    return path;
-  }
-  std::sort(directory_and_weights_list.begin(),
-            directory_and_weights_list.end(),
-            [](const std::pair<std::string, int>& x,
-               const std::pair<std::string, int>& y) -> int {
-              return x.second > y.second;
-            });
-  return directory_and_weights_list[0].first;
+  return path;
 }
 
 J::J() { ReadCdHistory(); }
