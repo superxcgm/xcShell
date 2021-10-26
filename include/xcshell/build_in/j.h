@@ -15,8 +15,8 @@ class J : public BuildInCommand {
  private:
   struct flock lock {};
   std::unordered_map<std::string, int> directory_and_weights_map_;
-  void ReadHistoryFile();
-  void UpdateDirectoryFileByVector();
+  void ReadCdHistory();
+  void UpdateCdHistory();
   std::string GetFuzzyMatchingDirectory(std::string path);
 
  public:
@@ -24,7 +24,7 @@ class J : public BuildInCommand {
   int Execute(const std::vector<std::string>& args, std::ostream& os,
               std::ostream& os_err);
   std::string GetName() { return "j"; }
-  void StorageDirectoryHistoryInFile(const std::string& path);
+  void StorageCdHistory(const std::string& path);
   ~J() {}
 };
 #endif  // INCLUDE_XCSHELL_BUILD_IN_J_H_

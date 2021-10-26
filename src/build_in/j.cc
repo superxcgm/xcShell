@@ -37,21 +37,21 @@ int J::Execute(const std::vector<std::string>& args, std::ostream& os,
   return 0;
 }
 
-void J::StorageDirectoryHistoryInFile(const std::string& path) {
-  ReadHistoryFile();
+void J::StorageCdHistory(const std::string& path) {
+  ReadCdHistory();
   directory_and_weights_map_[path]++;
   int fd = ErrorHandling::ErrorDispatchHandler(
       open(CD_HISTORY.c_str(), O_WRONLY, 0664),
       ErrorHandling::ErrorType::FATAL_ERROR);
   lock.l_type = F_SETLKW;
   fcntl(fd, F_SETLKW, &lock);
-  UpdateDirectoryFileByVector();
+  UpdateCdHistory();
   lock.l_type = F_UNLCK;
   fcntl(fd, F_SETLKW, &lock);
   close(fd);
 }
 
-void J::ReadHistoryFile() {
+void J::ReadCdHistory() {
   std::string buf;
   std::ifstream in(CD_HISTORY.c_str(), std::ios::in);
   int line = 0;
@@ -64,7 +64,7 @@ void J::ReadHistoryFile() {
   }
 }
 
-void J::UpdateDirectoryFileByVector() {
+void J::UpdateCdHistory() {
   std::ofstream file_empty(CD_HISTORY.c_str(), std::ios_base::out);
   std::ofstream update_file(CD_HISTORY, std::ios::app);
   auto item = directory_and_weights_map_.begin();
@@ -84,4 +84,4 @@ std::string J::GetFuzzyMatchingDirectory(std::string path) {
   }
   return path;
 }
-J::J() { ReadHistoryFile(); }
+J::J() { ReadCdHistory(); }
