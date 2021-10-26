@@ -1,10 +1,13 @@
 #include "xcshell/build_in/build_in.h"
 
 #include "xcshell/build_in/cd.h"
+#include "xcshell/build_in/j.h"
 
 BuildIn::BuildIn() : alias_(new Alias) {
-  std::shared_ptr<Cd> cd(new Cd);
+  std::shared_ptr<J> j(new J);
+  std::shared_ptr<Cd> cd(new Cd(*j));
   commands_[cd->GetName()] = cd;
+  commands_[j->GetName()] = j;
   commands_[alias_->GetName()] = alias_;
 }
 

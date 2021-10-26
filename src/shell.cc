@@ -9,8 +9,11 @@
 
 #include <spdlog/sinks/basic_file_sink.h>
 #include <spdlog/spdlog.h>
+#include <sys/stat.h>
+#include <unistd.h>
 
 #include <csignal>
+#include <fstream>
 #include <sstream>
 
 #include "xcshell/constants.h"
@@ -39,6 +42,7 @@ void Shell::Init(int argc, char **argv) {
   }
 
   IgnoreSignalInterrupt();
+  CreateCdHistory();
 }
 
 void Shell::Process() {
@@ -110,4 +114,15 @@ void Shell::InitLog() {
   logger->set_level(spdlog::level::debug);
   spdlog::set_default_logger(logger);
   spdlog::flush_every(std::chrono::seconds(3));
+}
+
+void Shell::CreateCdHistory() {
+  const std::string cd_history_path = "~/.xcShell";
+  if (access(utils::GetAbsolutePath(cd_history_path).c_str(), F_OK) ==
+      std::string::npos) {
+    ErrorHandling::ErrorDispatchHandler(
+        mkdir(utils::GetAbsolutePath(cd_history_path).c_str(), S_IRWXU),
+        ErrorHandling::ErrorType::FATAL_ERROR);
+    std::ofstream file(utils::GetAbsolutePath(CD_HISTORY).c_str());
+  }
 }

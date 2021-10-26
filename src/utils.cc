@@ -204,3 +204,9 @@ std::string utils::RightTrim(const std::string& str) {
 std::string utils::GenerateTmpFileName() {
   return "/tmp/xcShell_tmp_" + GetRandomString(10);
 }
+std::string utils::GetAbsolutePath(std::string path) {
+  if (path.find('~') != std::string::npos) {
+    return path.replace(path.find('~'), 1, utils::GetHomeDir());
+  }
+  return path;
+}

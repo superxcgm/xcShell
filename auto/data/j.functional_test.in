@@ -1,0 +1,11 @@
+mkdir j_test
+j j_test
+j ..
+j ~
+j -
+j /
+j -
+cd j_test
+cd /tmp/xcShell_functional_test
+j j_
+j xc

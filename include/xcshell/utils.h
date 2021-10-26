@@ -25,6 +25,7 @@ std::string GetCommandExecuteResult(CommandExecutor *commandExecutor,
 std::string GetBranchName(CommandExecutor *commandExecutor);
 std::string GetRandomString(int len);
 std::string GenerateTmpFileName();
+std::string GetAbsolutePath(std::string path);
 }  // namespace utils
 
 #endif  // INCLUDE_XCSHELL_UTILS_H_

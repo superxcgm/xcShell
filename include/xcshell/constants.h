@@ -18,4 +18,6 @@
 
 #define USER_CONFIG_FILE "~/.xcshrc"
 
+#define CD_HISTORY "~/.xcShell/cd_history.txt"
+
 #endif  // INCLUDE_XCSHELL_CONSTANTS_H_

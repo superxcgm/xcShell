@@ -194,3 +194,4 @@ TEST(UtilsTest, GenerateTmpFileName_ShouldGenerateFileInTmpDir) {
 
   EXPECT_EQ(filename.find("/tmp/"), 0);
 }
+
