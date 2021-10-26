@@ -23,8 +23,8 @@ int J::Execute(const std::vector<std::string>& args, std::ostream& os,
   }
 
   std::string path = args.empty() ? "~" : args[0];
-  if (path.find('~') != std::string::npos) {
-    path = path.replace(path.find('~'), 1, utils::GetHomeDir());
+  if (path == "~") {
+    path = utils::GetHomeDir();
   } else if (path == "-") {
     path = pre;
     // cover when pre is empty
@@ -32,6 +32,7 @@ int J::Execute(const std::vector<std::string>& args, std::ostream& os,
       path = ".";
     }
   }
+  path = utils::GetAbsolutePath(path);
   path = GetFuzzyMatchingDirectory(path);
   pre = utils::GetCurrentWorkingDirectory(os_err);
   ErrorHandling::ErrorDispatchHandler(chdir(path.c_str()),
@@ -43,7 +44,7 @@ void J::StorageCdHistory(const std::string& path) {
   ReadCdHistory();
   directory_and_weights_map_[path]++;
   int fd = ErrorHandling::ErrorDispatchHandler(
-      open(CD_HISTORY.c_str(), O_WRONLY, 0660),
+      open(utils::GetAbsolutePath(CD_HISTORY).c_str(), O_WRONLY, 0660),
       ErrorHandling::ErrorType::FATAL_ERROR);
   lock.l_type = F_SETLKW;
   fcntl(fd, F_SETLKW, &lock);
@@ -55,7 +56,7 @@ void J::StorageCdHistory(const std::string& path) {
 
 void J::ReadCdHistory() {
   std::string buf;
-  std::ifstream in(CD_HISTORY.c_str(), std::ios::in);
+  std::ifstream in(utils::GetAbsolutePath(CD_HISTORY).c_str(), std::ios::in);
   int line = 0;
   while (getline(in, buf)) {
     std::vector<std::string> directory_and_weights = utils::Split(buf, " ");
@@ -66,8 +67,10 @@ void J::ReadCdHistory() {
 }
 
 void J::UpdateCdHistory() {
-  std::ofstream file_empty(CD_HISTORY.c_str(), std::ios_base::out);
-  std::ofstream update_file(CD_HISTORY, std::ios::out);
+  std::ofstream file_empty(utils::GetAbsolutePath(CD_HISTORY).c_str(),
+                           std::ios_base::out);
+  std::ofstream update_file(utils::GetAbsolutePath(CD_HISTORY).c_str(),
+                            std::ios::out);
   for (const auto& [k, v] : directory_and_weights_map_) {
     update_file << k << " " << v << std::endl;
   }

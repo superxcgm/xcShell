@@ -17,8 +17,8 @@ int Cd::Execute(const std::vector<std::string> &args, std::ostream &os,
   }
 
   std::string path = args.empty() ? "~" : args[0];
-  if (path.find('~') != std::string::npos) {
-    path = path.replace(path.find('~'), 1, utils::GetHomeDir());
+  if (path == "~") {
+    path = utils::GetHomeDir();
   } else if (path == "-") {
     path = pre;
     // cover when pre is empty
@@ -26,7 +26,7 @@ int Cd::Execute(const std::vector<std::string> &args, std::ostream &os,
       path = ".";
     }
   }
-
+  path = utils::GetAbsolutePath(path);
   pre = utils::GetCurrentWorkingDirectory(os_err);
   ErrorHandling::ErrorDispatchHandler(chdir(path.c_str()),
                                       ErrorHandling::ErrorType::NORMAL_ERROR);

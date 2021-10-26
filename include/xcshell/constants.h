@@ -1,8 +1,6 @@
 #ifndef INCLUDE_XCSHELL_CONSTANTS_H_
 #define INCLUDE_XCSHELL_CONSTANTS_H_
 
-#include <xcshell/utils.h>
-
 #define SUCCESS 0
 
 #define ERROR_CODE_DEFAULT -1
@@ -20,7 +18,6 @@
 
 #define USER_CONFIG_FILE "~/.xcshrc"
 
-#define CD_HISTORY utils::GetHomeDir().append("/.xcShell/cd_history.txt")
-#define CD_HISTORY_PATH utils::GetHomeDir().append("/.xcShell")
+#define CD_HISTORY "~/.xcShell/cd_history.txt"
 
 #endif  // INCLUDE_XCSHELL_CONSTANTS_H_
