@@ -2,6 +2,7 @@
 
 #include <algorithm>
 #include <string>
+#include <typeinfo>
 #include <vector>
 
 #include "xcshell/command_parse_result.h"
@@ -46,6 +47,18 @@ bool Parser::IsInputRedirectSymbol(const std::string &arg) {
   return false;
 }
 
+std::string Parser::ParseEnvironmentVariable(const std::string &arg) {
+  std::cout<<arg<<std::endl;
+  if (arg.empty() || typeid(arg) != typeid(std::string)) return arg;
+  std::string parse_arg = arg;
+  if (parse_arg.find('$') != std::string::npos) {
+    parse_arg.replace(parse_arg.find('$'), 1, "");
+    parse_arg =
+        getenv(parse_arg.c_str()) == nullptr ? "" : getenv(parse_arg.c_str());
+  }
+  return parse_arg;
+}
+
 CommandParseResult Parser::BuildParseResultWithRedirect(
     const std::vector<std::string> &command_with_args,
     const std::string &command) {
@@ -60,7 +73,7 @@ CommandParseResult Parser::BuildParseResultWithRedirect(
     auto command_with_arg = command_with_args[i];
     if (IsRedirect(command_with_arg)) args_end = true;
     if (!args_end) {
-      args.push_back(command_with_arg);
+      args.push_back(ParseEnvironmentVariable(command_with_arg));
     } else if ((i + 1) < command_with_args.size()) {
       if (IsOutputRedirectSymbol(command_with_arg)) {
         output_file = command_with_args[i + 1];

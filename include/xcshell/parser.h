@@ -28,5 +28,6 @@ class Parser {
   static bool IsErrorRedirectSymbol(const std::string &arg);
   static bool IsErrorToStdoutRedirect(const std::string &arg);
   static bool IsRedirect(const std::string &arg);
+  static std::string ParseEnvironmentVariable(const std::string &arg);
 };
 #endif  // INCLUDE_XCSHELL_PARSER_H_
