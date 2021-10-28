@@ -101,8 +101,11 @@ std::vector<std::string> utils::SplitArgs(const std::string& str) {
   std::vector<char> quotation_marks = {'\'', '"'};
   for (; i < str.length();) {
     std::string fragment;
-    if (str[i] == quotation_marks[0] || str[i] == quotation_marks[1]) {
+    if (str[i] == quotation_marks[1]) {
       fragment = std::move(ExtractQuoteString(i + 1, str[i], str));
+      i += 2;  // ignore quotation mark
+    } else if (str[i] == quotation_marks[0]) {
+      fragment += '\'' + ExtractQuoteString(i + 1, str[i], str) + '\'';
       i += 2;  // ignore quotation mark
     } else {
       fragment = std::move(ExtractStringWithoutQuote(i, str));

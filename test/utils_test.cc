@@ -83,7 +83,7 @@ TEST(UtilsTest, SplitArgs_ShouldReturnCorrectlyFor3Arg) {
 }
 
 TEST(UtilsTest, SplitArgs_ShouldReturnCorrectlyForSingleQuotation) {
-  std::vector<std::string> expected = {"hello", "this \"world"};
+  std::vector<std::string> expected = {"hello", "'this \"world'"};
   auto parts = utils::SplitArgs("hello 'this \"world'");
 
   EXPECT_EQ(parts, expected);

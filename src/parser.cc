@@ -48,9 +48,13 @@ bool Parser::IsInputRedirectSymbol(const std::string &arg) {
 }
 
 std::string Parser::ParseEnvironmentVariable(const std::string &arg) {
-  std::cout<<arg<<std::endl;
-  if (arg.empty() || typeid(arg) != typeid(std::string)) return arg;
   std::string parse_arg = arg;
+  if (parse_arg.empty() || parse_arg.find('\'') != std::string::npos) {
+    parse_arg.erase(std::remove(parse_arg.begin(), parse_arg.end(), '\''),
+                    parse_arg.end());
+    return parse_arg;
+  }
+
   if (parse_arg.find('$') != std::string::npos) {
     parse_arg.replace(parse_arg.find('$'), 1, "");
     parse_arg =
