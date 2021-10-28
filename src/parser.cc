@@ -46,14 +46,25 @@ bool Parser::IsInputRedirectSymbol(const std::string &arg) {
   return false;
 }
 
-std::string Parser::ParseEnvironmentVariable(std::string *arg) {
-  if (*arg->c_str() == '\'') {
-    arg->erase(std::remove(arg->begin(), arg->end(), '\''), arg->end());
-  } else if (arg->find(PRINTF_EXTRACT) != std::string::npos) {
-    arg->replace(arg->find(PRINTF_EXTRACT), 1, "");
-    *arg = getenv(arg->c_str()) == nullptr ? "" : getenv(arg->c_str());
+std::string Parser::ParseEnvironmentVariable(const std::string &arg) {
+  std::string environment_variable_parse;
+  if (arg[0] == '\'') {
+    environment_variable_parse = arg;
+    environment_variable_parse.erase(
+        std::remove(environment_variable_parse.begin(),
+                    environment_variable_parse.end(), '\''),
+        environment_variable_parse.end());
+  } else if (arg.find(PRINTF_EXTRACT) != std::string::npos) {
+    std::vector<std::string> environment_variable_list = utils::Split(arg, " ");
+    for (auto &item : environment_variable_list) {
+      item.replace(item.find(PRINTF_EXTRACT), 1, "");
+      environment_variable_parse.append(
+          getenv(item.c_str()) == nullptr ? "" : getenv(item.c_str()));
+    }
+  } else {
+    environment_variable_parse = arg;
   }
-  return *arg;
+  return environment_variable_parse;
 }
 
 CommandParseResult Parser::BuildParseResultWithRedirect(
@@ -70,7 +81,7 @@ CommandParseResult Parser::BuildParseResultWithRedirect(
     auto command_with_arg = command_with_args[i];
     if (IsRedirect(command_with_arg)) args_end = true;
     if (!args_end) {
-      args.push_back(ParseEnvironmentVariable(&command_with_arg));
+      args.push_back(ParseEnvironmentVariable(command_with_arg));
     } else if ((i + 1) < command_with_args.size()) {
       if (IsOutputRedirectSymbol(command_with_arg)) {
         output_file = command_with_args[i + 1];

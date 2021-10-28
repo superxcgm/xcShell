@@ -415,3 +415,20 @@ TEST(ParseTest,
   EXPECT_EQ(command_parse_result_with_first.command, "echo");
   EXPECT_EQ(command_parse_result_with_first.args, vec_first_command_args);
 }
+
+TEST(ParseTest,
+     Parse_PraseEnvironmentVarliableCorrectIfInputQuoteDoubleAndOneNotExist) {
+  BuildIn build_in;
+  Parser parser(build_in);
+  std::string str = "echo \"$HOME $haha\"";
+  std::vector<std::string> vec_first_command_args;
+  std::string home_str = utils::GetHomeDir();
+  vec_first_command_args.emplace_back(home_str);
+  std::vector<CommandParseResult> command_parse_result_list =
+      parser.ParseUserInputLine(str);
+  CommandParseResult command_parse_result_with_first =
+      command_parse_result_list[0];
+
+  EXPECT_EQ(command_parse_result_with_first.command, "echo");
+  EXPECT_EQ(command_parse_result_with_first.args, vec_first_command_args);
+}
