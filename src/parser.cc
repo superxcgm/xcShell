@@ -2,7 +2,6 @@
 
 #include <algorithm>
 #include <string>
-#include <typeinfo>
 #include <vector>
 
 #include "xcshell/command_parse_result.h"
