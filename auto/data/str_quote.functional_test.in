@@ -4,3 +4,4 @@ echo "hello world" 'hi ni'
 echo hello world
 echo "j's'f"
 echo $haha
+echo $EXIST_PATH_ENV

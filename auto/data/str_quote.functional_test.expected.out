@@ -10,4 +10,6 @@ xcShell_functional_test > echo "j's'f"
 j's'f
 xcShell_functional_test > echo $haha
 
+xcShell_functional_test > echo $EXIST_PATH_ENV
+hello
 xcShell_functional_test > 
