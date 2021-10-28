@@ -13,6 +13,7 @@
 #define REDIRECT_ERROR_TO_STDOUT "2>&1"
 #define REDIRECT_INPUT "<"
 #define REDIRECT_PIPE "|"
+#define PRINTF_EXTRACT '$'
 
 #define GLOBAL_CONFIG_FILE "/etc/xcshrc"
 

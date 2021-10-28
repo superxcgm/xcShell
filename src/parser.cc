@@ -47,20 +47,14 @@ bool Parser::IsInputRedirectSymbol(const std::string &arg) {
   return false;
 }
 
-std::string Parser::ParseEnvironmentVariable(const std::string &arg) {
-  std::string parse_arg = arg;
-  if (parse_arg.empty() || parse_arg.find('\'') != std::string::npos) {
-    parse_arg.erase(std::remove(parse_arg.begin(), parse_arg.end(), '\''),
-                    parse_arg.end());
-    return parse_arg;
+std::string Parser::ParseEnvironmentVariable(std::string arg) {
+  if (arg[0] == '\'') {
+    arg.erase(std::remove(arg.begin(), arg.end(), '\''), arg.end());
+  } else if (arg.find(PRINTF_EXTRACT) != std::string::npos) {
+    arg.replace(arg.find(PRINTF_EXTRACT), 1, "");
+    arg = getenv(arg.c_str()) == nullptr ? "" : getenv(arg.c_str());
   }
-
-  if (parse_arg.find('$') != std::string::npos) {
-    parse_arg.replace(parse_arg.find('$'), 1, "");
-    parse_arg =
-        getenv(parse_arg.c_str()) == nullptr ? "" : getenv(parse_arg.c_str());
-  }
-  return parse_arg;
+  return arg;
 }
 
 CommandParseResult Parser::BuildParseResultWithRedirect(

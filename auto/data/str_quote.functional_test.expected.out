@@ -8,4 +8,6 @@ xcShell_functional_test > echo hello world
 hello world
 xcShell_functional_test > echo "j's'f"
 j's'f
+xcShell_functional_test > echo $haha
+
 xcShell_functional_test > 

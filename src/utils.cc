@@ -106,7 +106,6 @@ std::vector<std::string> utils::SplitArgs(const std::string& str) {
       i += 2;  // ignore quotation mark
     } else if (str[i] == quotation_marks[0]) {
       fragment += '\'' + ExtractQuoteString(i + 1, str[i], str) + '\'';
-      i += 2;  // ignore quotation mark
     } else {
       fragment = std::move(ExtractStringWithoutQuote(i, str));
     }
