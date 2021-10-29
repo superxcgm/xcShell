@@ -450,9 +450,8 @@ TEST(ParseTest,
   EXPECT_EQ(command_parse_result_with_first.args, vec_first_command_args);
 }
 
-TEST(
-    ParseTest,
-    Parse_PraseEnvironmentVarliableIfInputSpecialStringWithPrefixInArgAndHaveSufix) {
+TEST(ParseTest,
+     Parse_PraseEnvironmentVarliableIfInputSpecialStringWithPrefixInArg) {
   BuildIn build_in;
   Parser parser(build_in);
   std::string str = "echo $123HOME.123";
