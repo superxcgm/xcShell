@@ -46,38 +46,37 @@ bool Parser::IsInputRedirectSymbol(const std::string &arg) {
   return false;
 }
 
-std::string ErasePrefixNumber(std::string environment_variable) {
-  int i = 0;
-  int j = 0;
-
-  // i存在 j不存在 打印home
-  // i不存在 j存在 打印
-  for (; i < environment_variable.size(); i++) {
-    if (!std::isdigit(environment_variable[i])) {
+int GetNonDigitPos(const std::string &environment_variable) {
+  int index = 0;
+  for (; index < environment_variable.size(); index++) {
+    if (!std::isdigit(environment_variable[index])) {
       break;
     }
   }
-  if (i == 0) {
-    if (environment_variable.find('.') != std::string::npos) {
-      for (; j < environment_variable.size(); j++) {
-        if (environment_variable[j] == '.') {
-          break;
-        }
-      }
-      std::string environment = environment_variable.substr(0, j);
-      std::string xxx = getenv(environment.c_str()) == nullptr
-                            ? ""
-                            : getenv(environment.c_str());
-      for (; j < environment_variable.size(); j++) {
-        xxx += environment_variable[j];
-      }
-      return xxx;
-    } else {
-      return "";
-    }
+  if (index == environment_variable.size()) {
+    index = 0;
   }
-  environment_variable.erase(0, i);
-  return environment_variable;
+  return index;
+}
+
+std::string ErasePrefixNumber(std::string arg) {
+  int non_digit_pos = GetNonDigitPos(arg);
+  int symbol_index = utils::GetSpecifySymbolPos(arg, '.');
+  if (non_digit_pos != 0) {
+    return arg.erase(0, non_digit_pos);
+  } else if (symbol_index != 0) {
+    std::string environment_variable = arg.substr(0, symbol_index);
+    std::string extract_environment_variable =
+        getenv(environment_variable.c_str()) == nullptr
+            ? ""
+            : getenv(environment_variable.c_str());
+    for (; symbol_index < arg.size(); symbol_index++) {
+      extract_environment_variable += arg[symbol_index];
+    }
+    return extract_environment_variable;
+  } else {
+    return "";
+  }
 }
 
 std::string Parser::ExtractEnvironmentVariable(const std::string &arg) {
@@ -89,13 +88,12 @@ std::string Parser::ExtractEnvironmentVariable(const std::string &arg) {
   for (auto it = 1; it < environment_variable_list.size(); it++) {
     std::string environment_variable =
         utils::Trim(environment_variable_list[it]);
-    auto extract_environment_variable = getenv(environment_variable.c_str());
-    if (extract_environment_variable == nullptr) {
-      environment_variable_parse.append(
-          ErasePrefixNumber(environment_variable));
-    } else {
-      environment_variable_parse.append(extract_environment_variable);
-    }
+    environment_variable_parse =
+        getenv(environment_variable.c_str()) == nullptr
+            ? environment_variable_parse.append(
+                  ErasePrefixNumber(environment_variable))
+            : environment_variable_parse.append(
+                  getenv(environment_variable.c_str()));
   }
   return environment_variable_parse;
 }

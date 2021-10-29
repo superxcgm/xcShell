@@ -195,3 +195,20 @@ TEST(UtilsTest, GenerateTmpFileName_ShouldGenerateFileInTmpDir) {
   EXPECT_EQ(filename.find("/tmp/"), 0);
 }
 
+TEST(UtilsTest, GetSpecifySymbolPos_ShouldReturnSymbolIndex) {
+  std::string str = "HOME.123";
+  char symbol = '.';
+
+  auto index = utils::GetSpecifySymbolPos(str, symbol);
+
+  EXPECT_EQ(index, 4);
+}
+
+TEST(UtilsTest, GetSpecifySymbolPos_ShouldReturnSymbolIndexByNoSymbol) {
+  std::string str = "HOME123";
+  char symbol = '.';
+
+  auto index = utils::GetSpecifySymbolPos(str, symbol);
+
+  EXPECT_EQ(index, 0);
+}

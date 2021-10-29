@@ -450,8 +450,9 @@ TEST(ParseTest,
   EXPECT_EQ(command_parse_result_with_first.args, vec_first_command_args);
 }
 
-TEST(ParseTest,
-     Parse_PraseEnvironmentVarliableCorrectIfInputSpecialStringWithPrefixAnother) {
+TEST(
+    ParseTest,
+    Parse_PraseEnvironmentVarliableIfInputSpecialStringWithPrefixInArgAndHaveSufix) {
   BuildIn build_in;
   Parser parser(build_in);
   std::string str = "echo $123HOME.123";
@@ -474,6 +475,22 @@ TEST(ParseTest,
   std::vector<std::string> vec_first_command_args;
   std::string home_str = utils::GetHomeDir() + ".123";
   vec_first_command_args.emplace_back(home_str);
+  std::vector<CommandParseResult> command_parse_result_list =
+      parser.ParseUserInputLine(str);
+  CommandParseResult command_parse_result_with_first =
+      command_parse_result_list[0];
+
+  EXPECT_EQ(command_parse_result_with_first.command, "echo");
+  EXPECT_EQ(command_parse_result_with_first.args, vec_first_command_args);
+}
+
+TEST(ParseTest,
+     Parse_PraseEnvironmentVarliableIfInputSpecialStringWithSuffixByNoSymbol) {
+  BuildIn build_in;
+  Parser parser(build_in);
+  std::string str = "echo $HOME123";
+  std::vector<std::string> vec_first_command_args;
+  vec_first_command_args.emplace_back("");
   std::vector<CommandParseResult> command_parse_result_list =
       parser.ParseUserInputLine(str);
   CommandParseResult command_parse_result_with_first =
