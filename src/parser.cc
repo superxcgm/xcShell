@@ -55,11 +55,17 @@ std::string Parser::ParseEnvironmentVariable(const std::string &arg) {
                     environment_variable_parse.end(), '\''),
         environment_variable_parse.end());
   } else if (arg.find(PRINTF_EXTRACT) != std::string::npos) {
-    std::vector<std::string> environment_variable_list = utils::Split(arg, " ");
-    for (auto &item : environment_variable_list) {
-      item.replace(item.find(PRINTF_EXTRACT), 1, "");
+    std::vector<std::string> environment_variable_list = utils::Split(arg, "$");
+    if (!environment_variable_list[0].empty()) {
+      environment_variable_parse.append(environment_variable_list[0]);
+    }
+    for (auto it = 1; it < environment_variable_list.size(); it++) {
+      std::string environment_variable =
+          utils::Trim(environment_variable_list[it]);
       environment_variable_parse.append(
-          getenv(item.c_str()) == nullptr ? "" : getenv(item.c_str()));
+          getenv(environment_variable.c_str()) == nullptr
+              ? ""
+              : getenv(environment_variable.c_str()));
     }
   } else {
     environment_variable_parse = arg;
