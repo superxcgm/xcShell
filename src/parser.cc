@@ -59,7 +59,7 @@ int GetNonDigitPos(const std::string &environment_variable) {
   return index;
 }
 
-std::string ErasePrefixNumber(std::string arg) {
+std::string Parser::ExtractHideEnvironmentVariable(std::string arg) {
   int non_digit_pos = GetNonDigitPos(arg);
   int symbol_index = utils::GetSpecifySymbolPos(arg, '.');
   if (non_digit_pos != 0) {
@@ -91,7 +91,7 @@ std::string Parser::ExtractEnvironmentVariable(const std::string &arg) {
     environment_variable_parse =
         getenv(environment_variable.c_str()) == nullptr
             ? environment_variable_parse.append(
-                  ErasePrefixNumber(environment_variable))
+                  ExtractHideEnvironmentVariable(environment_variable))
             : environment_variable_parse.append(
                   getenv(environment_variable.c_str()));
   }
