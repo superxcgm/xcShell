@@ -12,4 +12,16 @@ xcShell_functional_test > echo $haha
 
 xcShell_functional_test > echo $EXIST_PATH_ENV
 hello
+xcShell_functional_test > echo 123$EXIST_PATH_ENV
+123hello
+xcShell_functional_test > echo $123EXIST_PATH_ENV
+EXIST_PATH_ENV
+xcShell_functional_test > echo $EXIST_PATH_ENV.123
+hello.123
+xcShell_functional_test > echo $EXIST_PATH_ENV123
+
+xcShell_functional_test > echo $123EXIST_PATH_ENV.123
+EXIST_PATH_ENV.123
+xcShell_functional_test > echo 123$EXIST_PATH_ENV.123
+123hello.123
 xcShell_functional_test > 

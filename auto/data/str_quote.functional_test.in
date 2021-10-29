@@ -5,3 +5,9 @@ echo hello world
 echo "j's'f"
 echo $haha
 echo $EXIST_PATH_ENV
+echo 123$EXIST_PATH_ENV
+echo $123EXIST_PATH_ENV
+echo $EXIST_PATH_ENV.123
+echo $EXIST_PATH_ENV123
+echo $123EXIST_PATH_ENV.123
+echo 123$EXIST_PATH_ENV.123
