@@ -423,7 +423,7 @@ TEST(ParseTest,
   std::string str = "echo \"$HOME $haha\"";
   std::vector<std::string> vec_first_command_args;
   std::string home_str = utils::GetHomeDir();
-  vec_first_command_args.emplace_back(home_str);
+  vec_first_command_args.emplace_back(home_str).append(" ");
   std::vector<CommandParseResult> command_parse_result_list =
       parser.ParseUserInputLine(str);
   CommandParseResult command_parse_result_with_first =

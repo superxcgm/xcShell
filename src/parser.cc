@@ -46,71 +46,83 @@ bool Parser::IsInputRedirectSymbol(const std::string &arg) {
   return false;
 }
 
-int GetNonDigitPos(const std::string &environment_variable) {
-  int index = 0;
-  for (; index < environment_variable.size(); index++) {
-    if (!std::isdigit(environment_variable[index])) {
-      break;
+std::string Parser::ExtractEnvironmentVariable(const std::string &arg, int i) {
+  std::string environment_variable;
+  std::string environment_variable_suffix;
+  std::string environment_variable_result;
+  for (; i < arg.size(); i++) {
+    if (arg[i] == '$') {
+      if (getenv(environment_variable.c_str()) != nullptr) {
+        environment_variable_result.append(getenv(environment_variable.c_str()))
+            .append(environment_variable_suffix);
+      }
+      if (std::isdigit(arg[i + 1])) {
+        i++;
+        for (; i < arg.size(); i++) {
+          if (std::isdigit(arg[i])) {
+            continue;
+          }
+          for (; i < arg.size(); i++) {
+            environment_variable_suffix += arg[i];
+          }
+        }
+        break;
+      }
+      environment_variable = "";
+      environment_variable_suffix = "";
+      continue;
+    }
+    if (std::isupper(arg[i]) || std::isalpha(arg[i]) || std::isdigit(arg[i]) ||
+        arg[i] == '_') {
+      environment_variable += arg[i];
+      continue;
+    } else {
+      for (; i < arg.size(); i++) {
+        if (arg[i] == '$') {
+          i--;
+          break;
+        }
+        environment_variable_suffix += arg[i];
+      }
     }
   }
-  if (index == environment_variable.size()) {
-    index = 0;
-  }
-  return index;
-}
 
-std::string Parser::ExtractHideEnvironmentVariable(std::string arg) {
-  int non_digit_pos = GetNonDigitPos(arg);
-  int symbol_index = utils::GetSpecifySymbolPos(arg, '.');
-  if (non_digit_pos != 0) {
-    return arg.erase(0, non_digit_pos);
-  } else if (symbol_index != 0) {
-    std::string environment_variable = arg.substr(0, symbol_index);
-    std::string extract_environment_variable =
-        getenv(environment_variable.c_str()) == nullptr
-            ? ""
-            : getenv(environment_variable.c_str());
-    for (; symbol_index < arg.size(); symbol_index++) {
-      extract_environment_variable += arg[symbol_index];
-    }
-    return extract_environment_variable;
+  if (getenv(environment_variable.c_str()) != nullptr) {
+    environment_variable_result.append(getenv(environment_variable.c_str()))
+        .append(environment_variable_suffix);
   } else {
-    return "";
+    environment_variable_result.append(environment_variable_suffix);
   }
-}
-
-std::string Parser::ExtractEnvironmentVariable(const std::string &arg) {
-  std::string environment_variable_parse;
-  std::vector<std::string> environment_variable_list = utils::Split(arg, "$");
-  if (!environment_variable_list[0].empty()) {
-    environment_variable_parse.append(environment_variable_list[0]);
-  }
-  for (auto it = 1; it < environment_variable_list.size(); it++) {
-    std::string environment_variable =
-        utils::Trim(environment_variable_list[it]);
-    environment_variable_parse =
-        getenv(environment_variable.c_str()) == nullptr
-            ? environment_variable_parse.append(
-                  ExtractHideEnvironmentVariable(environment_variable))
-            : environment_variable_parse.append(
-                  getenv(environment_variable.c_str()));
-  }
-  return environment_variable_parse;
+  return environment_variable_result;
 }
 
 std::string Parser::ParseInputArg(const std::string &arg) {
   std::string arg_parse_result;
-  if (arg[0] == '\'') {
-    arg_parse_result = arg;
-    arg_parse_result.erase(
-        std::remove(arg_parse_result.begin(), arg_parse_result.end(), '\''),
-        arg_parse_result.end());
-  } else if (arg.find(PRINTF_EXTRACT) != std::string::npos) {
-    arg_parse_result = ExtractEnvironmentVariable(arg);
-  } else {
-    arg_parse_result = arg;
+  std::string arg_parse_result_prefix;
+  int i = 0;
+  for (; i < arg.size(); i++) {
+    if (arg[0] == '\'' && arg[arg.size() - 1] == '\'') {
+      arg_parse_result.append(ExtractSingleQuoteString(arg, i));
+      break;
+    } else if (arg[i] == '$') {
+      arg_parse_result.append(ExtractEnvironmentVariable(arg, i));
+      break;
+    } else {
+      arg_parse_result_prefix += arg[i];
+    }
   }
-  return arg_parse_result;
+  return arg_parse_result_prefix.append(arg_parse_result);
+}
+
+std::string Parser::ExtractSingleQuoteString(const std::string &arg, int i) {
+  std::string single_quote_string;
+  for (; i < arg.size(); i++) {
+    if (arg[i] == '\'') {
+      continue;
+    }
+    single_quote_string += arg[i];
+  }
+  return single_quote_string;
 }
 
 CommandParseResult Parser::BuildParseResultWithRedirect(
