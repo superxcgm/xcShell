@@ -26,7 +26,6 @@ std::string GetBranchName(CommandExecutor *commandExecutor);
 std::string GetRandomString(int len);
 std::string GenerateTmpFileName();
 std::string GetAbsolutePath(std::string path);
-int GetSpecifySymbolPos(const std::string &environment_variable, char symbol);
 }  // namespace utils
 
 #endif  // INCLUDE_XCSHELL_UTILS_H_

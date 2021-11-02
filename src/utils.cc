@@ -159,16 +159,3 @@ std::string utils::GetAbsolutePath(std::string path) {
   return path;
 }
 
-int utils::GetSpecifySymbolPos(const std::string& environment_variable,
-                               char symbol) {
-  int index = 0;
-  for (; index < environment_variable.size(); index++) {
-    if (environment_variable[index] == symbol) {
-      break;
-    }
-  }
-  if (index == environment_variable.size()) {
-    index = 0;
-  }
-  return index;
-}
