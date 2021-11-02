@@ -4,7 +4,6 @@
 #include <string>
 #include <vector>
 
-#include <spdlog/spdlog.h>
 #include "xcshell/command_parse_result.h"
 #include "xcshell/constants.h"
 #include "xcshell/utils.h"
@@ -162,7 +161,8 @@ std::pair<std::string, int> ExtractStringWithoutQuote(int start, const std::stri
     if (str[i] == ' ') {
       break;
     }
-    if (str[i - 1] == '=' && (str[i] == '\'' || str[i] == '"')) {
+    if (str[i - 1] == '=' && (str[i] == QUOTATION_MARK_SINGLE || str[i] == QUOTATION_MARK_DOUBLE)) {
+      // todo: refactor
       auto [value, next] = ExtractQuoteString(i + 1, str[i], str, std::cerr);
       return {str.substr(start, i - start + 1) + value + str[i], next};
     }
@@ -178,16 +178,12 @@ std::vector<std::string> Parser::SplitArgs(const std::string &str) {
   int i = NextNonSpacePos(0, str);
   for (; i < str.length();) {
     std::string fragment;
-    bool complete_quote = false;
-    if (str[i] == QUOTATION_MARK_DOUBLE) {
-      auto [value, next] = ExtractQuoteString(i + 1, QUOTATION_MARK_DOUBLE, str, std::cerr);
+    bool complete_quote = str[i] == QUOTATION_MARK_SINGLE;
+
+    if (str[i] == QUOTATION_MARK_DOUBLE || str[i] == QUOTATION_MARK_SINGLE) {
+      auto [value, next] = ExtractQuoteString(i + 1, str[i], str, std::cerr);
       fragment = value;
       i = next;
-    } else if (str[i] == QUOTATION_MARK_SINGLE) {
-      auto [value, next] = ExtractQuoteString(i + 1, QUOTATION_MARK_SINGLE, str, std::cerr);
-      fragment = value;
-      i = next;
-      complete_quote = true;
     } else {
       auto [value, next] = ExtractStringWithoutQuote(i, str);
       fragment = value;
