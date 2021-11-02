@@ -132,42 +132,41 @@ std::string Parser::ExtractSingleQuoteString(const std::string &arg, int i) {
 }
 
 CommandParseResult Parser::BuildParseResultWithRedirect(
-    const std::vector<std::string> &command_with_args,
+    const std::vector<std::string> &origin_args,
     const std::string &command) {
-  std::vector<std::string> args;
+  std::vector<std::string> final_args;
   bool args_end = false;
   bool stderr_is_append = false;
   std::string error_file;
   std::string output_file;
   std::string input_file;
   bool is_append = false;
-  for (int i = 0; i < command_with_args.size(); i++) {
-    auto command_with_arg = command_with_args[i];
-    if (IsRedirect(command_with_arg)) args_end = true;
+  for (int i = 0; i < origin_args.size(); i++) {
+    auto arg = origin_args[i];
+    if (IsRedirect(arg)) args_end = true;
     if (!args_end) {
-      // todo: not to parse arg here
-      args.push_back(ParseInputArg(command_with_arg));
-    } else if ((i + 1) < command_with_args.size()) {
-      if (IsOutputRedirectSymbol(command_with_arg)) {
-        output_file = command_with_args[i + 1];
+      final_args.push_back(arg);
+    } else if ((i + 1) < origin_args.size()) {
+      if (IsOutputRedirectSymbol(arg)) {
+        output_file = origin_args[i + 1];
       }
-      if (IsInputRedirectSymbol(command_with_arg)) {
-        input_file = command_with_args[i + 1];
+      if (IsInputRedirectSymbol(arg)) {
+        input_file = origin_args[i + 1];
       }
-      if (IsErrorRedirectSymbol(command_with_arg)) {
-        error_file = command_with_args[i + 1];
+      if (IsErrorRedirectSymbol(arg)) {
+        error_file = origin_args[i + 1];
       }
     }
-    if (command_with_arg == REDIRECT_OUTPUT_APPEND) is_append = true;
-    if (command_with_arg == REDIRECT_ERROR_OUTPUT_APPEND) {
+    if (arg == REDIRECT_OUTPUT_APPEND) is_append = true;
+    if (arg == REDIRECT_ERROR_OUTPUT_APPEND) {
       stderr_is_append = true;
     }
-    if (IsErrorToStdoutRedirect(command_with_arg)) {
+    if (IsErrorToStdoutRedirect(arg)) {
       error_file = output_file;
       stderr_is_append = is_append;
     }
   }
-  return {command,    args,      input_file,      output_file,
+  return {command, final_args, input_file, output_file,
           error_file, is_append, stderr_is_append};
 }
 
@@ -270,7 +269,7 @@ std::vector<std::string> Parser::SplitArgs(const std::string &str) {
     } else {
       fragment = std::move(ExtractStringWithoutQuote(i, str));
     }
-    args.push_back(fragment);
+    args.push_back(ParseInputArg(fragment));
     i = NextNonSpacePos(i + fragment.size(), str);
   }
   if (i < str.length()) {

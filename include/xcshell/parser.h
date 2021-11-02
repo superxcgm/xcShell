@@ -20,7 +20,7 @@ class Parser {
   std::tuple<std::string, std::vector<std::string>> ParseCommand(
       const std::string &input_line);
   static CommandParseResult BuildParseResultWithRedirect(
-      const std::vector<std::string> &command_with_args,
+      const std::vector<std::string> &origin_args,
       const std::string &command);
 
   static bool IsInputRedirectSymbol(const std::string &arg);
