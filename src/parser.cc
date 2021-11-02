@@ -85,30 +85,36 @@ CommandParseResult Parser::BuildParseResultWithRedirect(
           error_file, is_append, stderr_is_append};
 }
 
-std::vector<CommandParseResult> Parser::Parse(
+std::optional<std::vector<CommandParseResult>> Parser::Parse(
     const std::string &input_line) {
   std::vector<CommandParseResult> commands;
   std::vector<std::string> commands_str =
       utils::Split(input_line, REDIRECT_PIPE);
   for (const auto &command_str : commands_str) {
-    auto [command_name, args] = ParseCommand(command_str);
-
+    auto maybeCommandAndArgs = ParseCommand(command_str);
+    if (!maybeCommandAndArgs.has_value()) {
+      return {};
+    }
+    auto [command_name, args] = maybeCommandAndArgs.value();
     commands.push_back(BuildParseResultWithRedirect(args, command_name));
   }
   return commands;
 }
 
-std::tuple<std::string, std::vector<std::string>> Parser::ParseCommand(
+std::optional<std::tuple<std::string, std::vector<std::string>>> Parser::ParseCommand(
     const std::string &input_line) {
   auto [init_command_name, args_str] = SplitCommandNameAndArgs(input_line);
 //  spdlog::debug("init_command_name: {}, args_str: {}", init_command_name);
   auto alias_command = build_in_.GetAlias()->Replace(init_command_name);
   auto [command_name, extra_args_str] = SplitCommandNameAndArgs(alias_command);
-  auto args = SplitArgs(args_str + " " + extra_args_str);
-  return {command_name, args};
+  auto maybe_args = SplitArgs(args_str + " " + extra_args_str);
+  if (!maybe_args.has_value()) {
+    return {};
+  }
+  return std::tuple<std::string, std::vector<std::string>>(command_name, maybe_args.value());
 }
 
-int NextNonSpacePos(int start, const std::string &str) {
+int Parser::NextNonSpacePos(int start, const std::string &str) {
   int i = start;
   while (i < str.length() && str[i] == ' ') i++;
   return i;
@@ -130,7 +136,7 @@ std::pair<std::string, std::string> Parser::SplitCommandNameAndArgs(const std::s
   return {command_name, args};
 }
 
-std::pair<std::string, int> ExtractQuoteString(int start, char quotation_mark,
+std::optional<std::pair<std::string, int>> Parser::ExtractQuoteString(int start, char quotation_mark,
                                const std::string &str, std::ostream &os_err) {
   int i;
   int quotation_mark_count = 1;
@@ -149,13 +155,13 @@ std::pair<std::string, int> ExtractQuoteString(int start, char quotation_mark,
     ans += str[i];
   }
   if (quotation_mark_count % 2 != 0) {
-    // todo: error handle: abort execute, failed
     os_err << "quotation mark do not match" << std::endl;
+    return {};
   }
-  return {ans, i + 1};
+  return std::pair(ans, i + 1);
 }
 
-std::pair<std::string, int> ExtractStringWithoutQuote(int start, const std::string &str) {
+std::optional<std::pair<std::string, int>> Parser::ExtractStringWithoutQuote(int start, const std::string &str) {
   int i = start;
   for (; i < str.length(); i++) {
     if (str[i] == ' ') {
@@ -163,16 +169,20 @@ std::pair<std::string, int> ExtractStringWithoutQuote(int start, const std::stri
     }
     if (str[i - 1] == '=' && (str[i] == QUOTATION_MARK_SINGLE || str[i] == QUOTATION_MARK_DOUBLE)) {
       // todo: refactor
-      auto [value, next] = ExtractQuoteString(i + 1, str[i], str, std::cerr);
-      return {str.substr(start, i - start + 1) + value + str[i], next};
+      auto maybeValue = ExtractQuoteString(i + 1, str[i], str, std::cerr);
+      if (!maybeValue.has_value()) {
+        return {};
+      }
+      auto [value, next] = maybeValue.value();
+      return std::pair(str.substr(start, i - start + 1) + value + str[i], next);
     }
   }
-  return {str.substr(start, i - start), i};
+  return std::pair(str.substr(start, i - start), i);
 }
 
-std::vector<std::string> Parser::SplitArgs(const std::string &str) {
+std::optional<std::vector<std::string>> Parser::SplitArgs(const std::string &str) {
   if (str.empty()) {
-    return {};
+    return std::vector<std::string>();
   }
   std::vector<std::string> args;
   int i = NextNonSpacePos(0, str);
@@ -181,11 +191,18 @@ std::vector<std::string> Parser::SplitArgs(const std::string &str) {
     bool complete_quote = str[i] == QUOTATION_MARK_SINGLE;
 
     if (str[i] == QUOTATION_MARK_DOUBLE || str[i] == QUOTATION_MARK_SINGLE) {
-      auto [value, next] = ExtractQuoteString(i + 1, str[i], str, std::cerr);
-      fragment = value;
-      i = next;
+      auto maybe_value =  ExtractQuoteString(i + 1, str[i], str, std::cerr);
+      if (!maybe_value.has_value()) {
+        return {};
+      }
+      fragment = maybe_value.value().first;
+      i = maybe_value.value().second;
     } else {
-      auto [value, next] = ExtractStringWithoutQuote(i, str);
+      auto maybe_value = ExtractStringWithoutQuote(i, str);
+      if (!maybe_value.has_value()) {
+        return {};
+      }
+      auto [value, next] = maybe_value.value();
       fragment = value;
       i = next;
     }

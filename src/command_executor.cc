@@ -121,34 +121,38 @@ std::vector<std::array<int, 2>> CommandExecutor::CreatePipe(
 }
 
 int CommandExecutor::Execute(const std::string &line) {
-  std::vector<CommandParseResult> command_parse_result_list =
+  std::optional<std::vector<CommandParseResult>> maybe_commands =
       parser_.Parse(line);
-  LogCommandParseResultList(command_parse_result_list);
+  if (!maybe_commands.has_value()) {
+    return ERROR_CODE_DEFAULT;
+  }
+  auto commands = maybe_commands.value();
+  LogCommandParseResultList(commands);
   int save_fd = ErrorHandling::ErrorDispatchHandler(
       dup(STDOUT_FILENO), ErrorHandling::ErrorType::FATAL_ERROR);
   struct CommandParseResult *built_In_Command_ptr = nullptr;
   std::vector<std::array<int, 2>> pipe_fds_list;
-  if (command_parse_result_list.size() > 1) {
-    pipe_fds_list = CreatePipe(command_parse_result_list);
+  if (commands.size() > 1) {
+    pipe_fds_list = CreatePipe(commands);
   }
   std::vector<pid_t> child_pids;
-  for (int i = 0; i < command_parse_result_list.size(); i++) {
-    bool is_last_command = i == command_parse_result_list.size() - 1;
-    if (build_in_.Exist(command_parse_result_list[i].command)) {
+  for (int i = 0; i < commands.size(); i++) {
+    bool is_last_command = i == commands.size() - 1;
+    if (build_in_.Exist(commands[i].command)) {
       // build_in command pipe redirect,need the reader needs to be received
       // before it can be written to the pipe
       if (!pipe_fds_list.empty()) {
-        built_In_Command_ptr = &command_parse_result_list[i];
+        built_In_Command_ptr = &commands[i];
       } else {
-        build_in_.Execute(command_parse_result_list[i].command,
-                          command_parse_result_list[i].args);
+        build_in_.Execute(commands[i].command,
+                          commands[i].args);
       }
     } else {
       pid_t pid = ErrorHandling::ErrorDispatchHandler(
           fork(), ErrorHandling::ErrorType::FATAL_ERROR);
       if (pid == 0) {
         close(save_fd);
-        return ProcessChild(command_parse_result_list[i], pipe_fds_list, i,
+        return ProcessChild(commands[i], pipe_fds_list, i,
                             is_last_command);
       } else {
         child_pids.push_back(pid);
@@ -160,7 +164,7 @@ int CommandExecutor::Execute(const std::string &line) {
   BuildInCommandExecute(save_fd, built_In_Command_ptr, pipe_fds_list);
   CloseAllPipeAndWaitChildProcess(pipe_fds_list, child_pids);
   close(save_fd);
-  return 0;
+  return SUCCESS;
 }
 
 void CommandExecutor::BuildInCommandExecute(
