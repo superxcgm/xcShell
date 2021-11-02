@@ -14,6 +14,9 @@
 #define REDIRECT_INPUT "<"
 #define REDIRECT_PIPE "|"
 
+#define QUOTATION_MARK_SINGLE '\''
+#define QUOTATION_MARK_DOUBLE '"'
+
 #define GLOBAL_CONFIG_FILE "/etc/xcshrc"
 
 #define USER_CONFIG_FILE "~/.xcshrc"

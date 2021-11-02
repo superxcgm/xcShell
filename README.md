@@ -46,9 +46,9 @@
 ./auto/functional_test.sh generate xxx
 # For example: ./auto/functional_test.sh generate pipe
 ```
-This command will generate empty file `xxx.functional_test.in` and `xxx.functional_test.expected.out` in dir `auto/data`.
-And then you can write your test in `xxx.functional_test.in`, run functional test and check output of you test.
-It should be located in `/tmp/xcShell_functional_test/xxx.functional_test.out`.
+This command will generate empty file `xxx.functional_test.in` and `xxx.functional_test.expected.out` in dir `auto/data`
+. And then you can write your test in `xxx.functional_test.in`, run functional test and check output of you test. It
+should be located in `/tmp/xcShell_functional_test/xxx.functional_test.out`.
 
 You can save output by `./auto/functional_test.sh apply xxx` if the output file match you expect.
 
