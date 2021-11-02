@@ -456,7 +456,7 @@ TEST(ParseTest,
   Parser parser(build_in);
   std::string str = "echo $123HOME.123";
   std::vector<std::string> vec_first_command_args;
-  vec_first_command_args.emplace_back("HOME.123");
+  vec_first_command_args.emplace_back("123HOME.123");
   std::vector<CommandParseResult> command_parse_result_list =
       parser.Parse(str);
   CommandParseResult command_parse_result_with_first =

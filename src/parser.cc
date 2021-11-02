@@ -47,90 +47,6 @@ bool Parser::IsInputRedirectSymbol(const std::string &arg) {
   return false;
 }
 
-std::string Parser::ExtractEnvironmentVariable(const std::string &arg, int i) {
-  std::string environment_variable;
-  std::string environment_variable_suffix;
-  std::string environment_variable_result;
-  for (; i < arg.size(); i++) {
-    if (arg[i] == '$') {
-      if (getenv(environment_variable.c_str()) != nullptr) {
-        environment_variable_result.append(getenv(environment_variable.c_str()))
-            .append(environment_variable_suffix);
-      }
-      if (std::isdigit(arg[i + 1])) {
-        i++;
-        for (; i < arg.size(); i++) {
-          if (std::isdigit(arg[i])) {
-            continue;
-          }
-          for (; i < arg.size(); i++) {
-            environment_variable_suffix += arg[i];
-          }
-        }
-        break;
-      }
-      environment_variable = "";
-      environment_variable_suffix = "";
-      continue;
-    }
-    if (std::isupper(arg[i]) || std::isalpha(arg[i]) || std::isdigit(arg[i]) ||
-        arg[i] == '_') {
-      environment_variable += arg[i];
-      continue;
-    } else {
-      for (; i < arg.size(); i++) {
-        if (arg[i] == '\"') {
-          continue;
-        }
-        if (arg[i] == '$') {
-          i--;
-          break;
-        }
-        environment_variable_suffix += arg[i];
-      }
-    }
-  }
-
-  if (getenv(environment_variable.c_str()) != nullptr) {
-    environment_variable_result.append(getenv(environment_variable.c_str()))
-        .append(environment_variable_suffix);
-  } else {
-    environment_variable_result.append(environment_variable_suffix);
-  }
-  return environment_variable_result;
-}
-
-std::string Parser::ParseInputArg(const std::string &arg) {
-  std::string arg_parse_result;
-  std::string arg_parse_result_prefix;
-  int i = 0;
-  for (; i < arg.size(); i++) {
-    if (arg[0] == '\'' && arg[arg.size() - 1] == '\'') {
-      arg_parse_result.append(ExtractSingleQuoteString(arg, i));
-      break;
-    } else if (arg[i] == '$') {
-      arg_parse_result.append(ExtractEnvironmentVariable(arg, i));
-      break;
-    } else if (arg[i] == '\"') {
-      i++;
-    } else {
-      arg_parse_result_prefix += arg[i];
-    }
-  }
-  return arg_parse_result_prefix.append(arg_parse_result);
-}
-
-std::string Parser::ExtractSingleQuoteString(const std::string &arg, int i) {
-  std::string single_quote_string;
-  for (; i < arg.size(); i++) {
-    if (arg[i] == '\'') {
-      continue;
-    }
-    single_quote_string += arg[i];
-  }
-  return single_quote_string;
-}
-
 CommandParseResult Parser::BuildParseResultWithRedirect(
     const std::vector<std::string> &origin_args,
     const std::string &command) {
@@ -215,10 +131,11 @@ std::pair<std::string, std::string> Parser::SplitCommandNameAndArgs(const std::s
   return {command_name, args};
 }
 
-std::string ExtractQuoteString(int start, char quotation_mark,
+std::pair<std::string, int> ExtractQuoteString(int start, char quotation_mark,
                                const std::string &str, std::ostream &os_err) {
   int i;
   int quotation_mark_count = 1;
+  std::string ans;
   for (i = start; i < str.length(); i++) {
     if (str[i] == quotation_mark) {
       // todo: ignore continuous quotation mark
@@ -230,26 +147,27 @@ std::string ExtractQuoteString(int start, char quotation_mark,
       quotation_mark_count++;
       break;
     }
+    ans += str[i];
   }
   if (quotation_mark_count % 2 != 0) {
     // todo: error handle: abort execute, failed
     os_err << "quotation mark do not match" << std::endl;
   }
-  return str.substr(start, i - start);
+  return {ans, i + 1};
 }
 
-std::string ExtractStringWithoutQuote(int start, const std::string &str) {
+std::pair<std::string, int> ExtractStringWithoutQuote(int start, const std::string &str) {
   int i = start;
   for (; i < str.length(); i++) {
     if (str[i] == ' ') {
       break;
     }
     if (str[i - 1] == '=' && (str[i] == '\'' || str[i] == '"')) {
-      return str.substr(start, i - start + 1) +
-             ExtractQuoteString(i + 1, str[i], str, std::cerr) + str[i];
+      auto [value, next] = ExtractQuoteString(i + 1, str[i], str, std::cerr);
+      return {str.substr(start, i - start + 1) + value + str[i], next};
     }
   }
-  return str.substr(start, i - start);
+  return {str.substr(start, i - start), i};
 }
 
 std::vector<std::string> Parser::SplitArgs(const std::string &str) {
@@ -260,21 +178,62 @@ std::vector<std::string> Parser::SplitArgs(const std::string &str) {
   int i = NextNonSpacePos(0, str);
   for (; i < str.length();) {
     std::string fragment;
+    bool complete_quote = false;
     if (str[i] == QUOTATION_MARK_DOUBLE) {
-      fragment = std::move(ExtractQuoteString(i + 1, str[i], str, std::cerr));
-      i += 2;  // ignore quotation mark
+      auto [value, next] = ExtractQuoteString(i + 1, QUOTATION_MARK_DOUBLE, str, std::cerr);
+      fragment = value;
+      i = next;
     } else if (str[i] == QUOTATION_MARK_SINGLE) {
-      fragment +=
-          '\'' + ExtractQuoteString(i + 1, str[i], str, std::cerr) + '\'';
+      auto [value, next] = ExtractQuoteString(i + 1, QUOTATION_MARK_SINGLE, str, std::cerr);
+      fragment = value;
+      i = next;
+      complete_quote = true;
     } else {
-      fragment = std::move(ExtractStringWithoutQuote(i, str));
+      auto [value, next] = ExtractStringWithoutQuote(i, str);
+      fragment = value;
+      i = next;
     }
-    args.push_back(ParseInputArg(fragment));
-    i = NextNonSpacePos(i + fragment.size(), str);
+    if (!complete_quote) {
+      fragment = ReplaceVariable(fragment);
+    }
+    args.push_back(fragment);
+    i = NextNonSpacePos(i, str);
   }
   if (i < str.length()) {
     args.push_back(str.substr(i));
   }
 
   return args;
+}
+std::pair<std::string, int> Parser::ExtractVariable(const std::string &str, int start) {
+  int left = start;
+  if (std::isalpha(str[start]) || str[start] == '_') {
+    int right = start + 1;
+    while (right < str.size() && std::isalnum(str[right]) || str[right] == '_') {
+      right++;
+    }
+    std::string variable_name = str.substr(left, right - left);
+    char *value = getenv(variable_name.c_str());
+    if (value == nullptr) {
+      return {"", right};
+    } else {
+      return {value, right};
+    }
+  }
+  return {"", start};
+}
+
+std::string Parser::ReplaceVariable(const std::string &str) {
+  std::string ans;
+  for (int i = 0; i < str.size();) {
+    if (str[i] == '$') {
+      auto [value, next] = ExtractVariable(str, i + 1);
+      ans += value;
+      i = next;
+    } else {
+      ans += str[i];
+      i++;
+    }
+  }
+  return ans;
 }

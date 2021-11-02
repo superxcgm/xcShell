@@ -28,10 +28,9 @@ class Parser {
   static bool IsErrorRedirectSymbol(const std::string &arg);
   static bool IsErrorToStdoutRedirect(const std::string &arg);
   static bool IsRedirect(const std::string &arg);
-  static std::string ParseInputArg(const std::string &arg);
-  static std::string ExtractEnvironmentVariable(const std::string &arg, int i);
-  static std::string ExtractSingleQuoteString(const std::string &arg, int i);
   static std::pair<std::string, std::string> SplitCommandNameAndArgs(const std::string &command);
   static std::vector<std::string> SplitArgs(const std::string& str);
+  static std::string ReplaceVariable(const std::string &str);
+  static std::pair<std::string, int> ExtractVariable(const std::string &str, int start);
 };
 #endif  // INCLUDE_XCSHELL_PARSER_H_
