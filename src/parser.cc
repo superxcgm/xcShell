@@ -181,14 +181,78 @@ std::vector<CommandParseResult> Parser::ParseUserInputLine(
 
 std::tuple<std::string, std::vector<std::string>> Parser::GetCommandAndSuffix(
     const std::string &input_line) {
-  auto parts = utils::SplitArgs(input_line);
+  auto parts = SplitArgs(input_line);
   const std::string init_command = parts[0];
   auto command_with_args_str = build_in_.GetAlias()->Replace(init_command);
-  auto command_with_args = utils::SplitArgs(command_with_args_str);
+  auto command_with_args = SplitArgs(command_with_args_str);
   auto command = command_with_args[0];
   parts.erase(parts.begin());
   for (size_t i = command_with_args.size() - 1; i > 0; i--) {
     parts.insert(parts.begin(), command_with_args[i]);
   }
   return {command, parts};
+}
+
+int NextNonSpacePos(int start, const std::string &str) {
+  int i = start;
+  while (i < str.length() && str[i] == ' ') i++;
+  return i;
+}
+
+std::string ExtractQuoteString(int start, char quotation_mark,
+                               const std::string &str, std::ostream &os_err) {
+  int i;
+  int check_number = 1;
+  for (i = start; i < str.length(); i++) {
+    if (str[i] == quotation_mark) {
+      check_number++;
+      break;
+    }
+  }
+  if (check_number % 2 != 0) {
+    os_err << "less one quote" << std::endl;
+  }
+  return str.substr(start, i - start);
+}
+
+std::string ExtractStringWithoutQuote(int start, const std::string &str) {
+  int i = start;
+  for (; i < str.length(); i++) {
+    if (str[i] == ' ') {
+      break;
+    }
+    if (str[i - 1] == '=' && (str[i] == '\'' || str[i] == '"')) {
+      return str.substr(start, i - start + 1) +
+             ExtractQuoteString(i + 1, str[i], str, std::cerr) + str[i];
+    }
+  }
+  return str.substr(start, i - start);
+}
+
+std::vector<std::string> Parser::SplitArgs(const std::string &str) {
+  if (str.empty()) {
+    return {};
+  }
+  std::vector<std::string> parts;
+  int i = NextNonSpacePos(0, str);
+  std::vector<char> quotation_marks = {'\'', '"'};
+  for (; i < str.length();) {
+    std::string fragment;
+    if (str[i] == quotation_marks[1]) {
+      fragment = std::move(ExtractQuoteString(i + 1, str[i], str, std::cerr));
+      i += 2;  // ignore quotation mark
+    } else if (str[i] == quotation_marks[0]) {
+      fragment +=
+          '\'' + ExtractQuoteString(i + 1, str[i], str, std::cerr) + '\'';
+    } else {
+      fragment = std::move(ExtractStringWithoutQuote(i, str));
+    }
+    parts.push_back(fragment);
+    i = NextNonSpacePos(i + fragment.size(), str);
+  }
+  if (i < str.length()) {
+    parts.push_back(str.substr(i));
+  }
+
+  return parts;
 }

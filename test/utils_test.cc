@@ -41,68 +41,6 @@ TEST(UtilsTest, GetLastDir_ShouldReturnLastDirectoryUnchange) {
   EXPECT_EQ(parts, "bin");
 }
 
-TEST(UtilsTest, SplitArgs_ShouldReturnEmptyListForEmptyString) {
-  auto parts = utils::SplitArgs("");
-
-  EXPECT_TRUE(parts.empty());
-}
-
-TEST(UtilsTest, SplitArgs_ShouldReturnCorrectlyFor1Arg) {
-  auto parts = utils::SplitArgs("hello");
-
-  EXPECT_EQ(parts.size(), 1);
-  EXPECT_EQ(parts[0], "hello");
-}
-
-TEST(UtilsTest, SplitArgs_ShouldReturnCorrectlyForIgnoreHeadingSpace) {
-  auto parts = utils::SplitArgs(" hello");
-
-  EXPECT_EQ(parts.size(), 1);
-  EXPECT_EQ(parts[0], "hello");
-}
-
-TEST(UtilsTest, SplitArgs_ShouldReturnCorrectlyForIgnoreTailingSpace) {
-  auto parts = utils::SplitArgs("hello  ");
-
-  EXPECT_EQ(parts.size(), 1);
-  EXPECT_EQ(parts[0], "hello");
-}
-
-TEST(UtilsTest, SplitArgs_ShouldReturnCorrectlyForIgnoreExtraMiddleSpace) {
-  std::vector<std::string> expected = {"hello", "world"};
-  auto parts = utils::SplitArgs("hello  world");
-
-  EXPECT_EQ(parts, expected);
-}
-
-TEST(UtilsTest, SplitArgs_ShouldReturnCorrectlyFor3Arg) {
-  std::vector<std::string> expected = {"hello", "this", "world"};
-  auto parts = utils::SplitArgs("hello this world");
-
-  EXPECT_EQ(parts, expected);
-}
-
-TEST(UtilsTest, SplitArgs_ShouldReturnCorrectlyForSingleQuotation) {
-  std::vector<std::string> expected = {"hello", "'this \"world'"};
-  auto parts = utils::SplitArgs("hello 'this \"world'");
-
-  EXPECT_EQ(parts, expected);
-}
-
-TEST(UtilsTest, SplitArgs_ShouldReturnCorrectlyForDoubleQuotation) {
-  std::vector<std::string> expected = {"hello", "this 'world"};
-  auto parts = utils::SplitArgs("hello \"this 'world\"");
-
-  EXPECT_EQ(parts, expected);
-}
-
-TEST(UtilsTest, SplitArgs_ShouldReturnCorrectlyForArgWithEquationAndQuotetion) {
-  std::vector<std::string> expected = {"ls='ls -G'"};
-  auto parts = utils::SplitArgs("ls='ls -G'");
-
-  EXPECT_EQ(parts, expected);
-}
-
 TEST(UtilsTest, RemoveQuote_ShouldReturnOriginStrIfNoQuote) {
   EXPECT_EQ(utils::RemoveQuote("hehe"), "hehe");
 }

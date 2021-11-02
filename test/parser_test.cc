@@ -498,3 +498,68 @@ TEST(ParseTest,
   EXPECT_EQ(command_parse_result_with_first.command, "echo");
   EXPECT_EQ(command_parse_result_with_first.args, vec_first_command_args);
 }
+
+//TEST(ParseTest, SplitArgs_ShouldReturnEmptyListForEmptyString) {
+//  BuildIn build_in;
+//  Parser parser(build_in);
+//
+//  auto parts = utils::SplitArgs("");
+//
+//  EXPECT_TRUE(parts.empty());
+//}
+//
+//TEST(ParseTest, SplitArgs_ShouldReturnCorrectlyFor1Arg) {
+//  auto parts = utils::SplitArgs("hello");
+//
+//  EXPECT_EQ(parts.size(), 1);
+//  EXPECT_EQ(parts[0], "hello");
+//}
+//
+//TEST(ParseTest, SplitArgs_ShouldReturnCorrectlyForIgnoreHeadingSpace) {
+//  auto parts = utils::SplitArgs(" hello");
+//
+//  EXPECT_EQ(parts.size(), 1);
+//  EXPECT_EQ(parts[0], "hello");
+//}
+//
+//TEST(ParseTest, SplitArgs_ShouldReturnCorrectlyForIgnoreTailingSpace) {
+//  auto parts = utils::SplitArgs("hello  ");
+//
+//  EXPECT_EQ(parts.size(), 1);
+//  EXPECT_EQ(parts[0], "hello");
+//}
+//
+//TEST(ParseTest, SplitArgs_ShouldReturnCorrectlyForIgnoreExtraMiddleSpace) {
+//  std::vector<std::string> expected = {"hello", "world"};
+//  auto parts = utils::SplitArgs("hello  world");
+//
+//  EXPECT_EQ(parts, expected);
+//}
+//
+//TEST(ParseTest, SplitArgs_ShouldReturnCorrectlyFor3Arg) {
+//  std::vector<std::string> expected = {"hello", "this", "world"};
+//  auto parts = utils::SplitArgs("hello this world");
+//
+//  EXPECT_EQ(parts, expected);
+//}
+//
+//TEST(ParseTest, SplitArgs_ShouldReturnCorrectlyForSingleQuotation) {
+//  std::vector<std::string> expected = {"hello", "'this \"world'"};
+//  auto parts = ("hello 'this \"world'");
+//
+//  EXPECT_EQ(parts, expected);
+//}
+//
+//TEST(ParseTest, SplitArgs_ShouldReturnCorrectlyForDoubleQuotation) {
+//  std::vector<std::string> expected = {"hello", "this 'world"};
+//  auto parts = utils::SplitArgs("hello \"this 'world\"");
+//
+//  EXPECT_EQ(parts, expected);
+//}
+//
+//TEST(ParseTest, SplitArgs_ShouldReturnCorrectlyForArgWithEquationAndQuotetion) {
+//  std::vector<std::string> expected = {"ls='ls -G'"};
+//  auto parts = utils::SplitArgs("ls='ls -G'");
+//
+//  EXPECT_EQ(parts, expected);
+//}
