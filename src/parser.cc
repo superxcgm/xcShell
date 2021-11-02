@@ -78,6 +78,9 @@ std::string Parser::ExtractEnvironmentVariable(const std::string &arg, int i) {
       continue;
     } else {
       for (; i < arg.size(); i++) {
+        if (arg[i] == '\"') {
+          continue;
+        }
         if (arg[i] == '$') {
           i--;
           break;
@@ -107,6 +110,8 @@ std::string Parser::ParseInputArg(const std::string &arg) {
     } else if (arg[i] == '$') {
       arg_parse_result.append(ExtractEnvironmentVariable(arg, i));
       break;
+    } else if (arg[i] == '\"') {
+      i++;
     } else {
       arg_parse_result_prefix += arg[i];
     }
@@ -205,6 +210,11 @@ std::string ExtractQuoteString(int start, char quotation_mark,
   int check_number = 1;
   for (i = start; i < str.length(); i++) {
     if (str[i] == quotation_mark) {
+      if (i + 1 < str.length() && str[i + 1] == quotation_mark) {
+        check_number += 2;
+        i++;
+        continue;
+      }
       check_number++;
       break;
     }
