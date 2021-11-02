@@ -38,6 +38,10 @@ xcShell_functional_test > echo $EXIST_PATH_ENV $haha
 hello 
 xcShell_functional_test > echo "HOME""PATH"
 HOMEPATH
-xcShell_functional_test > echo "$$EXIST_PATH_ENV""$EXIST_PATH_ENV_TEST"
+xcShell_functional_test > echo "$EXIST_PATH_ENV""$EXIST_PATH_ENV_TEST"
 helloworld
+xcShell_functional_test > echo '$EXIST_PATH_ENV
+quotation mark do not match
+xcShell_functional_test > echo "$EXIST_PATH_ENV
+quotation mark do not match
 xcShell_functional_test > 

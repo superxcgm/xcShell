@@ -68,4 +68,3 @@ void Alias::AppendString(std::string &str, const std::string &added_str) {
   str.append(" ");
   str.append(added_str);
 }
-

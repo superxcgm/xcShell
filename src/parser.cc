@@ -47,8 +47,7 @@ bool Parser::IsInputRedirectSymbol(const std::string &arg) {
 }
 
 CommandParseResult Parser::BuildParseResultWithRedirect(
-    const std::vector<std::string> &origin_args,
-    const std::string &command) {
+    const std::vector<std::string> &origin_args, const std::string &command) {
   std::vector<std::string> final_args;
   bool args_end = false;
   bool stderr_is_append = false;
@@ -81,8 +80,8 @@ CommandParseResult Parser::BuildParseResultWithRedirect(
       stderr_is_append = is_append;
     }
   }
-  return {command, final_args, input_file, output_file,
-          error_file, is_append, stderr_is_append};
+  return {command,    final_args, input_file,      output_file,
+          error_file, is_append,  stderr_is_append};
 }
 
 std::optional<std::vector<CommandParseResult>> Parser::Parse(
@@ -95,23 +94,24 @@ std::optional<std::vector<CommandParseResult>> Parser::Parse(
     if (!maybeCommandAndArgs.has_value()) {
       return {};
     }
-    auto[command_name, args] = maybeCommandAndArgs.value();
+    auto [command_name, args] = maybeCommandAndArgs.value();
     commands.push_back(BuildParseResultWithRedirect(args, command_name));
   }
   return commands;
 }
 
-std::optional<std::tuple<std::string, std::vector<std::string>>> Parser::ParseCommand(
-    const std::string &input_line) {
-  auto[init_command_name, args_str] = SplitCommandNameAndArgs(input_line);
-//  spdlog::debug("init_command_name: {}, args_str: {}", init_command_name);
+std::optional<std::tuple<std::string, std::vector<std::string>>>
+Parser::ParseCommand(const std::string &input_line) {
+  auto [init_command_name, args_str] = SplitCommandNameAndArgs(input_line);
+  //  spdlog::debug("init_command_name: {}, args_str: {}", init_command_name);
   auto alias_command = build_in_.GetAlias()->Replace(init_command_name);
-  auto[command_name, extra_args_str] = SplitCommandNameAndArgs(alias_command);
+  auto [command_name, extra_args_str] = SplitCommandNameAndArgs(alias_command);
   auto maybe_args = SplitArgs(args_str + " " + extra_args_str);
   if (!maybe_args.has_value()) {
     return {};
   }
-  return std::tuple<std::string, std::vector<std::string>>(command_name, maybe_args.value());
+  return std::tuple<std::string, std::vector<std::string>>(command_name,
+                                                           maybe_args.value());
 }
 
 int Parser::NextNonSpacePos(int start, const std::string &str) {
@@ -120,7 +120,8 @@ int Parser::NextNonSpacePos(int start, const std::string &str) {
   return i;
 }
 
-std::pair<std::string, std::string> Parser::SplitCommandNameAndArgs(const std::string &command) {
+std::pair<std::string, std::string> Parser::SplitCommandNameAndArgs(
+    const std::string &command) {
   int i = NextNonSpacePos(0, command);
   int j;
   for (j = i + 1; j < command.size(); j++) {
@@ -136,8 +137,9 @@ std::pair<std::string, std::string> Parser::SplitCommandNameAndArgs(const std::s
   return {command_name, args};
 }
 
-std::optional<std::pair<std::string, int>> Parser::ExtractQuoteString(int start, char quotation_mark,
-                                                                      const std::string &str, std::ostream &os_err) {
+std::optional<std::pair<std::string, int>> Parser::ExtractQuoteString(
+    int start, char quotation_mark, const std::string &str,
+    std::ostream &os_err) {
   int i;
   int quotation_mark_count = 1;
   std::string ans;
@@ -161,26 +163,29 @@ std::optional<std::pair<std::string, int>> Parser::ExtractQuoteString(int start,
   return std::pair(ans, i + 1);
 }
 
-std::optional<std::pair<std::string, int>> Parser::ExtractStringWithoutQuote(int start, const std::string &str) {
+std::optional<std::pair<std::string, int>> Parser::ExtractStringWithoutQuote(
+    int start, const std::string &str) {
   int i = start;
   for (; i < str.length(); i++) {
     if (str[i] == ' ') {
       break;
     }
-    if (str[i - 1] == '=' && (str[i] == QUOTATION_MARK_SINGLE || str[i] == QUOTATION_MARK_DOUBLE)) {
+    if (str[i - 1] == '=' &&
+        (str[i] == QUOTATION_MARK_SINGLE || str[i] == QUOTATION_MARK_DOUBLE)) {
       // todo: refactor
       auto maybeValue = ExtractQuoteString(i + 1, str[i], str, std::cerr);
       if (!maybeValue.has_value()) {
         return {};
       }
-      auto[value, next] = maybeValue.value();
+      auto [value, next] = maybeValue.value();
       return std::pair(str.substr(start, i - start + 1) + value + str[i], next);
     }
   }
   return std::pair(str.substr(start, i - start), i);
 }
 
-std::optional<std::vector<std::string>> Parser::SplitArgs(const std::string &str) {
+std::optional<std::vector<std::string>> Parser::SplitArgs(
+    const std::string &str) {
   if (str.empty()) {
     return std::vector<std::string>();
   }
@@ -202,7 +207,7 @@ std::optional<std::vector<std::string>> Parser::SplitArgs(const std::string &str
       if (!maybe_value.has_value()) {
         return {};
       }
-      auto[value, next] = maybe_value.value();
+      auto [value, next] = maybe_value.value();
       fragment = value;
       i = next;
     }
@@ -218,11 +223,13 @@ std::optional<std::vector<std::string>> Parser::SplitArgs(const std::string &str
 
   return args;
 }
-std::pair<std::string, int> Parser::ExtractVariable(const std::string &str, int start) {
+std::pair<std::string, int> Parser::ExtractVariable(const std::string &str,
+                                                    int start) {
   int left = start;
   if (std::isalpha(str[start]) || str[start] == '_') {
     int right = start + 1;
-    while (right < str.size() && std::isalnum(str[right]) || str[right] == '_') {
+    while (right < str.size() && std::isalnum(str[right]) ||
+           str[right] == '_') {
       right++;
     }
     std::string variable_name = str.substr(left, right - left);
@@ -240,7 +247,7 @@ std::string Parser::ReplaceVariable(const std::string &str) {
   std::string ans;
   for (int i = 0; i < str.size();) {
     if (str[i] == '$') {
-      auto[value, next] = ExtractVariable(str, i + 1);
+      auto [value, next] = ExtractVariable(str, i + 1);
       ans += value;
       i = next;
     } else {

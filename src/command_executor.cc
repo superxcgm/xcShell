@@ -144,16 +144,14 @@ int CommandExecutor::Execute(const std::string &line) {
       if (!pipe_fds_list.empty()) {
         built_In_Command_ptr = &commands[i];
       } else {
-        build_in_.Execute(commands[i].command,
-                          commands[i].args);
+        build_in_.Execute(commands[i].command, commands[i].args);
       }
     } else {
       pid_t pid = ErrorHandling::ErrorDispatchHandler(
           fork(), ErrorHandling::ErrorType::FATAL_ERROR);
       if (pid == 0) {
         close(save_fd);
-        return ProcessChild(commands[i], pipe_fds_list, i,
-                            is_last_command);
+        return ProcessChild(commands[i], pipe_fds_list, i, is_last_command);
       } else {
         child_pids.push_back(pid);
       }
