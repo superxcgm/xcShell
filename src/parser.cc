@@ -4,6 +4,7 @@
 #include <string>
 #include <vector>
 
+#include <spdlog/spdlog.h>
 #include "xcshell/command_parse_result.h"
 #include "xcshell/constants.h"
 #include "xcshell/utils.h"
@@ -185,16 +186,12 @@ std::vector<CommandParseResult> Parser::Parse(
 
 std::tuple<std::string, std::vector<std::string>> Parser::ParseCommand(
     const std::string &input_line) {
-  auto parts = SplitArgs(input_line);
-  const std::string init_command = parts[0];
-  auto command_with_args_str = build_in_.GetAlias()->Replace(init_command);
-  auto command_with_args = SplitArgs(command_with_args_str);
-  auto command = command_with_args[0];
-  parts.erase(parts.begin());
-  for (size_t i = command_with_args.size() - 1; i > 0; i--) {
-    parts.insert(parts.begin(), command_with_args[i]);
-  }
-  return {command, parts};
+  auto [init_command_name, args_str] = SplitCommandNameAndArgs(input_line);
+//  spdlog::debug("init_command_name: {}, args_str: {}", init_command_name);
+  auto alias_command = build_in_.GetAlias()->Replace(init_command_name);
+  auto [command_name, extra_args_str] = SplitCommandNameAndArgs(alias_command);
+  auto args = SplitArgs(args_str + " " + extra_args_str);
+  return {command_name, args};
 }
 
 int NextNonSpacePos(int start, const std::string &str) {
@@ -207,11 +204,16 @@ std::pair<std::string, std::string> Parser::SplitCommandNameAndArgs(const std::s
   int i = NextNonSpacePos(0, command);
   int j;
   for (j = i + 1; j < command.size(); j++) {
-    if (j == ' ') {
+    if (command[j] == ' ') {
       break;
     }
   }
-  return {command.substr(i, j - i), command.substr(j + 1)};
+  std::string command_name = command.substr(i, j - i);
+  std::string args;
+  if (j + 1 < command.size()) {
+    args = command.substr(j + 1);
+  }
+  return {command_name, args};
 }
 
 std::string ExtractQuoteString(int start, char quotation_mark,
