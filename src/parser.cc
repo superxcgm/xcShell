@@ -144,6 +144,7 @@ CommandParseResult Parser::BuildParseResultWithRedirect(
     auto command_with_arg = command_with_args[i];
     if (IsRedirect(command_with_arg)) args_end = true;
     if (!args_end) {
+      // todo: not to parse arg here
       args.push_back(ParseInputArg(command_with_arg));
     } else if ((i + 1) < command_with_args.size()) {
       if (IsOutputRedirectSymbol(command_with_arg)) {
@@ -169,22 +170,20 @@ CommandParseResult Parser::BuildParseResultWithRedirect(
           error_file, is_append, stderr_is_append};
 }
 
-std::vector<CommandParseResult> Parser::ParseUserInputLine(
+std::vector<CommandParseResult> Parser::Parse(
     const std::string &input_line) {
-  std::vector<CommandParseResult> command_parse_result_list;
-  std::vector<std::string> command_and_suffix_list =
+  std::vector<CommandParseResult> commands;
+  std::vector<std::string> commands_str =
       utils::Split(input_line, REDIRECT_PIPE);
-  for (const auto &command_and_suffix : command_and_suffix_list) {
-    auto [command, commandSuffix] =
-        GetCommandAndSuffix(utils::Trim(command_and_suffix));
+  for (const auto &command_str : commands_str) {
+    auto [command_name, args] = ParseCommand(command_str);
 
-    command_parse_result_list.push_back(
-        BuildParseResultWithRedirect(commandSuffix, command));
+    commands.push_back(BuildParseResultWithRedirect(args, command_name));
   }
-  return command_parse_result_list;
+  return commands;
 }
 
-std::tuple<std::string, std::vector<std::string>> Parser::GetCommandAndSuffix(
+std::tuple<std::string, std::vector<std::string>> Parser::ParseCommand(
     const std::string &input_line) {
   auto parts = SplitArgs(input_line);
   const std::string init_command = parts[0];
@@ -204,23 +203,36 @@ int NextNonSpacePos(int start, const std::string &str) {
   return i;
 }
 
-std::string ExtractQuoteString(int start, char quotation_mark,
-                               const std::string &str, std::ostream &os_err) {
-  int i;
-  int check_number = 1;
-  for (i = start; i < str.length(); i++) {
-    if (str[i] == quotation_mark) {
-      if (i + 1 < str.length() && str[i + 1] == quotation_mark) {
-        check_number += 2;
-        i++;
-        continue;
-      }
-      check_number++;
+std::pair<std::string, std::string> Parser::SplitCommandNameAndArgs(const std::string& command) {
+  int i = NextNonSpacePos(0, command);
+  int j;
+  for (j = i + 1; j < command.size(); j++) {
+    if (j == ' ') {
       break;
     }
   }
-  if (check_number % 2 != 0) {
-    os_err << "less one quote" << std::endl;
+  return {command.substr(i, j - i), command.substr(j + 1)};
+}
+
+std::string ExtractQuoteString(int start, char quotation_mark,
+                               const std::string &str, std::ostream &os_err) {
+  int i;
+  int quotation_mark_count = 1;
+  for (i = start; i < str.length(); i++) {
+    if (str[i] == quotation_mark) {
+      // todo: ignore continuous quotation mark
+      if (i + 1 < str.length() && str[i + 1] == quotation_mark) {
+        quotation_mark_count += 2;
+        i++;
+        continue;
+      }
+      quotation_mark_count++;
+      break;
+    }
+  }
+  if (quotation_mark_count % 2 != 0) {
+    // todo: error handle: abort execute, failed
+    os_err << "quotation mark do not match" << std::endl;
   }
   return str.substr(start, i - start);
 }
@@ -243,26 +255,25 @@ std::vector<std::string> Parser::SplitArgs(const std::string &str) {
   if (str.empty()) {
     return {};
   }
-  std::vector<std::string> parts;
+  std::vector<std::string> args;
   int i = NextNonSpacePos(0, str);
-  std::vector<char> quotation_marks = {'\'', '"'};
   for (; i < str.length();) {
     std::string fragment;
-    if (str[i] == quotation_marks[1]) {
+    if (str[i] == QUOTATION_MARK_DOUBLE) {
       fragment = std::move(ExtractQuoteString(i + 1, str[i], str, std::cerr));
       i += 2;  // ignore quotation mark
-    } else if (str[i] == quotation_marks[0]) {
+    } else if (str[i] == QUOTATION_MARK_SINGLE) {
       fragment +=
           '\'' + ExtractQuoteString(i + 1, str[i], str, std::cerr) + '\'';
     } else {
       fragment = std::move(ExtractStringWithoutQuote(i, str));
     }
-    parts.push_back(fragment);
+    args.push_back(fragment);
     i = NextNonSpacePos(i + fragment.size(), str);
   }
   if (i < str.length()) {
-    parts.push_back(str.substr(i));
+    args.push_back(str.substr(i));
   }
 
-  return parts;
+  return args;
 }

@@ -122,7 +122,7 @@ std::vector<std::array<int, 2>> CommandExecutor::CreatePipe(
 
 int CommandExecutor::Execute(const std::string &line) {
   std::vector<CommandParseResult> command_parse_result_list =
-      parser_.ParseUserInputLine(line);
+      parser_.Parse(line);
   LogCommandParseResultList(command_parse_result_list);
   int save_fd = ErrorHandling::ErrorDispatchHandler(
       dup(STDOUT_FILENO), ErrorHandling::ErrorType::FATAL_ERROR);
