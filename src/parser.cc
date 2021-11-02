@@ -95,7 +95,7 @@ std::optional<std::vector<CommandParseResult>> Parser::Parse(
     if (!maybeCommandAndArgs.has_value()) {
       return {};
     }
-    auto [command_name, args] = maybeCommandAndArgs.value();
+    auto[command_name, args] = maybeCommandAndArgs.value();
     commands.push_back(BuildParseResultWithRedirect(args, command_name));
   }
   return commands;
@@ -103,10 +103,10 @@ std::optional<std::vector<CommandParseResult>> Parser::Parse(
 
 std::optional<std::tuple<std::string, std::vector<std::string>>> Parser::ParseCommand(
     const std::string &input_line) {
-  auto [init_command_name, args_str] = SplitCommandNameAndArgs(input_line);
+  auto[init_command_name, args_str] = SplitCommandNameAndArgs(input_line);
 //  spdlog::debug("init_command_name: {}, args_str: {}", init_command_name);
   auto alias_command = build_in_.GetAlias()->Replace(init_command_name);
-  auto [command_name, extra_args_str] = SplitCommandNameAndArgs(alias_command);
+  auto[command_name, extra_args_str] = SplitCommandNameAndArgs(alias_command);
   auto maybe_args = SplitArgs(args_str + " " + extra_args_str);
   if (!maybe_args.has_value()) {
     return {};
@@ -120,7 +120,7 @@ int Parser::NextNonSpacePos(int start, const std::string &str) {
   return i;
 }
 
-std::pair<std::string, std::string> Parser::SplitCommandNameAndArgs(const std::string& command) {
+std::pair<std::string, std::string> Parser::SplitCommandNameAndArgs(const std::string &command) {
   int i = NextNonSpacePos(0, command);
   int j;
   for (j = i + 1; j < command.size(); j++) {
@@ -137,7 +137,7 @@ std::pair<std::string, std::string> Parser::SplitCommandNameAndArgs(const std::s
 }
 
 std::optional<std::pair<std::string, int>> Parser::ExtractQuoteString(int start, char quotation_mark,
-                               const std::string &str, std::ostream &os_err) {
+                                                                      const std::string &str, std::ostream &os_err) {
   int i;
   int quotation_mark_count = 1;
   std::string ans;
@@ -173,7 +173,7 @@ std::optional<std::pair<std::string, int>> Parser::ExtractStringWithoutQuote(int
       if (!maybeValue.has_value()) {
         return {};
       }
-      auto [value, next] = maybeValue.value();
+      auto[value, next] = maybeValue.value();
       return std::pair(str.substr(start, i - start + 1) + value + str[i], next);
     }
   }
@@ -191,7 +191,7 @@ std::optional<std::vector<std::string>> Parser::SplitArgs(const std::string &str
     bool complete_quote = str[i] == QUOTATION_MARK_SINGLE;
 
     if (str[i] == QUOTATION_MARK_DOUBLE || str[i] == QUOTATION_MARK_SINGLE) {
-      auto maybe_value =  ExtractQuoteString(i + 1, str[i], str, std::cerr);
+      auto maybe_value = ExtractQuoteString(i + 1, str[i], str, std::cerr);
       if (!maybe_value.has_value()) {
         return {};
       }
@@ -202,7 +202,7 @@ std::optional<std::vector<std::string>> Parser::SplitArgs(const std::string &str
       if (!maybe_value.has_value()) {
         return {};
       }
-      auto [value, next] = maybe_value.value();
+      auto[value, next] = maybe_value.value();
       fragment = value;
       i = next;
     }
@@ -240,7 +240,7 @@ std::string Parser::ReplaceVariable(const std::string &str) {
   std::string ans;
   for (int i = 0; i < str.size();) {
     if (str[i] == '$') {
-      auto [value, next] = ExtractVariable(str, i + 1);
+      auto[value, next] = ExtractVariable(str, i + 1);
       ans += value;
       i = next;
     } else {
