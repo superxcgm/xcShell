@@ -528,3 +528,34 @@ TEST(ParseTest, Parse_ParseStringSingleQuoteCorrectly) {
   EXPECT_EQ(command_parse_result_with_first.command, "echo");
   EXPECT_EQ(command_parse_result_with_first.args, vec_first_command_args);
 }
+
+TEST(ParseTest, Parse_ParseStringCorrectlyWithDoubleQuotePrefixAndSuffix) {
+  BuildIn build_in;
+  Parser parser(build_in);
+  std::string str = R"(echo ""s"")";
+  std::vector<std::string> vec_first_command_args;
+  vec_first_command_args.emplace_back("s");
+  std::vector<CommandParseResult> command_parse_result_list =
+      parser.Parse(str).value();
+  CommandParseResult command_parse_result_with_first =
+      command_parse_result_list[0];
+
+  EXPECT_EQ(command_parse_result_with_first.command, "echo");
+  EXPECT_EQ(command_parse_result_with_first.args, vec_first_command_args);
+}
+
+TEST(ParseTest, Parse_ParseStringCorrectlyWithDoubleQuoteSuffix) {
+  BuildIn build_in;
+  Parser parser(build_in);
+  std::string str = "echo s\"\"";
+  std::vector<std::string> vec_first_command_args;
+  vec_first_command_args.emplace_back("s");
+  vec_first_command_args.emplace_back("");
+  std::vector<CommandParseResult> command_parse_result_list =
+      parser.Parse(str).value();
+  CommandParseResult command_parse_result_with_first =
+      command_parse_result_list[0];
+
+  EXPECT_EQ(command_parse_result_with_first.command, "echo");
+  EXPECT_EQ(command_parse_result_with_first.args, vec_first_command_args);
+}

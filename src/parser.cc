@@ -106,7 +106,7 @@ Parser::ParseCommand(const std::string &input_line) {
   //  spdlog::debug("init_command_name: {}, args_str: {}", init_command_name);
   auto alias_command = build_in_.GetAlias()->Replace(init_command_name);
   auto [command_name, extra_args_str] = SplitCommandNameAndArgs(alias_command);
-  auto maybe_args = SplitArgs(args_str + " " + extra_args_str);
+  auto maybe_args = SplitArgs(utils::Trim(args_str + " " + extra_args_str));
   if (!maybe_args.has_value()) {
     return {};
   }
@@ -152,7 +152,10 @@ std::optional<std::pair<std::string, int>> Parser::ExtractQuoteString(
         continue;
       }
       quotation_mark_count++;
-      break;
+      if (i + 1 < str.length() && str[i + 1] == ' ') {
+        break;
+      }
+      continue;
     }
     ans += str[i];
   }
@@ -167,7 +170,9 @@ std::optional<std::pair<std::string, int>> Parser::ExtractStringWithoutQuote(
     int start, const std::string &str) {
   int i = start;
   for (; i < str.length(); i++) {
-    if (str[i] == ' ') {
+    if (str[i] == ' ' ||
+        (str[i - 1] != '=' && (str[i] == QUOTATION_MARK_SINGLE ||
+                               str[i] == QUOTATION_MARK_DOUBLE))) {
       break;
     }
     if (str[i - 1] == '=' &&
