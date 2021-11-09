@@ -42,7 +42,7 @@ void Shell::Init(int argc, char **argv) {
   }
 
   IgnoreSignalInterrupt();
-  CreateCdHistory();
+  CreateCdHistory(CD_HISTORY);
 }
 
 void Shell::Process() {
@@ -116,8 +116,8 @@ void Shell::InitLog() {
   spdlog::flush_every(std::chrono::seconds(3));
 }
 
-void Shell::CreateCdHistory() {
-  const std::string cd_history_path = "~/.xcShell";
+void Shell::CreateCdHistory(const std::string &path) {
+  const std::string cd_history_path = utils::GetCdHistoryFileWorkDir(path);
   if (access(utils::GetAbsolutePath(cd_history_path).c_str(), F_OK) ==
       std::string::npos) {
     ErrorHandling::ErrorDispatchHandler(

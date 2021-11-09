@@ -20,7 +20,7 @@ class Shell {
   void ExecuteConfig(const std::string& config_string);
   static void IgnoreSignalInterrupt();
   void InitLog();
-  static void CreateCdHistory();
+  static void CreateCdHistory(const std::string& path);
 
   CommandExecutor command_executor_;
 };

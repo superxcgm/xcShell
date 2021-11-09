@@ -195,3 +195,20 @@ TEST(UtilsTest, GenerateTmpFileName_ShouldGenerateFileInTmpDir) {
   EXPECT_EQ(filename.find("/tmp/"), 0);
 }
 
+TEST(UtilsTest, GetCdHistoryDir_ShouldReturnFileDir) {
+  auto parts = utils::GetCdHistoryFileWorkDir("/usr/bin/cd_history.txt");
+
+  EXPECT_EQ(parts, "/usr/bin");
+}
+
+TEST(UtilsTest, GetCdHistoryDir_ShouldReturnFileDirWhenInputRootDir) {
+  auto parts = utils::GetCdHistoryFileWorkDir("/cd_history.txt");
+
+  EXPECT_EQ(parts, "/");
+}
+
+TEST(UtilsTest, GetCdHistoryDir_ShouldReturnFileDirWhenInputHomeDir) {
+  auto parts = utils::GetCdHistoryFileWorkDir("~/cd_history.txt");
+
+  EXPECT_EQ(parts, "~");
+}

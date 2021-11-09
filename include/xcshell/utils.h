@@ -26,6 +26,7 @@ std::string GetBranchName(CommandExecutor *commandExecutor);
 std::string GetRandomString(int len);
 std::string GenerateTmpFileName();
 std::string GetAbsolutePath(std::string path);
+std::string GetCdHistoryFileWorkDir(const std::string &path);
 }  // namespace utils
 
 #endif  // INCLUDE_XCSHELL_UTILS_H_
