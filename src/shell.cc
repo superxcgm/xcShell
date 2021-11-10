@@ -116,6 +116,6 @@ void Shell::CreateCdHistory(const std::string &path) {
     ErrorHandling::ErrorDispatchHandler(
         mkdir(utils::GetAbsolutePath(cd_history_path).c_str(), S_IRWXU),
         ErrorHandling::ErrorType::FATAL_ERROR);
-    std::ofstream file(utils::GetAbsolutePath(path));
   }
+  std::ofstream file(utils::GetAbsolutePath(path));
 }

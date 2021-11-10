@@ -44,7 +44,7 @@ void J::StorageCdHistory(const std::string& path) {
   ReadCdHistory();
   directory_and_weights_map_[path]++;
   int fd = ErrorHandling::ErrorDispatchHandler(
-      open(utils::GetAbsolutePath(CD_HISTORY).c_str(), O_WRONLY, 0660),
+      open(utils::GetAbsolutePath(cd_history_).c_str(), O_WRONLY, 0660),
       ErrorHandling::ErrorType::FATAL_ERROR);
   lock.l_type = F_SETLKW;
   fcntl(fd, F_SETLKW, &lock);
@@ -56,7 +56,7 @@ void J::StorageCdHistory(const std::string& path) {
 
 void J::ReadCdHistory() {
   std::string buf;
-  std::ifstream in(utils::GetAbsolutePath(CD_HISTORY).c_str(), std::ios::in);
+  std::ifstream in(utils::GetAbsolutePath(cd_history_).c_str(), std::ios::in);
   while (getline(in, buf)) {
     std::vector<std::string> directory_and_weights = utils::Split(buf, " ");
     directory_and_weights_map_.insert(std::make_pair(
@@ -65,7 +65,7 @@ void J::ReadCdHistory() {
 }
 
 void J::UpdateCdHistory() {
-  std::ofstream update_file(utils::GetAbsolutePath(CD_HISTORY).c_str(),
+  std::ofstream update_file(utils::GetAbsolutePath(cd_history_).c_str(),
                             std::ios::out);
   for (const auto& [k, v] : directory_and_weights_map_) {
     update_file << k << " " << v << std::endl;
@@ -90,4 +90,7 @@ std::string J::GetFuzzyMatchingDirectory(std::string path) {
   return path;
 }
 
-J::J() { ReadCdHistory(); }
+J::J(const std::string& cd_history) {
+  cd_history_ = cd_history;
+  ReadCdHistory();
+}
