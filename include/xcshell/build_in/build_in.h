@@ -11,7 +11,7 @@
 
 class BuildIn {
  public:
-  BuildIn();
+  explicit BuildIn(const std::string &cd_history);
 
   bool Exist(const std::string &cmd);
 

@@ -1,11 +1,12 @@
 #include "xcshell/parser.h"
+#include "xcshell/constants.h"
 
 #include <gtest/gtest.h>
 
 #include <vector>
 
 TEST(ParseTest, Parse_PraseStringCorrectly) {
-  BuildIn build_in;
+  BuildIn build_in(CD_HISTORY);
   Parser parser(build_in);
   std::string str = "x";
   std::vector<std::string> vec;
@@ -18,7 +19,7 @@ TEST(ParseTest, Parse_PraseStringCorrectly) {
 }
 
 TEST(ParseTest, Parse_PraseOutputRedirectionCorrectlyWithOverwrite) {
-  BuildIn build_in;
+  BuildIn build_in(CD_HISTORY);
   Parser parser(build_in);
   std::string str = "ls > a.txt";
   std::vector<std::string> vec;
@@ -34,7 +35,7 @@ TEST(ParseTest, Parse_PraseOutputRedirectionCorrectlyWithOverwrite) {
 }
 
 TEST(ParseTest, Parse_PraseOutputRedirectionWithSingleBuildInCommand) {
-  BuildIn build_in;
+  BuildIn build_in(CD_HISTORY);
   Parser parser(build_in);
   std::string str = "alias";
   std::vector<std::string> vec;
@@ -49,7 +50,7 @@ TEST(ParseTest, Parse_PraseOutputRedirectionWithSingleBuildInCommand) {
 }
 
 TEST(ParseTest, Parse_PraseOutputRedirectionCorrectlyWithAppend) {
-  BuildIn build_in;
+  BuildIn build_in(CD_HISTORY);
   Parser parser(build_in);
   std::string str = "ls -l >> a.txt";
   std::vector<std::string> vec;
@@ -66,7 +67,7 @@ TEST(ParseTest, Parse_PraseOutputRedirectionCorrectlyWithAppend) {
 }
 
 TEST(ParseTest, Parse_PraseInputRedirectionCorrectly) {
-  BuildIn build_in;
+  BuildIn build_in(CD_HISTORY);
   Parser parser(build_in);
   std::string str = "bc < a.input";
   std::vector<std::string> vec;
@@ -81,7 +82,7 @@ TEST(ParseTest, Parse_PraseInputRedirectionCorrectly) {
 }
 
 TEST(ParseTest, Parse_PraseInputAndOutputRedirectionCorrectly) {
-  BuildIn build_in;
+  BuildIn build_in(CD_HISTORY);
   Parser parser(build_in);
   std::string str = "bc < a.input > a.txt";
   std::vector<std::string> vec;
@@ -97,7 +98,7 @@ TEST(ParseTest, Parse_PraseInputAndOutputRedirectionCorrectly) {
 }
 
 TEST(ParseTest, Parse_OutputCorrectlyNotContainAnyRedirection) {
-  BuildIn build_in;
+  BuildIn build_in(CD_HISTORY);
   Parser parser(build_in);
   std::string str = "ls -a";
   std::vector<std::string> vec;
@@ -113,7 +114,7 @@ TEST(ParseTest, Parse_OutputCorrectlyNotContainAnyRedirection) {
 }
 
 TEST(ParseTest, Parse_CorrectlyParseTwoCommandsAtTheSameTime) {
-  BuildIn build_in;
+  BuildIn build_in(CD_HISTORY);
   Parser parser(build_in);
   std::string str = "ls | grep PM";
   std::vector<std::string> vec_first_command_args;
@@ -138,7 +139,7 @@ TEST(ParseTest, Parse_CorrectlyParseTwoCommandsAtTheSameTime) {
 }
 
 TEST(ParseTest, Parse_CorrectlyParseTwoCommandsWithBuildInCommand) {
-  BuildIn build_in;
+  BuildIn build_in(CD_HISTORY);
   Parser parser(build_in);
   std::string str = "alias | grep ls";
   std::vector<std::string> vec_first_command_args;
@@ -163,7 +164,7 @@ TEST(ParseTest, Parse_CorrectlyParseTwoCommandsWithBuildInCommand) {
 }
 
 TEST(ParseTest, Parse_CorrectlyParseMoreCommandsAtTheSameTime) {
-  BuildIn build_in;
+  BuildIn build_in(CD_HISTORY);
   Parser parser(build_in);
   std::string str = "cat /etc/passwd | grep sh | less";
   std::vector<std::string> vec_first_command_args;
@@ -197,7 +198,7 @@ TEST(ParseTest, Parse_CorrectlyParseMoreCommandsAtTheSameTime) {
 }
 
 TEST(ParseTest, Parse_PraseStandardtErrorRedirectionCorrectlyWithOverwrite) {
-  BuildIn build_in;
+  BuildIn build_in(CD_HISTORY);
   Parser parser(build_in);
   std::string str = "echo '1 / 0' | bc 2> a.txt";
   std::vector<std::string> vec_first_command_args;
@@ -226,7 +227,7 @@ TEST(ParseTest, Parse_PraseStandardtErrorRedirectionCorrectlyWithOverwrite) {
 }
 
 TEST(ParseTest, Parse_PraseStandardtErrorRedirectionCorrectlyWithAppend) {
-  BuildIn build_in;
+  BuildIn build_in(CD_HISTORY);
   Parser parser(build_in);
   std::string str = "echo '1 / 0' | bc 2>> a.txt";
   std::vector<std::string> vec_first_command_args;
@@ -255,7 +256,7 @@ TEST(ParseTest, Parse_PraseStandardtErrorRedirectionCorrectlyWithAppend) {
 }
 
 TEST(ParseTest, Parse_PraseStandardtErrorToStdoutRedirectCorrectWithOverwrite) {
-  BuildIn build_in;
+  BuildIn build_in(CD_HISTORY);
   Parser parser(build_in);
   std::string str = "echo '1 / 0' | bc > a.txt 2>&1";
   std::vector<std::string> vec_first_command_args;
@@ -283,7 +284,7 @@ TEST(ParseTest, Parse_PraseStandardtErrorToStdoutRedirectCorrectWithOverwrite) {
 }
 
 TEST(ParseTest, Parse_PraseStandardtErrorToStdoutRedirectCorrectWithAppend) {
-  BuildIn build_in;
+  BuildIn build_in(CD_HISTORY);
   Parser parser(build_in);
   std::string str = "echo '1 / 0' | bc >> a.txt 2>&1";
   std::vector<std::string> vec_first_command_args;
@@ -312,7 +313,7 @@ TEST(ParseTest, Parse_PraseStandardtErrorToStdoutRedirectCorrectWithAppend) {
 
 TEST(ParseTest,
      Parse_PraseStandardtErrorAndOutputRedirectCorrectWithOverwrite) {
-  BuildIn build_in;
+  BuildIn build_in(CD_HISTORY);
   Parser parser(build_in);
   std::string str = "./a.out > std.out 2> err.out";
   std::vector<std::string> vec_first_command_args;
