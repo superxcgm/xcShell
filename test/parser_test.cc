@@ -1,10 +1,10 @@
 #include "xcshell/parser.h"
-#include "xcshell/constants.h"
 
 #include <gtest/gtest.h>
 
 #include <vector>
 
+#include "xcshell/constants.h"
 #include "xcshell/utils.h"
 
 TEST(ParseTest, Parse_PraseStringCorrectly) {

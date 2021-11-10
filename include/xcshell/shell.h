@@ -10,7 +10,7 @@
 
 class Shell {
  public:
-  Shell(bool load_config,std::string  cd_history)
+  Shell(bool load_config, std::string cd_history)
       : load_config_(load_config),
         cd_history_(std::move(cd_history)),
         command_executor_(cd_history_) {}
