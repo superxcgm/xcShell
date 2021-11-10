@@ -2,6 +2,7 @@
 gtest/1.10.0
 readline/8.0
 spdlog/1.9.2
+cli11/2.1.1
 
 [generators]
 cmake_find_package
