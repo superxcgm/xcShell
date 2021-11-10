@@ -61,64 +61,12 @@ std::string utils::GetHomeDir() {
   return home_dir;
 }
 
-int NextNonSpacePos(int start, const std::string& str) {
-  int i = start;
-  while (i < str.length() && str[i] == ' ') i++;
-  return i;
-}
-
-std::string ExtractQuoteString(int start, char quotation_mark,
-                               const std::string& str) {
-  int i;
-  for (i = start; i < str.length(); i++) {
-    if (str[i] == quotation_mark) {
-      break;
-    }
-  }
-  return str.substr(start, i - start);
-}
-
-std::string ExtractStringWithoutQuote(int start, const std::string& str) {
-  int i = start;
-  for (; i < str.length(); i++) {
-    if (str[i] == ' ') {
-      break;
-    }
-    if (str[i - 1] == '=' && (str[i] == '\'' || str[i] == '"')) {
-      return str.substr(start, i - start + 1) +
-             ExtractQuoteString(i + 1, str[i], str) + str[i];
-    }
-  }
-  return str.substr(start, i - start);
-}
-
-std::vector<std::string> utils::SplitArgs(const std::string& str) {
-  if (str.empty()) {
-    return {};
-  }
-  std::vector<std::string> parts;
-  int i = NextNonSpacePos(0, str);
-  std::vector<char> quotation_marks = {'\'', '"'};
-  for (; i < str.length();) {
-    std::string fragment;
-    if (str[i] == quotation_marks[0] || str[i] == quotation_marks[1]) {
-      fragment = std::move(ExtractQuoteString(i + 1, str[i], str));
-      i += 2;  // ignore quotation mark
-    } else {
-      fragment = std::move(ExtractStringWithoutQuote(i, str));
-    }
-    parts.push_back(fragment);
-    i = NextNonSpacePos(i + fragment.size(), str);
-  }
-  if (i < str.length()) {
-    parts.push_back(str.substr(i));
-  }
-
-  return parts;
-}
-
 std::string utils::RemoveQuote(const std::string& str) {
-  if (str[0] == '\'' && str[str.length() - 1] == '\'') {
+  std::vector<char> quotation_marks = {'\'', '"'};
+  if ((str[0] == quotation_marks[0] &&
+       str[str.length() - 1] == quotation_marks[0]) ||
+      (str[0] == quotation_marks[1] &&
+       str[str.length() - 1] == quotation_marks[1])) {
     return str.substr(1, str.length() - 2);
   }
   return str;

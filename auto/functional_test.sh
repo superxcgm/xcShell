@@ -5,27 +5,34 @@ run () {
     echo "xcShell build failed"
     exit 1
   fi
+  test_dir=/tmp/xcShell_functional_test
+  rm -rf $test_dir
+  mkdir -p $test_dir
+  cp auto/data/* $test_dir
+  cp build/xcShell $test_dir
 
-  rm -rf /tmp/xcShell_functional_test
-  mkdir -p /tmp/xcShell_functional_test
-  cp auto/data/*.functional_test.in /tmp/xcShell_functional_test
-  cp auto/data/*.functional_test.expected.out /tmp/xcShell_functional_test
-  cp build/xcShell /tmp/xcShell_functional_test
-
-  cd /tmp/xcShell_functional_test
+  cd $test_dir
 
   ret_code=0
 
   for input_file in *.functional_test.in
   do
     echo "Run test $input_file"
-    output_file=$(basename "$input_file" .in).out
-    expected_file=$(basename "$input_file" .in).expected.out
-    diff_file=$(basename "$input_file" .in).diff
+    base=$(basename "$input_file" .in)
+    before_file=$base.before.sh
+    output_file=$base.out
+    expected_file=$base.expected.out
+    diff_file=$base.diff
+    cmd=""
+    if [ -e "$before_file" ] ; then
+      chmod +x "$before_file"
+      cmd="source ./$before_file && "
+    fi
     #  echo $input_file
     #  echo $output_file
     #  echo $expected_file
-    ./xcShell --no-load-config --cd-history-file=/tmp/cd_history_test.txt< "$input_file" > "$output_file" 2>&1
+    cmd="${cmd} ./xcShell --no-load-config --cd-history-file=/tmp/cd_history_test.txt < $input_file > $output_file 2>&1"
+    /bin/bash -c "$cmd"
     if diff "$output_file" "$expected_file" > "$diff_file" ; then
       echo -e "  Test $input_file \033[32mpass\033[0m. "
       rm "$diff_file"

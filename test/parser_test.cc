@@ -5,13 +5,15 @@
 
 #include <vector>
 
+#include "xcshell/utils.h"
+
 TEST(ParseTest, Parse_PraseStringCorrectly) {
   BuildIn build_in(CD_HISTORY);
   Parser parser(build_in);
   std::string str = "x";
   std::vector<std::string> vec;
   std::vector<CommandParseResult> command_parse_result_list =
-      parser.ParseUserInputLine(str);
+      parser.Parse(str).value();
   CommandParseResult command_parse_result = command_parse_result_list[0];
 
   EXPECT_EQ(command_parse_result.command, "x");
@@ -24,7 +26,7 @@ TEST(ParseTest, Parse_PraseOutputRedirectionCorrectlyWithOverwrite) {
   std::string str = "ls > a.txt";
   std::vector<std::string> vec;
   std::vector<CommandParseResult> command_parse_result_list =
-      parser.ParseUserInputLine(str);
+      parser.Parse(str).value();
   CommandParseResult command_parse_result = command_parse_result_list[0];
 
   EXPECT_EQ(command_parse_result.command, "ls");
@@ -40,7 +42,7 @@ TEST(ParseTest, Parse_PraseOutputRedirectionWithSingleBuildInCommand) {
   std::string str = "alias";
   std::vector<std::string> vec;
   std::vector<CommandParseResult> command_parse_result_list =
-      parser.ParseUserInputLine(str);
+      parser.Parse(str).value();
   CommandParseResult command_parse_result = command_parse_result_list[0];
 
   EXPECT_EQ(command_parse_result.command, "alias");
@@ -56,7 +58,7 @@ TEST(ParseTest, Parse_PraseOutputRedirectionCorrectlyWithAppend) {
   std::vector<std::string> vec;
   vec.emplace_back("-l");
   std::vector<CommandParseResult> command_parse_result_list =
-      parser.ParseUserInputLine(str);
+      parser.Parse(str).value();
   CommandParseResult command_parse_result = command_parse_result_list[0];
 
   EXPECT_EQ(command_parse_result.command, "ls");
@@ -72,7 +74,7 @@ TEST(ParseTest, Parse_PraseInputRedirectionCorrectly) {
   std::string str = "bc < a.input";
   std::vector<std::string> vec;
   std::vector<CommandParseResult> command_parse_result_list =
-      parser.ParseUserInputLine(str);
+      parser.Parse(str).value();
   CommandParseResult command_parse_result = command_parse_result_list[0];
 
   EXPECT_EQ(command_parse_result.command, "bc");
@@ -87,7 +89,7 @@ TEST(ParseTest, Parse_PraseInputAndOutputRedirectionCorrectly) {
   std::string str = "bc < a.input > a.txt";
   std::vector<std::string> vec;
   std::vector<CommandParseResult> command_parse_result_list =
-      parser.ParseUserInputLine(str);
+      parser.Parse(str).value();
   CommandParseResult command_parse_result = command_parse_result_list[0];
 
   EXPECT_EQ(command_parse_result.command, "bc");
@@ -104,7 +106,7 @@ TEST(ParseTest, Parse_OutputCorrectlyNotContainAnyRedirection) {
   std::vector<std::string> vec;
   vec.emplace_back("-a");
   std::vector<CommandParseResult> command_parse_result_list =
-      parser.ParseUserInputLine(str);
+      parser.Parse(str).value();
   CommandParseResult command_parse_result = command_parse_result_list[0];
 
   EXPECT_EQ(command_parse_result.command, "ls");
@@ -121,7 +123,7 @@ TEST(ParseTest, Parse_CorrectlyParseTwoCommandsAtTheSameTime) {
   std::vector<std::string> vec_second_command_args;
   vec_second_command_args.emplace_back("PM");
   std::vector<CommandParseResult> command_parse_result_list =
-      parser.ParseUserInputLine(str);
+      parser.Parse(str).value();
   CommandParseResult command_parse_result_with_first =
       command_parse_result_list[0];
   CommandParseResult command_parse_result_with_second =
@@ -146,7 +148,7 @@ TEST(ParseTest, Parse_CorrectlyParseTwoCommandsWithBuildInCommand) {
   std::vector<std::string> vec_second_command_args;
   vec_second_command_args.emplace_back("ls");
   std::vector<CommandParseResult> command_parse_result_list =
-      parser.ParseUserInputLine(str);
+      parser.Parse(str).value();
   CommandParseResult command_parse_result_with_first =
       command_parse_result_list[0];
   CommandParseResult command_parse_result_with_second =
@@ -173,7 +175,7 @@ TEST(ParseTest, Parse_CorrectlyParseMoreCommandsAtTheSameTime) {
   vec_first_command_args.emplace_back("/etc/passwd");
   vec_second_command_args.emplace_back("sh");
   std::vector<CommandParseResult> command_parse_result_list =
-      parser.ParseUserInputLine(str);
+      parser.Parse(str).value();
   CommandParseResult command_parse_result_with_first =
       command_parse_result_list[0];
   CommandParseResult command_parse_result_with_second =
@@ -206,7 +208,7 @@ TEST(ParseTest, Parse_PraseStandardtErrorRedirectionCorrectlyWithOverwrite) {
   std::vector<std::string> vec_third_command_args;
   vec_first_command_args.emplace_back("1 / 0");
   std::vector<CommandParseResult> command_parse_result_list =
-      parser.ParseUserInputLine(str);
+      parser.Parse(str).value();
   CommandParseResult command_parse_result_with_first =
       command_parse_result_list[0];
   CommandParseResult command_parse_result_with_second =
@@ -235,7 +237,7 @@ TEST(ParseTest, Parse_PraseStandardtErrorRedirectionCorrectlyWithAppend) {
   std::vector<std::string> vec_third_command_args;
   vec_first_command_args.emplace_back("1 / 0");
   std::vector<CommandParseResult> command_parse_result_list =
-      parser.ParseUserInputLine(str);
+      parser.Parse(str).value();
   CommandParseResult command_parse_result_with_first =
       command_parse_result_list[0];
   CommandParseResult command_parse_result_with_second =
@@ -264,7 +266,7 @@ TEST(ParseTest, Parse_PraseStandardtErrorToStdoutRedirectCorrectWithOverwrite) {
   std::vector<std::string> vec_third_command_args;
   vec_first_command_args.emplace_back("1 / 0");
   std::vector<CommandParseResult> command_parse_result_list =
-      parser.ParseUserInputLine(str);
+      parser.Parse(str).value();
   CommandParseResult command_parse_result_with_first =
       command_parse_result_list[0];
   CommandParseResult command_parse_result_with_second =
@@ -292,7 +294,7 @@ TEST(ParseTest, Parse_PraseStandardtErrorToStdoutRedirectCorrectWithAppend) {
   std::vector<std::string> vec_third_command_args;
   vec_first_command_args.emplace_back("1 / 0");
   std::vector<CommandParseResult> command_parse_result_list =
-      parser.ParseUserInputLine(str);
+      parser.Parse(str).value();
   CommandParseResult command_parse_result_with_first =
       command_parse_result_list[0];
   CommandParseResult command_parse_result_with_second =
@@ -318,7 +320,7 @@ TEST(ParseTest,
   std::string str = "./a.out > std.out 2> err.out";
   std::vector<std::string> vec_first_command_args;
   std::vector<CommandParseResult> command_parse_result_list =
-      parser.ParseUserInputLine(str);
+      parser.Parse(str).value();
   CommandParseResult command_parse_result_with_first =
       command_parse_result_list[0];
 
@@ -328,4 +330,202 @@ TEST(ParseTest,
   EXPECT_EQ(command_parse_result_with_first.input_redirect_file, "");
   EXPECT_EQ(command_parse_result_with_first.error_redirect_file, "err.out");
   EXPECT_EQ(command_parse_result_with_first.stderr_is_append, false);
+}
+
+TEST(ParseTest,
+     Parse_PraseEnvironmentVarliableCorrectIfInputStringWithNoQuote) {
+  BuildIn build_in;
+  Parser parser(build_in);
+  std::string str = "echo $HOME";
+  std::vector<std::string> vec_first_command_args;
+  std::string home_str = utils::GetHomeDir();
+  vec_first_command_args.emplace_back(home_str);
+  std::vector<CommandParseResult> command_parse_result_list =
+      parser.Parse(str).value();
+  CommandParseResult command_parse_result_with_first =
+      command_parse_result_list[0];
+
+  EXPECT_EQ(command_parse_result_with_first.command, "echo");
+  EXPECT_EQ(command_parse_result_with_first.args, vec_first_command_args);
+}
+
+TEST(ParseTest,
+     Parse_PraseEnvironmentVarliableCorrectIfInputStringWithsingleQuote) {
+  BuildIn build_in;
+  Parser parser(build_in);
+  std::string str = "echo \'$HOME\'";
+  std::vector<std::string> vec_first_command_args;
+
+  vec_first_command_args.emplace_back("$HOME");
+  std::vector<CommandParseResult> command_parse_result_list =
+      parser.Parse(str).value();
+  CommandParseResult command_parse_result_with_first =
+      command_parse_result_list[0];
+
+  EXPECT_EQ(command_parse_result_with_first.command, "echo");
+  EXPECT_EQ(command_parse_result_with_first.args, vec_first_command_args);
+}
+
+TEST(ParseTest,
+     Parse_PraseEnvironmentVarliableCorrectIfInputStringWithDoubleQuote) {
+  BuildIn build_in;
+  Parser parser(build_in);
+  std::string str = "echo \"$HOME\"";
+  std::vector<std::string> vec_first_command_args;
+  std::string home_str = utils::GetHomeDir();
+  vec_first_command_args.emplace_back(home_str);
+  std::vector<CommandParseResult> command_parse_result_list =
+      parser.Parse(str).value();
+  CommandParseResult command_parse_result_with_first =
+      command_parse_result_list[0];
+
+  EXPECT_EQ(command_parse_result_with_first.command, "echo");
+  EXPECT_EQ(command_parse_result_with_first.args, vec_first_command_args);
+}
+
+TEST(ParseTest,
+     Parse_PraseEnvironmentVarliableCorrectIfInputStringWithNotExist) {
+  BuildIn build_in;
+  Parser parser(build_in);
+  std::string str = "echo $haha";
+  std::vector<std::string> vec_first_command_args;
+  vec_first_command_args.emplace_back("");
+  std::vector<CommandParseResult> command_parse_result_list =
+      parser.Parse(str).value();
+  CommandParseResult command_parse_result_with_first =
+      command_parse_result_list[0];
+
+  EXPECT_EQ(command_parse_result_with_first.command, "echo");
+  EXPECT_EQ(command_parse_result_with_first.args, vec_first_command_args);
+}
+
+TEST(ParseTest,
+     Parse_PraseEnvironmentVarliableCorrectIfInputDoubleStringAndOneNotExist) {
+  BuildIn build_in;
+  Parser parser(build_in);
+  std::string str = "echo $HOME $haha";
+  std::vector<std::string> vec_first_command_args;
+  std::string home_str = utils::GetHomeDir();
+  vec_first_command_args.emplace_back(home_str);
+  vec_first_command_args.emplace_back("");
+  std::vector<CommandParseResult> command_parse_result_list =
+      parser.Parse(str).value();
+  CommandParseResult command_parse_result_with_first =
+      command_parse_result_list[0];
+
+  EXPECT_EQ(command_parse_result_with_first.command, "echo");
+  EXPECT_EQ(command_parse_result_with_first.args, vec_first_command_args);
+}
+
+TEST(ParseTest,
+     Parse_PraseEnvironmentVarliableCorrectIfInputQuoteDoubleAndOneNotExist) {
+  BuildIn build_in;
+  Parser parser(build_in);
+  std::string str = "echo \"$HOME $haha\"";
+  std::vector<std::string> vec_first_command_args;
+  std::string home_str = utils::GetHomeDir();
+  vec_first_command_args.emplace_back(home_str).append(" ");
+  std::vector<CommandParseResult> command_parse_result_list =
+      parser.Parse(str).value();
+  CommandParseResult command_parse_result_with_first =
+      command_parse_result_list[0];
+
+  EXPECT_EQ(command_parse_result_with_first.command, "echo");
+  EXPECT_EQ(command_parse_result_with_first.args, vec_first_command_args);
+}
+
+TEST(ParseTest,
+     Parse_PraseEnvironmentVarliableCorrectIfInputSpecialStringWithPrefix) {
+  BuildIn build_in;
+  Parser parser(build_in);
+  std::string str = "echo 123$HOME";
+  std::vector<std::string> vec_first_command_args;
+  std::string home_str = "123" + utils::GetHomeDir();
+  vec_first_command_args.emplace_back(home_str);
+  std::vector<CommandParseResult> command_parse_result_list =
+      parser.Parse(str).value();
+  CommandParseResult command_parse_result_with_first =
+      command_parse_result_list[0];
+
+  EXPECT_EQ(command_parse_result_with_first.command, "echo");
+  EXPECT_EQ(command_parse_result_with_first.args, vec_first_command_args);
+}
+
+TEST(ParseTest,
+     Parse_PraseEnvironmentVarliableIfInputSpecialStringWithPrefixInArg) {
+  BuildIn build_in;
+  Parser parser(build_in);
+  std::string str = "echo $123HOME.123";
+  std::vector<std::string> vec_first_command_args;
+  vec_first_command_args.emplace_back("123HOME.123");
+  std::vector<CommandParseResult> command_parse_result_list =
+      parser.Parse(str).value();
+  CommandParseResult command_parse_result_with_first =
+      command_parse_result_list[0];
+
+  EXPECT_EQ(command_parse_result_with_first.command, "echo");
+  EXPECT_EQ(command_parse_result_with_first.args, vec_first_command_args);
+}
+
+TEST(ParseTest,
+     Parse_PraseEnvironmentVarliableCorrectIfInputSpecialStringWithSuffix) {
+  BuildIn build_in;
+  Parser parser(build_in);
+  std::string str = "echo $HOME.123";
+  std::vector<std::string> vec_first_command_args;
+  std::string home_str = utils::GetHomeDir() + ".123";
+  vec_first_command_args.emplace_back(home_str);
+  std::vector<CommandParseResult> command_parse_result_list =
+      parser.Parse(str).value();
+  CommandParseResult command_parse_result_with_first =
+      command_parse_result_list[0];
+
+  EXPECT_EQ(command_parse_result_with_first.command, "echo");
+  EXPECT_EQ(command_parse_result_with_first.args, vec_first_command_args);
+}
+
+TEST(ParseTest,
+     Parse_PraseEnvironmentVarliableIfInputSpecialStringWithSuffixByNoSymbol) {
+  BuildIn build_in;
+  Parser parser(build_in);
+  std::string str = "echo $HOME123";
+  std::vector<std::string> vec_first_command_args;
+  vec_first_command_args.emplace_back("");
+  std::vector<CommandParseResult> command_parse_result_list =
+      parser.Parse(str).value();
+  CommandParseResult command_parse_result_with_first =
+      command_parse_result_list[0];
+
+  EXPECT_EQ(command_parse_result_with_first.command, "echo");
+  EXPECT_EQ(command_parse_result_with_first.args, vec_first_command_args);
+}
+
+TEST(ParseTest, Parse_ParseStringDoubleQuoteCorrectly) {
+  BuildIn build_in;
+  Parser parser(build_in);
+  std::string str = R"(echo "ss""ss")";
+  std::vector<std::string> vec_first_command_args;
+  vec_first_command_args.emplace_back("ssss");
+  std::vector<CommandParseResult> command_parse_result_list =
+      parser.Parse(str).value();
+  CommandParseResult command_parse_result_with_first =
+      command_parse_result_list[0];
+
+  EXPECT_EQ(command_parse_result_with_first.command, "echo");
+  EXPECT_EQ(command_parse_result_with_first.args, vec_first_command_args);
+}
+
+TEST(ParseTest, Parse_ParseStringSingleQuoteCorrectly) {
+  BuildIn build_in;
+  Parser parser(build_in);
+  std::string str = R"(echo 'ss''ss')";
+  std::vector<std::string> vec_first_command_args;
+  vec_first_command_args.emplace_back("ssss");
+  std::vector<CommandParseResult> command_parse_result_list =
+      parser.Parse(str).value();
+  CommandParseResult command_parse_result_with_first =
+      command_parse_result_list[0];
+
+  EXPECT_EQ(command_parse_result_with_first.command, "echo");
+  EXPECT_EQ(command_parse_result_with_first.args, vec_first_command_args);
 }
