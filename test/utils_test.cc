@@ -142,7 +142,7 @@ TEST(UtilsTest, GetCdHistoryDir_ShouldReturnFileDir) {
 TEST(UtilsTest, GetCdHistoryDir_ShouldReturnFileDirWhenInputRootDir) {
   auto parts = utils::GetDirPath("/cd_history.txt");
 
-  EXPECT_EQ(parts, "/");
+  EXPECT_EQ(parts, "");
 }
 
 TEST(UtilsTest, GetCdHistoryDir_ShouldReturnFileDirWhenInputHomeDir) {
