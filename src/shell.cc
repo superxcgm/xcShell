@@ -20,18 +20,11 @@
 #include "xcshell/error_handling.h"
 #include "xcshell/utils.h"
 
-void Shell::Init(int argc, char **argv) {
+void Shell::Init() {
   InitLog();
   spdlog::info("Try to init xcShell");
-  bool load_config = true;
-  if (argc > 1) {
-    std::string option = argv[1];
-    if (option == "--no-load-config") {
-      load_config = false;
-    }
-  }
 
-  if (load_config) {
+  if (!load_config_) {
     auto global_config = utils::ReadFileText(GLOBAL_CONFIG_FILE);
     spdlog::info("Loading global config: {}", global_config);
     ExecuteConfig(global_config);
@@ -42,7 +35,7 @@ void Shell::Init(int argc, char **argv) {
   }
 
   IgnoreSignalInterrupt();
-  CreateCdHistory();
+  CreateCdHistory(cd_history_);
 }
 
 void Shell::Process() {
@@ -116,13 +109,13 @@ void Shell::InitLog() {
   spdlog::flush_every(std::chrono::seconds(3));
 }
 
-void Shell::CreateCdHistory() {
-  const std::string cd_history_path = "~/.xcShell";
+void Shell::CreateCdHistory(const std::string &path) {
+  const std::string cd_history_path = utils::GetDirPath(path);
   if (access(utils::GetAbsolutePath(cd_history_path).c_str(), F_OK) ==
       std::string::npos) {
     ErrorHandling::ErrorDispatchHandler(
         mkdir(utils::GetAbsolutePath(cd_history_path).c_str(), S_IRWXU),
         ErrorHandling::ErrorType::FATAL_ERROR);
-    std::ofstream file(utils::GetAbsolutePath(CD_HISTORY).c_str());
+    std::ofstream file(utils::GetAbsolutePath(path));
   }
 }
