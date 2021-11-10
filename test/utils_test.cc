@@ -134,19 +134,31 @@ TEST(UtilsTest, GenerateTmpFileName_ShouldGenerateFileInTmpDir) {
 }
 
 TEST(UtilsTest, GetCdHistoryDir_ShouldReturnFileDir) {
+<<<<<<< HEAD
   auto parts = utils::GetDirPath("/usr/bin/cd_history.txt");
+=======
+  auto parts = utils::GetCdHistoryFileWorkDir("/usr/bin/cd_history.txt");
+>>>>>>> 7d645e6119a85ccd71af87eb63b456b88fe96d85
 
   EXPECT_EQ(parts, "/usr/bin");
 }
 
 TEST(UtilsTest, GetCdHistoryDir_ShouldReturnFileDirWhenInputRootDir) {
+<<<<<<< HEAD
   auto parts = utils::GetDirPath("/cd_history.txt");
+=======
+  auto parts = utils::GetCdHistoryFileWorkDir("/cd_history.txt");
+>>>>>>> 7d645e6119a85ccd71af87eb63b456b88fe96d85
 
   EXPECT_EQ(parts, "/");
 }
 
 TEST(UtilsTest, GetCdHistoryDir_ShouldReturnFileDirWhenInputHomeDir) {
+<<<<<<< HEAD
   auto parts = utils::GetDirPath("~/cd_history.txt");
+=======
+  auto parts = utils::GetCdHistoryFileWorkDir("~/cd_history.txt");
+>>>>>>> 7d645e6119a85ccd71af87eb63b456b88fe96d85
 
   EXPECT_EQ(parts, "~");
 }

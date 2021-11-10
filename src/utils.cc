@@ -159,10 +159,21 @@ std::string utils::GetAbsolutePath(std::string path) {
   return path;
 }
 
+<<<<<<< HEAD
 std::string utils::GetDirPath(std::string path) {
   const size_t last_slash_idx = path.rfind('/');
   if (std::string::npos != last_slash_idx) {
     return path.substr(0, last_slash_idx);
   }
   return path;
+=======
+std::string utils::GetCdHistoryFileWorkDir(const std::string& path) {
+  std::string path_std =
+      path[path.size() - 1] == '/' ? path.substr(0, path.size() - 1) : path;
+  auto idx = path_std.rfind('/');
+  if (idx == 0) {
+    return "/";
+  }
+  return path_std.substr(0, idx);
+>>>>>>> 7d645e6119a85ccd71af87eb63b456b88fe96d85
 }

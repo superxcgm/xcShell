@@ -33,7 +33,6 @@ void Shell::Init() {
     spdlog::info("Loading user config: {}", user_config);
     ExecuteConfig(user_config);
   }
-
   IgnoreSignalInterrupt();
   CreateCdHistory(cd_history_);
 }
@@ -110,12 +109,20 @@ void Shell::InitLog() {
 }
 
 void Shell::CreateCdHistory(const std::string &path) {
+<<<<<<< HEAD
   const std::string cd_history_path = utils::GetDirPath(path);
+=======
+  const std::string cd_history_path = utils::GetCdHistoryFileWorkDir(path);
+>>>>>>> 7d645e6119a85ccd71af87eb63b456b88fe96d85
   if (access(utils::GetAbsolutePath(cd_history_path).c_str(), F_OK) ==
       std::string::npos) {
     ErrorHandling::ErrorDispatchHandler(
         mkdir(utils::GetAbsolutePath(cd_history_path).c_str(), S_IRWXU),
         ErrorHandling::ErrorType::FATAL_ERROR);
+<<<<<<< HEAD
+=======
+    std::ofstream file(utils::GetAbsolutePath(path));
+>>>>>>> 7d645e6119a85ccd71af87eb63b456b88fe96d85
   }
   std::ofstream file(utils::GetAbsolutePath(path));
 }
