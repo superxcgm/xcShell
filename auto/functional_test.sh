@@ -31,11 +31,7 @@ run () {
     #  echo $input_file
     #  echo $output_file
     #  echo $expected_file
-<<<<<<< HEAD
     cmd="${cmd} ./xcShell --no-load-config --cd-history-file=~/.xcShell/cd_history_test.txt < $input_file > $output_file 2>&1"
-=======
-    cmd="${cmd} ./xcShell --no-load-config --cd-history-file=/tmp/cd_history_test.txt < $input_file > $output_file 2>&1"
->>>>>>> 7d645e6119a85ccd71af87eb63b456b88fe96d85
     /bin/bash -c "$cmd"
     if diff "$output_file" "$expected_file" > "$diff_file" ; then
       echo -e "  Test $input_file \033[32mpass\033[0m. "

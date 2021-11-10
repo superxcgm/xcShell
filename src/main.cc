@@ -1,7 +1,4 @@
-<<<<<<< HEAD
-=======
 
->>>>>>> 7d645e6119a85ccd71af87eb63b456b88fe96d85
 #include "CLI/App.hpp"
 #include "CLI/Config.hpp"
 #include "CLI/Formatter.hpp"
@@ -18,15 +15,9 @@ int main(int argc, char **argv) {
   if (cd_history.empty()) {
     cd_history = CD_HISTORY;
   }
-<<<<<<< HEAD
 
   Shell shell(load_config, cd_history);
 
-=======
-
-  Shell shell(load_config,cd_history);
-
->>>>>>> 7d645e6119a85ccd71af87eb63b456b88fe96d85
   shell.Init();
 
   shell.Process();
