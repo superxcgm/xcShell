@@ -5,3 +5,5 @@ cmake-build-debug
 *.iml
 a.out
 *.swp
+unit_test.xml
+test-coverage.xml
