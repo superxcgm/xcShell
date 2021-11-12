@@ -39,6 +39,12 @@ jobs:
       - name: Prepare check tools
         run: |
           sudo apt-get update && sudo apt-get install -y gcovr
+      - uses: actions/setup-python@v1
+      - name: Install Conan
+        run: |
+          python -m pip install --upgrade pip
+          pip install conan
+          pip install conan_package_tools
       - name: Run build-wrapper
         run: |
           build-wrapper-linux-x86-64 --out-dir ${{ env.BUILD_WRAPPER_OUT_DIR }} ./auto/sonar.sh
