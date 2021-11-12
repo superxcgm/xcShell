@@ -5,7 +5,7 @@ set -e
 mkdir build
 cd build
 conan install ..
-cmake .. -DCMAKE_CXX_FLAGS="--coverage"
+cmake .. -DCMAKE_BUILD_TYPE=Debug -DCMAKE_CXX_FLAGS="--coverage"
 make
 ctest --output-on-failure || true
 cd ..
