@@ -5,4 +5,4 @@ set -e
 ./auto/build.sh
 
 cd build
-cmake --build . --target test
+ctest --output-on-failure

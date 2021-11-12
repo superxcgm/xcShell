@@ -1,6 +1,6 @@
 # xcShell - build your own wheel
 ![](https://github.com/superxcgm/xcShell/actions/workflows/ci.yml/badge.svg)
-
+[![Coverage](https://sonarcloud.io/api/project_badges/measure?project=superxcgm_xcShell&metric=coverage)](https://sonarcloud.io/summary/new_code?id=superxcgm_xcShell)
 [KANBAN](https://github.com/users/superxcgm/projects/4)
 
 ## Usage
