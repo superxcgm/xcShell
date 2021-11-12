@@ -1,7 +1,5 @@
 #!/bin/bash
 
-#set -e
-
 cd build
 conan install ..
 cmake .. -DCMAKE_CXX_FLAGS="--coverage"

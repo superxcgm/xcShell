@@ -1,4 +1,4 @@
-name: Mac OS Build
+name: Sonar
 on:
   push:
     branches:
@@ -44,7 +44,7 @@ jobs:
           echo "$HOME/.sonar/build-wrapper-macosx-x86" >> $GITHUB_PATH
       - name: Run build-wrapper
         run: |
-          build-wrapper-macosx-x86 --out-dir ${{ env.BUILD_WRAPPER_OUT_DIR }} ./auto/test.sh && ./auto/functional_test.sh run
+          build-wrapper-macosx-x86 --out-dir ${{ env.BUILD_WRAPPER_OUT_DIR }} ./auto/sonar.sh
       - name: Run sonar-scanner
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
