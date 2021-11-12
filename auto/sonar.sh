@@ -4,7 +4,7 @@ set -e
 
 mkdir build
 cd build
-conan install ..
+conan install .. -s compiler.libcxx=libstdc++11
 cmake .. -DCMAKE_BUILD_TYPE=Debug -DCMAKE_CXX_FLAGS="--coverage"
 make
 ctest --output-on-failure || true
