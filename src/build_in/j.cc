@@ -92,6 +92,7 @@ std::string J::GetFuzzyMatchingDirectory(std::string path) {
 }
 
 J::J(std::string_view cd_history) {
-  cd_history_ = cd_history;
+  const std::string default_cd_history = "~/.xcShell/cd_history.txt";
+  cd_history_ = cd_history.empty() ? default_cd_history : cd_history;
   ReadCdHistory();
 }
