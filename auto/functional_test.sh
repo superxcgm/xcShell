@@ -31,6 +31,7 @@ run () {
     #  echo $input_file
     #  echo $output_file
     #  echo $expected_file
+    # todo: test history-file should not place in user home
     cmd="${cmd} ./xcShell --no-load-config --cd-history-file=~/.xcShell/cd_history_test.txt < $input_file > $output_file 2>&1"
     /bin/bash -c "$cmd"
     if diff "$output_file" "$expected_file" > "$diff_file" ; then
