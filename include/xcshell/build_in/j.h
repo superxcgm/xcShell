@@ -20,11 +20,12 @@ class J : public BuildInCommand {
   std::string GetFuzzyMatchingDirectory(std::string path);
 
  public:
-  J();
+  explicit J(std::string_view cd_history);
   int Execute(const std::vector<std::string>& args, std::ostream& os,
               std::ostream& os_err) override;
   std::string GetName() override { return "j"; }
   void StorageCdHistory(const std::string& path);
+  std::string cd_history_;
   ~J() override = default;
 };
 #endif  // INCLUDE_XCSHELL_BUILD_IN_J_H_

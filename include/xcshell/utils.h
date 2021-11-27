@@ -6,6 +6,7 @@
 
 #include "xcshell/command_executor.h"
 
+// todo: split this big class
 namespace utils {
 std::vector<std::string> Split(const std::string &str);
 std::vector<std::string> Split(const std::string &str,
@@ -26,6 +27,7 @@ std::string GetBranchName(CommandExecutor *commandExecutor);
 std::string GetRandomString(int len);
 std::string GenerateTmpFileName();
 std::string GetAbsolutePath(std::string path);
+std::string GetDirPath(std::string path);
 }  // namespace utils
 
 #endif  // INCLUDE_XCSHELL_UTILS_H_

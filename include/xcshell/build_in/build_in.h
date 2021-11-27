@@ -12,7 +12,7 @@
 
 class BuildIn {
  public:
-  BuildIn();
+  explicit BuildIn(std::string_view cd_history);
 
   bool Exist(const std::string &cmd);
 

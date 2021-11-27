@@ -19,7 +19,8 @@ list(FILTER TEST_SOURCES INCLUDE REGEX "^.*_test.cc$")
 
 find_package(readline REQUIRED)
 find_package(spdlog REQUIRED)
-target_link_libraries(${PROJECT_NAME} readline::readline spdlog::spdlog)
+find_package(CLI11 REQUIRED)
+target_link_libraries(${PROJECT_NAME} readline::readline spdlog::spdlog CLI11::CLI11)
 
 if (NOT "${TEST_SOURCES}" STREQUAL "")
     enable_testing()
