@@ -65,6 +65,7 @@ void J::ReadCdHistory() {
 }
 
 void J::UpdateCdHistory() {
+  // todo: should not GetAbsolutePath here
   std::ofstream update_file(utils::GetAbsolutePath(cd_history_).c_str(),
                             std::ios::out);
   for (const auto& [k, v] : directory_and_weights_map_) {
