@@ -22,10 +22,10 @@ class J : public BuildInCommand {
  public:
   explicit J(const std::string& cd_history);
   int Execute(const std::vector<std::string>& args, std::ostream& os,
-              std::ostream& os_err);
-  std::string GetName() { return "j"; }
+              std::ostream& os_err) override;
+  std::string GetName() override { return "j"; }
   void StorageCdHistory(const std::string& path);
   std::string cd_history_;
-  ~J() {}
+  ~J() override = default;
 };
 #endif  // INCLUDE_XCSHELL_BUILD_IN_J_H_

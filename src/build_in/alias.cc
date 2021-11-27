@@ -20,8 +20,6 @@ int Alias::Execute(const std::vector<std::string> &args, std::ostream &os,
   return SUCCESS;
 }
 
-Alias::~Alias() {}
-
 int Alias::PrintAllAlias(std::ostream &os) {
   for (const auto &item : alias_) {
     PrintSingleAlias(item.first, os);

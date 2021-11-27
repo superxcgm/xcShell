@@ -5,19 +5,20 @@
 #include <map>
 #include <string>
 #include <vector>
+#include <functional>
 
 #include "./build_in_command.h"
 
 class Alias : public BuildInCommand {
  public:
   int Execute(const std::vector<std::string> &args, std::ostream &os,
-              std::ostream &os_err);
+              std::ostream &os_err) override;
 
   std::string Replace(const std::string &cmd);
 
-  std::string GetName() { return "alias"; }
+  std::string GetName() override { return "alias"; }
 
-  ~Alias();
+  ~Alias() override = default;
 
  private:
   int PrintSingleAlias(const std::string &name, std::ostream &os);
@@ -26,7 +27,8 @@ class Alias : public BuildInCommand {
 
   void AppendString(std::string &str, const std::string &added_str);  // NOLINT
 
-  std::map<std::string, std::string> alias_;
+  // todo: do we need sort?
+  std::map<std::string, std::string, std::less<>> alias_;
 };
 
 #endif  // INCLUDE_XCSHELL_BUILD_IN_ALIAS_H_

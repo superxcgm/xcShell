@@ -5,6 +5,7 @@
 #include <memory>
 #include <string>
 #include <vector>
+#include <functional>
 
 #include "./alias.h"
 #include "./build_in_command.h"
@@ -20,7 +21,8 @@ class BuildIn {
   std::shared_ptr<Alias> GetAlias();
 
  private:
-  std::map<std::string, std::shared_ptr<BuildInCommand>> commands_;
+  // todo: do we need sort?
+  std::map<std::string, std::shared_ptr<BuildInCommand>, std::less<>> commands_;
   std::shared_ptr<Alias> alias_;
 };
 

@@ -23,14 +23,14 @@ find_package(CLI11 REQUIRED)
 target_link_libraries(${PROJECT_NAME} readline::readline spdlog::spdlog CLI11::CLI11)
 
 if (NOT "${TEST_SOURCES}" STREQUAL "")
+    enable_testing()
     list(FILTER EXE_SOURCES EXCLUDE REGEX "main.cc")
     add_executable(${PROJECT_NAME}_test ${EXE_SOURCES} ${TEST_SOURCES} test/test_main.cc)
     find_package(GTest REQUIRED)
     target_link_libraries(${PROJECT_NAME}_test GTest::GTest readline::readline spdlog::spdlog CLI11::CLI11)
+    add_test(${PROJECT_NAME}_test ${PROJECT_NAME}_test --gtest_output=xml:${CMAKE_SOURCE_DIR}/unit_test.xml)
 endif ()
 
 add_custom_target(lint COMMAND cpplint --recursive ../)
 
 add_custom_target(format COMMAND find ../ -iname *.h -o -iname *.cpp | xargs clang-format -i -style=file)
-
-add_custom_target(test COMMAND ${CMAKE_BINARY_DIR}/${PROJECT_NAME}_test)
