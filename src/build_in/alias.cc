@@ -21,8 +21,8 @@ int Alias::Execute(const std::vector<std::string> &args, std::ostream &os,
 }
 
 int Alias::PrintAllAlias(std::ostream &os) {
-  for (const auto &item : alias_) {
-    PrintSingleAlias(item.first, os);
+  for (auto &[k, v] : alias_) {
+    PrintSingleAlias(k, os);
   }
   return success;
 }
@@ -59,7 +59,7 @@ std::string Alias::Replace(const std::string &cmd) {
   return cur_command;
 }
 
-void Alias::AppendString(std::string &str, const std::string &added_str) {
+void Alias::AppendString(std::string &str, const std::string &added_str) const {
   if (added_str.empty()) {
     return;
   }
