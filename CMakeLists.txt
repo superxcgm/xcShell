@@ -27,7 +27,7 @@ if (NOT "${TEST_SOURCES}" STREQUAL "")
     list(FILTER EXE_SOURCES EXCLUDE REGEX "main.cc")
     add_executable(${PROJECT_NAME}_test ${EXE_SOURCES} ${TEST_SOURCES} test/test_main.cc)
     find_package(GTest REQUIRED)
-    target_link_libraries(${PROJECT_NAME}_test GTest::GTest readline::readline spdlog::spdlog CLI11::CLI11)
+    target_link_libraries(${PROJECT_NAME}_test GTest::GTest readline::readline spdlog::spdlog)
     add_test(${PROJECT_NAME}_test ${PROJECT_NAME}_test --gtest_output=xml:${CMAKE_SOURCE_DIR}/unit_test.xml)
 endif ()
 
