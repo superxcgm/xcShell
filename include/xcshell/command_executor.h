@@ -13,7 +13,7 @@
 
 class CommandExecutor {
  public:
-  explicit CommandExecutor(const std::string &cd_history)
+  explicit CommandExecutor(std::string_view cd_history)
       : build_in_(cd_history), parser_(build_in_) {}
 
   int Execute(const std::string &line);

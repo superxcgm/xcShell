@@ -6,13 +6,14 @@
 #include "xcshell/shell.h"
 
 int main(int argc, char **argv) {
-  CLI::App app("parse the xcShell argv");
+  CLI::App app("My own shell");
   app.add_flag("--no-load-config");
   std::string cd_history;
   app.add_flag("--cd-history-file", cd_history);
   CLI11_PARSE(app, argc, argv);
   bool load_config = app.get_option("--no-load-config")->as<bool>();
   if (cd_history.empty()) {
+    // todo: this should not place here
     cd_history = CD_HISTORY;
   }
 

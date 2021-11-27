@@ -90,7 +90,7 @@ std::string J::GetFuzzyMatchingDirectory(std::string path) {
   return path;
 }
 
-J::J(const std::string& cd_history) {
+J::J(std::string_view cd_history) {
   cd_history_ = cd_history;
   ReadCdHistory();
 }

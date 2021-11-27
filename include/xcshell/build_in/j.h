@@ -20,7 +20,7 @@ class J : public BuildInCommand {
   std::string GetFuzzyMatchingDirectory(std::string path);
 
  public:
-  explicit J(const std::string& cd_history);
+  explicit J(std::string_view cd_history);
   int Execute(const std::vector<std::string>& args, std::ostream& os,
               std::ostream& os_err) override;
   std::string GetName() override { return "j"; }
