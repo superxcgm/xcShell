@@ -40,5 +40,13 @@ class Parser {
   static std::optional<std::pair<std::string, int>> ExtractStringWithoutQuote(
       int start, const std::string &str);
   static int NextNonSpacePos(int start, const std::string &str);
+
+  static std::string redirect_output_overwrite_;
+  static std::string redirect_output_append_;
+  static std::string redirect_error_output_overwrite_;
+  static std::string redirect_error_output_append_;
+  static std::string redirect_error_to_stdout_;
+  static std::string redirect_input_;
+  static std::string redirect_pipe_;
 };
 #endif  // INCLUDE_XCSHELL_PARSER_H_

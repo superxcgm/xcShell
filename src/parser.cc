@@ -8,39 +8,47 @@
 #include "xcshell/constants.h"
 #include "xcshell/utils.h"
 
+std::string Parser::redirect_output_overwrite_ = ">";
+std::string Parser::redirect_output_append_ = ">>";
+std::string Parser::redirect_error_output_overwrite_ = "2>";
+std::string Parser::redirect_error_output_append_ = "2>>";
+std::string Parser::redirect_error_to_stdout_ = "2>&1";
+std::string Parser::redirect_input_ = "<";
+std::string Parser::redirect_pipe_ = "|";
+
 bool Parser::IsRedirect(const std::string &arg) {
-  if (arg == REDIRECT_OUTPUT_OVERWRITE || arg == REDIRECT_INPUT ||
-      arg == REDIRECT_OUTPUT_APPEND || arg == REDIRECT_ERROR_OUTPUT_OVERWRITE ||
-      arg == REDIRECT_ERROR_OUTPUT_APPEND || arg == REDIRECT_ERROR_TO_STDOUT) {
+  if (arg == redirect_output_overwrite_ || arg == redirect_input_ ||
+      arg == redirect_output_append_ || arg == redirect_error_output_overwrite_ ||
+      arg == redirect_error_output_append_ || arg == redirect_error_to_stdout_) {
     return true;
   }
   return false;
 }
 
 bool Parser::IsErrorToStdoutRedirect(const std::string &arg) {
-  if (arg == REDIRECT_ERROR_TO_STDOUT) {
+  if (arg == redirect_error_to_stdout_) {
     return true;
   }
   return false;
 }
 
 bool Parser::IsOutputRedirectSymbol(const std::string &arg) {
-  if (arg == REDIRECT_OUTPUT_OVERWRITE || arg == REDIRECT_OUTPUT_APPEND) {
+  if (arg == redirect_output_overwrite_ || arg == redirect_output_append_) {
     return true;
   }
   return false;
 }
 
 bool Parser::IsErrorRedirectSymbol(const std::string &arg) {
-  if (arg == REDIRECT_ERROR_OUTPUT_OVERWRITE ||
-      arg == REDIRECT_ERROR_OUTPUT_APPEND || arg == REDIRECT_ERROR_TO_STDOUT) {
+  if (arg == redirect_error_output_overwrite_ ||
+      arg == redirect_error_output_append_ || arg == redirect_error_to_stdout_) {
     return true;
   }
   return false;
 }
 
 bool Parser::IsInputRedirectSymbol(const std::string &arg) {
-  if (arg == REDIRECT_INPUT) {
+  if (arg == redirect_input_) {
     return true;
   }
   return false;
@@ -71,8 +79,8 @@ CommandParseResult Parser::BuildParseResultWithRedirect(
         error_file = origin_args[i + 1];
       }
     }
-    if (arg == REDIRECT_OUTPUT_APPEND) is_append = true;
-    if (arg == REDIRECT_ERROR_OUTPUT_APPEND) {
+    if (arg == redirect_output_append_) is_append = true;
+    if (arg == redirect_error_output_append_) {
       stderr_is_append = true;
     }
     if (IsErrorToStdoutRedirect(arg)) {
@@ -88,7 +96,7 @@ std::optional<std::vector<CommandParseResult>> Parser::Parse(
     const std::string &input_line) {
   std::vector<CommandParseResult> commands;
   std::vector<std::string> commands_str =
-      utils::Split(input_line, REDIRECT_PIPE);
+      utils::Split(input_line, redirect_pipe_);
   for (const auto &command_str : commands_str) {
     auto maybeCommandAndArgs = ParseCommand(command_str);
     if (!maybeCommandAndArgs.has_value()) {
