@@ -5,6 +5,7 @@
 #include <memory>
 #include <string>
 #include <vector>
+#include <functional>
 
 #include "./alias.h"
 #include "./build_in_command.h"
