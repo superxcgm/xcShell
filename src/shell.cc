@@ -57,7 +57,7 @@ void Shell::Process() {
       add_history(line_ptr);
     }
     std::string line = line_ptr;
-    free(line_ptr);
+    free(line_ptr);  // NOSONAR
     if (line.empty()) {
       continue;
     }
