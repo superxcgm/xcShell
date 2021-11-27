@@ -16,20 +16,22 @@
 #include <fstream>
 #include <sstream>
 
-#include "xcshell/constants.h"
 #include "xcshell/error_handling.h"
 #include "xcshell/utils.h"
 
 void Shell::Init() {
   InitLog();
   spdlog::info("Try to init xcShell");
-
   if (!load_config_) {
-    auto global_config = utils::ReadFileText(GLOBAL_CONFIG_FILE);
+    // Todo: extract config class
+    const std::string global_config_file = "/etc/xcshrc";
+    const std::string user_config_file = "~/.xcshrc";
+
+    auto global_config = utils::ReadFileText(global_config_file);
     spdlog::info("Loading global config: {}", global_config);
     ExecuteConfig(global_config);
 
-    auto user_config = utils::ReadFileText(utils::ExpandPath(USER_CONFIG_FILE));
+    auto user_config = utils::ReadFileText(utils::ExpandPath(user_config_file));
     spdlog::info("Loading user config: {}", user_config);
     ExecuteConfig(user_config);
   }
