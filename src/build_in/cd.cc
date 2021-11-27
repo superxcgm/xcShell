@@ -31,5 +31,5 @@ int Cd::Execute(const std::vector<std::string> &args, std::ostream &os,
   ErrorHandling::ErrorDispatchHandler(chdir(path.c_str()),
                                       ErrorHandling::ErrorType::NORMAL_ERROR);
   j_.StorageCdHistory(utils::GetCurrentWorkingDirectory(std::cerr));
-  return SUCCESS;
+  return success;
 }

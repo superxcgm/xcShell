@@ -162,7 +162,7 @@ int CommandExecutor::Execute(const std::string &line) {
   BuildInCommandExecute(save_fd, built_In_Command_ptr, pipe_fds_list);
   CloseAllPipeAndWaitChildProcess(pipe_fds_list, child_pids);
   close(save_fd);
-  return SUCCESS;
+  return success;
 }
 
 void CommandExecutor::BuildInCommandExecute(

@@ -1,7 +1,7 @@
 #ifndef INCLUDE_XCSHELL_CONSTANTS_H_
 #define INCLUDE_XCSHELL_CONSTANTS_H_
 
-#define SUCCESS 0
+const int success = 0;
 
 const int error_code_default = -1;
 

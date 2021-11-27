@@ -17,23 +17,23 @@ int Alias::Execute(const std::vector<std::string> &args, std::ostream &os,
   auto value = definition.substr(pos + 1);
   alias_[name] = value;
 
-  return SUCCESS;
+  return success;
 }
 
 int Alias::PrintAllAlias(std::ostream &os) {
   for (const auto &item : alias_) {
     PrintSingleAlias(item.first, os);
   }
-  return SUCCESS;
+  return success;
 }
 
 int Alias::PrintSingleAlias(const std::string &name, std::ostream &os) {
   auto it = alias_.find(name);
   if (it == alias_.end()) {
-    return SUCCESS;
+    return success;
   }
   os << name << "=" << it->second << std::endl;
-  return SUCCESS;
+  return success;
 }
 
 std::string Alias::Replace(const std::string &cmd) {
