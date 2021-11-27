@@ -14,9 +14,9 @@ class Cd : public BuildInCommand {
  public:
   explicit Cd(J &j) : j_(j) {}
   int Execute(const std::vector<std::string> &args, std::ostream &os,
-              std::ostream &os_err);
-  std::string GetName() { return "cd"; }
-  ~Cd() {}
+              std::ostream &os_err) override;
+  std::string GetName() override { return "cd"; }
+  ~Cd() override = default;
 };
 
 #endif  // INCLUDE_XCSHELL_BUILD_IN_CD_H_
