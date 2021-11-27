@@ -5,7 +5,6 @@
 #include <vector>
 
 #include "xcshell/command_parse_result.h"
-#include "xcshell/constants.h"
 #include "xcshell/utils.h"
 
 std::string Parser::redirect_output_overwrite_ = ">";
@@ -15,6 +14,8 @@ std::string Parser::redirect_error_output_append_ = "2>>";
 std::string Parser::redirect_error_to_stdout_ = "2>&1";
 std::string Parser::redirect_input_ = "<";
 std::string Parser::redirect_pipe_ = "|";
+char Parser::quotation_mark_single_ = '\'';
+char Parser::quotation_mark_double_ = '"';
 
 bool Parser::IsRedirect(const std::string &arg) {
   if (arg == redirect_output_overwrite_ || arg == redirect_input_ ||
@@ -179,7 +180,7 @@ std::optional<std::pair<std::string, int>> Parser::ExtractStringWithoutQuote(
       break;
     }
     if (str[i - 1] == '=' &&
-        (str[i] == QUOTATION_MARK_SINGLE || str[i] == QUOTATION_MARK_DOUBLE)) {
+        (str[i] == quotation_mark_single_ || str[i] == quotation_mark_double_)) {
       // todo: refactor
       auto maybeValue = ExtractQuoteString(i + 1, str[i], str, std::cerr);
       if (!maybeValue.has_value()) {
@@ -201,9 +202,9 @@ std::optional<std::vector<std::string>> Parser::SplitArgs(
   int i = NextNonSpacePos(0, str);
   for (; i < str.length();) {
     std::string fragment;
-    bool complete_quote = str[i] == QUOTATION_MARK_SINGLE;
+    bool complete_quote = str[i] == quotation_mark_single_;
 
-    if (str[i] == QUOTATION_MARK_DOUBLE || str[i] == QUOTATION_MARK_SINGLE) {
+    if (str[i] == quotation_mark_double_ || str[i] == quotation_mark_single_) {
       auto maybe_value = ExtractQuoteString(i + 1, str[i], str, std::cerr);
       if (!maybe_value.has_value()) {
         return {};

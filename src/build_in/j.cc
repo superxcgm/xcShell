@@ -19,7 +19,7 @@ int J::Execute(const std::vector<std::string>& args, std::ostream& os,
     os_err << "invalid args : Command j and cd have similar functions "
               "and support directory fuzzy matching"
            << std::endl;
-    return ERROR_CODE_DEFAULT;
+    return error_code_default;
   }
 
   std::string path = args.empty() ? "~" : args[0];

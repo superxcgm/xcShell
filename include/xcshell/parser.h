@@ -48,5 +48,7 @@ class Parser {
   static std::string redirect_error_to_stdout_;
   static std::string redirect_input_;
   static std::string redirect_pipe_;
+  static char quotation_mark_single_;
+  static char quotation_mark_double_;
 };
 #endif  // INCLUDE_XCSHELL_PARSER_H_

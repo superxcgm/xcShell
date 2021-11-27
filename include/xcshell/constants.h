@@ -3,11 +3,7 @@
 
 #define SUCCESS 0
 
-#define ERROR_CODE_DEFAULT -1
-#define ERROR_CODE_SYSTEM -1
-
-#define QUOTATION_MARK_SINGLE '\''
-#define QUOTATION_MARK_DOUBLE '"'
+const int error_code_default = -1;
 
 #define GLOBAL_CONFIG_FILE "/etc/xcshrc"
 
