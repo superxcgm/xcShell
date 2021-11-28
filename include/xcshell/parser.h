@@ -41,13 +41,13 @@ class Parser {
       int start, const std::string &str);
   static int NextNonSpacePos(int start, const std::string &str);
 
-  static std::string redirect_output_overwrite_;
-  static std::string redirect_output_append_;
-  static std::string redirect_error_output_overwrite_;
-  static std::string redirect_error_output_append_;
-  static std::string redirect_error_to_stdout_;
-  static std::string redirect_input_;
-  static std::string redirect_pipe_;
+  static const char * redirect_output_overwrite_;
+  static const char * redirect_output_append_;
+  static const char * redirect_error_output_overwrite_;
+  static const char * redirect_error_output_append_;
+  static const char * redirect_error_to_stdout_;
+  static const char * redirect_input_;
+  static const char * redirect_pipe_;
   static char quotation_mark_single_;
   static char quotation_mark_double_;
 };

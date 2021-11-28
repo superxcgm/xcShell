@@ -7,13 +7,13 @@
 #include "xcshell/command_parse_result.h"
 #include "xcshell/utils.h"
 
-std::string Parser::redirect_output_overwrite_ = ">";
-std::string Parser::redirect_output_append_ = ">>";
-std::string Parser::redirect_error_output_overwrite_ = "2>";
-std::string Parser::redirect_error_output_append_ = "2>>";
-std::string Parser::redirect_error_to_stdout_ = "2>&1";
-std::string Parser::redirect_input_ = "<";
-std::string Parser::redirect_pipe_ = "|";
+const char * Parser::redirect_output_overwrite_ = ">";
+const char * Parser::redirect_output_append_ = ">>";
+const char * Parser::redirect_error_output_overwrite_ = "2>";
+const char * Parser::redirect_error_output_append_ = "2>>";
+const char * Parser::redirect_error_to_stdout_ = "2>&1";
+const char * Parser::redirect_input_ = "<";
+const char * Parser::redirect_pipe_ = "|";
 char Parser::quotation_mark_single_ = '\'';
 char Parser::quotation_mark_double_ = '"';
 

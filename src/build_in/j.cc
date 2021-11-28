@@ -59,7 +59,8 @@ void J::ReadCdHistory() {
   std::ifstream in(utils::GetAbsolutePath(cd_history_).c_str(), std::ios::in);
   while (getline(in, buf)) {
     std::vector<std::string> directory_and_weights = utils::Split(buf, " ");
-    directory_and_weights_map_[directory_and_weights[0]] = std::stoi(directory_and_weights[1]);
+    directory_and_weights_map_[directory_and_weights[0]] =
+        std::stoi(directory_and_weights[1]);
   }
 }
 
