@@ -21,7 +21,7 @@ int Alias::Execute(const std::vector<std::string> &args, std::ostream &os,
 }
 
 int Alias::PrintAllAlias(std::ostream &os) {
-  for (auto &[k, v] : alias_) {
+  for (auto const &[k, v] : alias_) {
     PrintSingleAlias(k, os);
   }
   return success;

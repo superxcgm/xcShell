@@ -5,8 +5,8 @@
 
 BuildIn::BuildIn(std::string_view cd_history) :
     alias_(std::make_shared<Alias>()) {
-  std::shared_ptr<J> j = std::make_shared<J>(cd_history);
-  std::shared_ptr<Cd> cd = std::make_shared<Cd>(*j);
+  auto j = std::make_shared<J>(cd_history);
+  auto cd = std::make_shared<Cd>(*j);
   commands_[cd->GetName()] = cd;
   commands_[j->GetName()] = j;
   commands_[alias_->GetName()] = alias_;
