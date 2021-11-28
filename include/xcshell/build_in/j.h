@@ -13,11 +13,12 @@
 
 class J : public BuildInCommand {
  private:
-  struct flock lock {};
+  struct flock lock_ {};
   std::unordered_map<std::string, int> directory_and_weights_map_;
+  std::string cd_history_;
   void ReadCdHistory();
-  void UpdateCdHistory();
-  std::string GetFuzzyMatchingDirectory(std::string path);
+  void UpdateCdHistory() const;
+  std::string GetFuzzyMatchingDirectory(std::string path) const;
 
  public:
   explicit J(std::string_view cd_history);
@@ -25,7 +26,6 @@ class J : public BuildInCommand {
               std::ostream& os_err) override;
   std::string GetName() override { return "j"; }
   void StorageCdHistory(const std::string& path);
-  std::string cd_history_;
   ~J() override = default;
 };
 #endif  // INCLUDE_XCSHELL_BUILD_IN_J_H_

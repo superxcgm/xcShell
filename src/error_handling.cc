@@ -19,12 +19,13 @@ void ErrorHandling::PrintSystemError(std::ostream& os_err) {
 
 void ErrorHandling::SystemCallExitOnFailed() {
   ErrorHandling::PrintSystemError(std::cerr);
-  exit(ERROR_CODE_DEFAULT);
+  exit(error_code_default);
 }
 
 int ErrorHandling::ErrorDispatchHandler(int return_value,
                                         ErrorType error_type) {
-  if (return_value == ERROR_CODE_SYSTEM) {
+  const int error_code_system = -1;
+  if (return_value == error_code_system) {
     switch (error_type) {
       case ErrorHandling::ErrorType::FATAL_ERROR:
         SystemCallExitOnFailed();

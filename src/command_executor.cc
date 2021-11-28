@@ -70,7 +70,7 @@ int CommandExecutor::ProcessChild(
   ErrorHandling::ErrorDispatchHandler(
       execvp(command_parse_result.command.c_str(), &argv[0]),
       ErrorHandling::ErrorType::NORMAL_ERROR);
-  _exit(ERROR_CODE_DEFAULT);
+  _exit(error_code_default);
 }
 
 void CommandExecutor::RedirectSelector(
@@ -124,7 +124,7 @@ int CommandExecutor::Execute(const std::string &line) {
   std::optional<std::vector<CommandParseResult>> maybe_commands =
       parser_.Parse(line);
   if (!maybe_commands.has_value()) {
-    return ERROR_CODE_DEFAULT;
+    return error_code_default;
   }
   auto commands = maybe_commands.value();
   LogCommandParseResultList(commands);
@@ -162,7 +162,7 @@ int CommandExecutor::Execute(const std::string &line) {
   BuildInCommandExecute(save_fd, built_In_Command_ptr, pipe_fds_list);
   CloseAllPipeAndWaitChildProcess(pipe_fds_list, child_pids);
   close(save_fd);
-  return SUCCESS;
+  return success;
 }
 
 void CommandExecutor::BuildInCommandExecute(

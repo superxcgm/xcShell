@@ -18,7 +18,7 @@ class BuildIn {
 
   int Execute(const std::string &cmd, const std::vector<std::string> &args);
 
-  std::shared_ptr<Alias> GetAlias();
+  std::shared_ptr<Alias> GetAlias() const;
 
  private:
   // todo: do we need sort?

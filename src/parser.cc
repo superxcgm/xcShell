@@ -5,42 +5,55 @@
 #include <vector>
 
 #include "xcshell/command_parse_result.h"
-#include "xcshell/constants.h"
 #include "xcshell/utils.h"
 
+const char * Parser::redirect_output_overwrite_ = ">";
+const char * Parser::redirect_output_append_ = ">>";
+const char * Parser::redirect_error_output_overwrite_ = "2>";
+const char * Parser::redirect_error_output_append_ = "2>>";
+const char * Parser::redirect_error_to_stdout_ = "2>&1";
+const char * Parser::redirect_input_ = "<";
+const char * Parser::redirect_pipe_ = "|";
+char Parser::quotation_mark_single_ = '\'';
+char Parser::quotation_mark_double_ = '"';
+
 bool Parser::IsRedirect(const std::string &arg) {
-  if (arg == REDIRECT_OUTPUT_OVERWRITE || arg == REDIRECT_INPUT ||
-      arg == REDIRECT_OUTPUT_APPEND || arg == REDIRECT_ERROR_OUTPUT_OVERWRITE ||
-      arg == REDIRECT_ERROR_OUTPUT_APPEND || arg == REDIRECT_ERROR_TO_STDOUT) {
+  if (arg == redirect_output_overwrite_ ||
+      arg == redirect_input_ ||
+      arg == redirect_output_append_ ||
+      arg == redirect_error_output_overwrite_ ||
+      arg == redirect_error_output_append_ ||
+      arg == redirect_error_to_stdout_) {
     return true;
   }
   return false;
 }
 
 bool Parser::IsErrorToStdoutRedirect(const std::string &arg) {
-  if (arg == REDIRECT_ERROR_TO_STDOUT) {
+  if (arg == redirect_error_to_stdout_) {
     return true;
   }
   return false;
 }
 
 bool Parser::IsOutputRedirectSymbol(const std::string &arg) {
-  if (arg == REDIRECT_OUTPUT_OVERWRITE || arg == REDIRECT_OUTPUT_APPEND) {
+  if (arg == redirect_output_overwrite_ || arg == redirect_output_append_) {
     return true;
   }
   return false;
 }
 
 bool Parser::IsErrorRedirectSymbol(const std::string &arg) {
-  if (arg == REDIRECT_ERROR_OUTPUT_OVERWRITE ||
-      arg == REDIRECT_ERROR_OUTPUT_APPEND || arg == REDIRECT_ERROR_TO_STDOUT) {
+  if (arg == redirect_error_output_overwrite_ ||
+      arg == redirect_error_output_append_ ||
+      arg == redirect_error_to_stdout_) {
     return true;
   }
   return false;
 }
 
 bool Parser::IsInputRedirectSymbol(const std::string &arg) {
-  if (arg == REDIRECT_INPUT) {
+  if (arg == redirect_input_) {
     return true;
   }
   return false;
@@ -71,8 +84,8 @@ CommandParseResult Parser::BuildParseResultWithRedirect(
         error_file = origin_args[i + 1];
       }
     }
-    if (arg == REDIRECT_OUTPUT_APPEND) is_append = true;
-    if (arg == REDIRECT_ERROR_OUTPUT_APPEND) {
+    if (arg == redirect_output_append_) is_append = true;
+    if (arg == redirect_error_output_append_) {
       stderr_is_append = true;
     }
     if (IsErrorToStdoutRedirect(arg)) {
@@ -80,21 +93,21 @@ CommandParseResult Parser::BuildParseResultWithRedirect(
       stderr_is_append = is_append;
     }
   }
-  return {command,    final_args, input_file,      output_file,
-          error_file, is_append,  stderr_is_append};
+  return {command, final_args, input_file, output_file,
+          error_file, is_append, stderr_is_append};
 }
 
 std::optional<std::vector<CommandParseResult>> Parser::Parse(
     const std::string &input_line) {
   std::vector<CommandParseResult> commands;
   std::vector<std::string> commands_str =
-      utils::Split(input_line, REDIRECT_PIPE);
+      utils::Split(input_line, redirect_pipe_);
   for (const auto &command_str : commands_str) {
     auto maybeCommandAndArgs = ParseCommand(command_str);
     if (!maybeCommandAndArgs.has_value()) {
       return {};
     }
-    auto [command_name, args] = maybeCommandAndArgs.value();
+    auto[command_name, args] = maybeCommandAndArgs.value();
     commands.push_back(BuildParseResultWithRedirect(args, command_name));
   }
   return commands;
@@ -102,10 +115,10 @@ std::optional<std::vector<CommandParseResult>> Parser::Parse(
 
 std::optional<std::tuple<std::string, std::vector<std::string>>>
 Parser::ParseCommand(const std::string &input_line) {
-  auto [init_command_name, args_str] = SplitCommandNameAndArgs(input_line);
+  auto[init_command_name, args_str] = SplitCommandNameAndArgs(input_line);
   //  spdlog::debug("init_command_name: {}, args_str: {}", init_command_name);
   auto alias_command = build_in_.GetAlias()->Replace(init_command_name);
-  auto [command_name, extra_args_str] = SplitCommandNameAndArgs(alias_command);
+  auto[command_name, extra_args_str] = SplitCommandNameAndArgs(alias_command);
   auto maybe_args = SplitArgs(args_str + " " + extra_args_str);
   if (!maybe_args.has_value()) {
     return {};
@@ -171,13 +184,14 @@ std::optional<std::pair<std::string, int>> Parser::ExtractStringWithoutQuote(
       break;
     }
     if (str[i - 1] == '=' &&
-        (str[i] == QUOTATION_MARK_SINGLE || str[i] == QUOTATION_MARK_DOUBLE)) {
+        (str[i] == quotation_mark_single_ || str[i] == quotation_mark_double_)
+        ) {
       // todo: refactor
       auto maybeValue = ExtractQuoteString(i + 1, str[i], str, std::cerr);
       if (!maybeValue.has_value()) {
         return {};
       }
-      auto [value, next] = maybeValue.value();
+      auto[value, next] = maybeValue.value();
       return std::pair(str.substr(start, i - start + 1) + value + str[i], next);
     }
   }
@@ -193,9 +207,9 @@ std::optional<std::vector<std::string>> Parser::SplitArgs(
   int i = NextNonSpacePos(0, str);
   for (; i < str.length();) {
     std::string fragment;
-    bool complete_quote = str[i] == QUOTATION_MARK_SINGLE;
+    bool complete_quote = str[i] == quotation_mark_single_;
 
-    if (str[i] == QUOTATION_MARK_DOUBLE || str[i] == QUOTATION_MARK_SINGLE) {
+    if (str[i] == quotation_mark_double_ || str[i] == quotation_mark_single_) {
       auto maybe_value = ExtractQuoteString(i + 1, str[i], str, std::cerr);
       if (!maybe_value.has_value()) {
         return {};
@@ -207,7 +221,7 @@ std::optional<std::vector<std::string>> Parser::SplitArgs(
       if (!maybe_value.has_value()) {
         return {};
       }
-      auto [value, next] = maybe_value.value();
+      auto[value, next] = maybe_value.value();
       fragment = value;
       i = next;
     }
@@ -229,7 +243,7 @@ std::pair<std::string, int> Parser::ExtractVariable(const std::string &str,
   if (std::isalpha(str[start]) || str[start] == '_') {
     int right = start + 1;
     while (right < str.size() && std::isalnum(str[right]) ||
-           str[right] == '_') {
+        str[right] == '_') {
       right++;
     }
     std::string variable_name = str.substr(left, right - left);
@@ -247,7 +261,7 @@ std::string Parser::ReplaceVariable(const std::string &str) {
   std::string ans;
   for (int i = 0; i < str.size();) {
     if (str[i] == '$') {
-      auto [value, next] = ExtractVariable(str, i + 1);
+      auto[value, next] = ExtractVariable(str, i + 1);
       ans += value;
       i = next;
     } else {

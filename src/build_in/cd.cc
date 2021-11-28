@@ -13,7 +13,7 @@ int Cd::Execute(const std::vector<std::string> &args, std::ostream &os,
   static std::string pre;
   if (args.size() > 1) {
     os_err << "invalid args" << std::endl;
-    return ERROR_CODE_DEFAULT;
+    return error_code_default;
   }
 
   std::string path = args.empty() ? "~" : args[0];
@@ -31,5 +31,5 @@ int Cd::Execute(const std::vector<std::string> &args, std::ostream &os,
   ErrorHandling::ErrorDispatchHandler(chdir(path.c_str()),
                                       ErrorHandling::ErrorType::NORMAL_ERROR);
   j_.StorageCdHistory(utils::GetCurrentWorkingDirectory(std::cerr));
-  return SUCCESS;
+  return success;
 }
