@@ -28,9 +28,8 @@ class Shell {
   void InitLog();
   static void CreateCdHistory(const std::string& path);
 
-  std::string cd_history_;
-
   bool load_config_;
+  std::string cd_history_;
 
   CommandExecutor command_executor_;
 };

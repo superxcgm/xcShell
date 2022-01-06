@@ -41,8 +41,7 @@ std::string Alias::Replace(const std::string &cmd) {
   std::string tail_str;
   while (alias_.find(cur_command) != alias_.end()) {
     auto v = utils::RemoveQuote(alias_[cur_command]);
-    auto tmp_str = cur_command + " ";
-    if (tmp_str.append(tail_str).find(v) == 0) {
+    if ((cur_command + " ").append(tail_str).find(v) == 0) {
       break;
     }
     auto pos = v.find(' ');
@@ -59,7 +58,7 @@ std::string Alias::Replace(const std::string &cmd) {
   return cur_command;
 }
 
-void Alias::AppendString(std::string &str, const std::string &added_str) const {
+void Alias::AppendString(std::string &str, std::string_view added_str) const {
   if (added_str.empty()) {
     return;
   }

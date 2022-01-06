@@ -17,7 +17,7 @@ const char *Parser::redirect_pipe_ = "|";
 char Parser::quotation_mark_single_ = '\'';
 char Parser::quotation_mark_double_ = '"';
 
-bool Parser::IsRedirect(const std::string &arg) {
+bool Parser::IsRedirect(std::string_view arg) {
   if (arg == redirect_output_overwrite_ || arg == redirect_input_ ||
       arg == redirect_output_append_ ||
       arg == redirect_error_output_overwrite_ ||
@@ -28,21 +28,21 @@ bool Parser::IsRedirect(const std::string &arg) {
   return false;
 }
 
-bool Parser::IsErrorToStdoutRedirect(const std::string &arg) {
+bool Parser::IsErrorToStdoutRedirect(std::string_view arg) {
   if (arg == redirect_error_to_stdout_) {
     return true;
   }
   return false;
 }
 
-bool Parser::IsOutputRedirectSymbol(const std::string &arg) {
+bool Parser::IsOutputRedirectSymbol(std::string_view arg) {
   if (arg == redirect_output_overwrite_ || arg == redirect_output_append_) {
     return true;
   }
   return false;
 }
 
-bool Parser::IsErrorRedirectSymbol(const std::string &arg) {
+bool Parser::IsErrorRedirectSymbol(std::string_view arg) {
   if (arg == redirect_error_output_overwrite_ ||
       arg == redirect_error_output_append_ ||
       arg == redirect_error_to_stdout_) {
@@ -51,7 +51,7 @@ bool Parser::IsErrorRedirectSymbol(const std::string &arg) {
   return false;
 }
 
-bool Parser::IsInputRedirectSymbol(const std::string &arg) {
+bool Parser::IsInputRedirectSymbol(std::string_view arg) {
   if (arg == redirect_input_) {
     return true;
   }
@@ -148,8 +148,7 @@ std::pair<std::string, std::string> Parser::SplitCommandNameAndArgs(
 }
 
 std::optional<Parser::ValueAndNext> Parser::ExtractQuoteString(
-    int start, char quotation_mark, const std::string &str,
-    std::ostream &os_err) {
+    int start, char quotation_mark, const std::string &str) {
   int i;
   int quotation_mark_count = 1;
   std::string ans;
@@ -167,7 +166,7 @@ std::optional<Parser::ValueAndNext> Parser::ExtractQuoteString(
     ans += str[i];
   }
   if (quotation_mark_count % 2 != 0) {
-    os_err << "quotation mark do not match" << std::endl;
+    std::cerr << "quotation mark do not match" << std::endl;
     return {};
   }
   return ValueAndNext{ans, i + 1};
@@ -183,7 +182,7 @@ std::optional<Parser::ValueAndNext> Parser::ExtractStringWithoutQuote(
     if (str[i - 1] == '=' && (str[i] == quotation_mark_single_ ||
                               str[i] == quotation_mark_double_)) {
       // todo: refactor
-      auto maybeValue = ExtractQuoteString(i + 1, str[i], str, std::cerr);
+      auto maybeValue = ExtractQuoteString(i + 1, str[i], str);
       if (!maybeValue.has_value()) {
         return {};
       }
@@ -202,12 +201,12 @@ std::optional<std::vector<std::string>> Parser::SplitArgs(
   }
   std::vector<std::string> args;
   int i = NextNonSpacePos(0, str);
-  for (; i < str.length();) {
+  while (i < str.length()) {
     std::string fragment;
     bool complete_quote = str[i] == quotation_mark_single_;
 
     if (str[i] == quotation_mark_double_ || str[i] == quotation_mark_single_) {
-      auto maybe_value = ExtractQuoteString(i + 1, str[i], str, std::cerr);
+      auto maybe_value = ExtractQuoteString(i + 1, str[i], str);
       if (!maybe_value.has_value()) {
         return {};
       }

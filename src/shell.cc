@@ -99,7 +99,7 @@ void Shell::IgnoreSignalInterrupt() {
   new_action.sa_handler = SIG_IGN;
   int result = sigaction(SIGINT, &new_action, nullptr);
   if (result) {
-    ErrorHandling::PrintSystemError(std::cerr);
+    ErrorHandling::PrintSystemError();
   }
 }
 
@@ -111,8 +111,8 @@ void Shell::InitLog() {
 }
 
 void Shell::CreateCdHistory(const std::string &path) {
-  const std::string cd_history_path = utils::GetDirPath(path);
-  if (access(utils::GetAbsolutePath(cd_history_path).c_str(), F_OK) ==
+  if (const std::string cd_history_path = utils::GetDirPath(path);
+      access(utils::GetAbsolutePath(cd_history_path).c_str(), F_OK) ==
       std::string::npos) {
     ErrorHandling::ErrorDispatchHandler(
         mkdir(utils::GetAbsolutePath(cd_history_path).c_str(), S_IRWXU),

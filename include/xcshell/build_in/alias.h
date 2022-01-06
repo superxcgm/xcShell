@@ -25,7 +25,7 @@ class Alias : public BuildInCommand {
 
   int PrintAllAlias(std::ostream &os);
 
-  void AppendString(std::string &str, const std::string &added_str) const;  // NOLINT
+  void AppendString(std::string &str, std::string_view added_str) const;
 
   // todo: do we need sort?
   std::map<std::string, std::string, std::less<>> alias_;

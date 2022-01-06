@@ -103,7 +103,7 @@ void CommandExecutor::ResetSignalHandlerForInterrupt() {
   new_action.sa_handler = SIG_DFL;
   int result = sigaction(SIGINT, &new_action, nullptr);
   if (result) {
-    ErrorHandling::PrintSystemError(std::cerr);
+    ErrorHandling::PrintSystemError();
   }
 }
 
@@ -137,7 +137,7 @@ int CommandExecutor::Execute(const std::string &line) {
   LogCommandParseResultList(commands);
   int save_fd = ErrorHandling::ErrorDispatchHandler(
       dup(STDOUT_FILENO), ErrorHandling::ErrorType::FATAL_ERROR);
-  struct CommandParseResult *built_In_Command_ptr = nullptr;
+  CommandParseResult *built_In_Command_ptr = nullptr;
   std::vector<std::array<int, 2>> pipe_fds_list;
   if (commands.size() > 1) {
     pipe_fds_list = CreatePipe(commands);
@@ -173,13 +173,12 @@ int CommandExecutor::Execute(const std::string &line) {
 }
 
 void CommandExecutor::BuildInCommandExecute(
-    int save_fd, CommandParseResult *built_In_Command_ptr,
+    int save_fd, const CommandParseResult *built_In_Command_ptr,
     const std::vector<std::array<int, 2>> &pipe_fds_list) {
   if (built_In_Command_ptr != nullptr) {
     PipeRedirectFirst(pipe_fds_list);
     build_in_.Execute(built_In_Command_ptr->command,
                       built_In_Command_ptr->args);
-    built_In_Command_ptr = nullptr;
     dup2(save_fd, STDOUT_FILENO);
   }
 }

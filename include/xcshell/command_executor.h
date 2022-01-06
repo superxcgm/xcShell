@@ -47,7 +47,7 @@ class CommandExecutor {
   static void PipeRedirectEnd(
       const std::vector<std::array<int, 2>> &pipe_fds_list, int cmd_number);
   void BuildInCommandExecute(
-      int save_fd, CommandParseResult *built_In_Command_ptr,
+      int save_fd, const CommandParseResult *built_In_Command_ptr,
       const std::vector<std::array<int, 2>> &pipe_fds_list);
   static std::vector<std::array<int, 2>> CreatePipe(
       const std::vector<CommandParseResult> &command_parse_result_list);
