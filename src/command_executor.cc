@@ -20,11 +20,11 @@ int CommandExecutor::GetFileDescriptor(const std::string &file_name,
   int fd;
   if (is_append) {
     fd = ErrorHandling::ErrorDispatchHandler(
-        open(file_name.c_str(), O_WRONLY | O_APPEND | O_CREAT, 0664),
+        open(file_name.c_str(), O_WRONLY | O_APPEND | O_CREAT, 0660),
         ErrorHandling::ErrorType::FATAL_ERROR);
   } else {
     fd = ErrorHandling::ErrorDispatchHandler(
-        open(file_name.c_str(), O_WRONLY | O_TRUNC | O_CREAT, 0664),
+        open(file_name.c_str(), O_WRONLY | O_TRUNC | O_CREAT, 0660),
         ErrorHandling::ErrorType::FATAL_ERROR);
   }
   return fd;
