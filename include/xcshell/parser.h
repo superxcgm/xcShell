@@ -39,14 +39,14 @@ class Parser {
   static std::string ReplaceVariable(const std::string &str);
   static std::pair<std::string, int> ExtractVariable(const std::string &str,
                                                      int start);
-  static std::optional<std::pair<std::string, int>> ExtractQuoteString(
-      int start, char quotation_mark, const std::string &str,
-      std::ostream &os_err);
-
   struct ValueAndNext{
     std::string value;
     int next;
   };
+  static std::optional<ValueAndNext> ExtractQuoteString(
+      int start, char quotation_mark, const std::string &str,
+      std::ostream &os_err);
+
   static std::optional<ValueAndNext> ExtractStringWithoutQuote(
       int start, const std::string &str);
   static int NextNonSpacePos(int start, const std::string &str);

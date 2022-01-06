@@ -147,7 +147,7 @@ std::pair<std::string, std::string> Parser::SplitCommandNameAndArgs(
   return {command_name, args};
 }
 
-std::optional<std::pair<std::string, int>> Parser::ExtractQuoteString(
+std::optional<Parser::ValueAndNext> Parser::ExtractQuoteString(
     int start, char quotation_mark, const std::string &str,
     std::ostream &os_err) {
   int i;
@@ -170,7 +170,7 @@ std::optional<std::pair<std::string, int>> Parser::ExtractQuoteString(
     os_err << "quotation mark do not match" << std::endl;
     return {};
   }
-  return std::pair(ans, i + 1);
+  return ValueAndNext{ans, i + 1};
 }
 
 std::optional<Parser::ValueAndNext> Parser::ExtractStringWithoutQuote(
@@ -187,9 +187,9 @@ std::optional<Parser::ValueAndNext> Parser::ExtractStringWithoutQuote(
       if (!maybeValue.has_value()) {
         return {};
       }
-      auto [value, next] = maybeValue.value();
-      return ValueAndNext{str.substr(start, i - start + 1) + value + str[i],
-                          next};
+      return ValueAndNext{
+          str.substr(start, i - start + 1) + maybeValue.value().value + str[i],
+          maybeValue.value().next};
     }
   }
   return ValueAndNext{str.substr(start, i - start), i};
@@ -211,8 +211,8 @@ std::optional<std::vector<std::string>> Parser::SplitArgs(
       if (!maybe_value.has_value()) {
         return {};
       }
-      fragment = maybe_value.value().first;
-      i = maybe_value.value().second;
+      fragment = maybe_value.value().value;
+      i = maybe_value.value().next;
     } else {
       auto maybe_value = ExtractStringWithoutQuote(i, str);
       if (!maybe_value.has_value()) {
