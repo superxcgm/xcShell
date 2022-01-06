@@ -10,7 +10,7 @@
 namespace utils {
 std::vector<std::string> Split(const std::string &str);
 std::vector<std::string> Split(const std::string &str,
-                               const std::string &delim);
+                               std::string_view delim);
 std::vector<std::string> SplitArgs(const std::string &str);
 std::string GetCurrentWorkingDirectory();
 std::string GetLastDir(const std::string &path);

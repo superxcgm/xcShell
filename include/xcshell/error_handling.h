@@ -11,7 +11,7 @@ class ErrorHandling {
  public:
   enum class ErrorType { FATAL_ERROR = 1, NORMAL_ERROR = 2 };
 
-  static void PrintSystemError(std::ostream& os_err);
+  static void PrintSystemError();
   static int ErrorDispatchHandler(int return_value, ErrorType error_type);
 };
 

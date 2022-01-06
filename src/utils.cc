@@ -56,8 +56,8 @@ std::string utils::GetHomeDir() {
 }
 
 std::string utils::RemoveQuote(const std::string& str) {
-  std::vector<char> quotation_marks = {'\'', '"'};
-  if ((str[0] == quotation_marks[0] &&
+  if (std::vector<char> quotation_marks = {'\'', '"'};
+      (str[0] == quotation_marks[0] &&
        str[str.length() - 1] == quotation_marks[0]) ||
       (str[0] == quotation_marks[1] &&
        str[str.length() - 1] == quotation_marks[1])) {
@@ -67,11 +67,10 @@ std::string utils::RemoveQuote(const std::string& str) {
 }
 
 std::vector<std::string> utils::Split(const std::string& str,
-                                      const std::string& delim) {
+                                      std::string_view delim) {
   std::vector<std::string> str_list;
   size_t left = 0;
-  size_t idx;
-  for (idx = str.find(delim); idx != std::string::npos;
+  for (auto idx = str.find(delim); idx != std::string::npos;
        idx = str.find(delim, idx + 1)) {
     str_list.push_back(str.substr(left, idx - left));
     left = idx + 1;
@@ -155,8 +154,8 @@ std::string utils::GetAbsolutePath(std::string path) {
 }
 
 std::string utils::GetDirPath(std::string path) {
-  const size_t last_slash_idx = path.rfind('/');
-  if (std::string::npos != last_slash_idx) {
+  if (const size_t last_slash_idx = path.rfind('/');
+      std::string::npos != last_slash_idx) {
     return path.substr(0, last_slash_idx);
   }
   return path;

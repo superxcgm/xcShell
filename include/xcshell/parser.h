@@ -27,11 +27,11 @@ class Parser {
   static CommandParseResult BuildParseResultWithRedirect(
       const std::vector<std::string> &origin_args, const std::string &command);
 
-  static bool IsInputRedirectSymbol(const std::string &arg);
-  static bool IsOutputRedirectSymbol(const std::string &arg);
-  static bool IsErrorRedirectSymbol(const std::string &arg);
-  static bool IsErrorToStdoutRedirect(const std::string &arg);
-  static bool IsRedirect(const std::string &arg);
+  static bool IsInputRedirectSymbol(std::string_view arg);
+  static bool IsOutputRedirectSymbol(std::string_view arg);
+  static bool IsErrorRedirectSymbol(std::string_view arg);
+  static bool IsErrorToStdoutRedirect(std::string_view arg);
+  static bool IsRedirect(std::string_view arg);
   static std::pair<std::string, std::string> SplitCommandNameAndArgs(
       const std::string &command);
   static std::optional<std::vector<std::string>> SplitArgs(
@@ -44,8 +44,7 @@ class Parser {
     int next;
   };
   static std::optional<ValueAndNext> ExtractQuoteString(
-      int start, char quotation_mark, const std::string &str,
-      std::ostream &os_err);
+      int start, char quotation_mark, const std::string &str);
 
   static std::optional<ValueAndNext> ExtractStringWithoutQuote(
       int start, const std::string &str);
