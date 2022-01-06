@@ -18,11 +18,8 @@ class CommandExecutor {
 
   int Execute(const std::string &line);
 
-  static std::vector<char *> BuildArgv(const std::string &command,
-                                       const std::vector<std::string> &args);
-
  private:
-  static int ProcessChild(const CommandParseResult &command_parse_result,
+  static int ProcessChild(CommandParseResult &command_parse_result,
                           const std::vector<std::array<int, 2>> &pipe_fds_list,
                           int cmd_number, bool is_last_command);
   static void WaitChildExit(pid_t pid);
@@ -55,7 +52,7 @@ class CommandExecutor {
   static std::vector<std::array<int, 2>> CreatePipe(
       const std::vector<CommandParseResult> &command_parse_result_list);
   void LogCommandParseResultList(
-      const std::vector<CommandParseResult> &command_parse_result_list);
+      const std::vector<CommandParseResult> &command_parse_result_list) const;
   static void ErrorOutputRedirect(
       const CommandParseResult &command_parse_result);
 };

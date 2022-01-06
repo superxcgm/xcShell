@@ -4,7 +4,9 @@
 #include <spdlog/spdlog.h>
 #include <unistd.h>
 
+#include <array>
 #include <cstdio>
+#include <filesystem>
 #include <fstream>
 #include <random>
 #include <string>
@@ -32,13 +34,8 @@ std::string utils::ReadFileText(const std::string& file_name) {
 std::vector<std::string> utils::Split(const std::string& str) {
   return Split(str, " ");
 }
-std::string utils::GetCurrentWorkingDirectory(std::ostream& os_err) {
-  char buf[BUFSIZ];
-  if (getcwd(buf, BUFSIZ) == nullptr) {
-    ErrorHandling::PrintSystemError(os_err);
-    return "";
-  }
-  return buf;
+std::string utils::GetCurrentWorkingDirectory() {
+  return std::filesystem::current_path().string();
 }
 std::string utils::GetLastDir(const std::string& path) {
   if (path == "/") {
@@ -54,10 +51,7 @@ std::string utils::GetHomeDir() {
   if (!home_dir.empty()) {
     return home_dir;
   }
-
-  // todo: replace with getpwuid_r
-  auto pw = getpwuid(getuid());  // NOLINT
-  home_dir = pw->pw_dir;
+  home_dir = getenv("HOME");
   return home_dir;
 }
 
@@ -93,7 +87,8 @@ std::string utils::GetRandomString(int len) {
   static std::string charset =
       "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890";
   static std::default_random_engine e(time(nullptr));
-  static std::uniform_int_distribution<unsigned> u(0, charset.size() - 1);
+  static std::uniform_int_distribution<decltype(charset.size())> u(
+      0, charset.size() - 1);
   std::string rand_string;
   rand_string.resize(len);
   for (int i = 0; i < len; i++) {
@@ -143,7 +138,7 @@ std::string utils::LeftTrim(const std::string& str) {
 }
 
 std::string utils::RightTrim(const std::string& str) {
-  int i = str.size() - 1;
+  int64_t i = str.size() - 1;
   while (i >= 0 && str[i] == ' ') {
     i--;
   }

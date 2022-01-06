@@ -27,9 +27,9 @@ int Cd::Execute(const std::vector<std::string> &args, std::ostream &os,
     }
   }
   path = utils::GetAbsolutePath(path);
-  pre = utils::GetCurrentWorkingDirectory(os_err);
+  pre = utils::GetCurrentWorkingDirectory();
   ErrorHandling::ErrorDispatchHandler(chdir(path.c_str()),
                                       ErrorHandling::ErrorType::NORMAL_ERROR);
-  j_.StorageCdHistory(utils::GetCurrentWorkingDirectory(std::cerr));
+  j_.StorageCdHistory(utils::GetCurrentWorkingDirectory());
   return success;
 }

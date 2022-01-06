@@ -66,7 +66,7 @@ int Shell::Exit() {
 }
 
 std::string Shell::GeneratePrompt() {
-  auto pwd = utils::GetCurrentWorkingDirectory(std::cerr);
+  auto pwd = utils::GetCurrentWorkingDirectory();
   auto home = utils::GetHomeDir();
   std::string prompt_line;
   if (home == pwd) {
