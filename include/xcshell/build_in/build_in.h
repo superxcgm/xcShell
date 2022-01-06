@@ -23,7 +23,7 @@ class BuildIn {
  private:
   // todo: do we need sort?
   std::map<std::string, std::shared_ptr<BuildInCommand>, std::less<>> commands_;
-  std::shared_ptr<Alias> alias_;
+  std::shared_ptr<Alias> alias_{std::make_shared<Alias>()};
 };
 
 #endif  // INCLUDE_XCSHELL_BUILD_IN_BUILD_IN_H_

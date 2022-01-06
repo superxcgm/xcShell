@@ -52,7 +52,7 @@ class CommandExecutor {
   static std::vector<std::array<int, 2>> CreatePipe(
       const std::vector<CommandParseResult> &command_parse_result_list);
   void LogCommandParseResultList(
-      const std::vector<CommandParseResult> &command_parse_result_list);
+      const std::vector<CommandParseResult> &command_parse_result_list) const;
   static void ErrorOutputRedirect(
       const CommandParseResult &command_parse_result);
 };

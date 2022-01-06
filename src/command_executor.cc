@@ -119,8 +119,8 @@ std::vector<std::array<int, 2>> CommandExecutor::CreatePipe(
   std::vector<std::array<int, 2>> pipe_fds_list;
   auto pipe_number = command_parse_result_list.size() - 1;
   for (int i = 0; i < pipe_number; i++) {
-    int pipe_fds[2];
-    ErrorHandling::ErrorDispatchHandler(pipe(pipe_fds),
+    std::array<int, 2> pipe_fds{};
+    ErrorHandling::ErrorDispatchHandler(pipe(pipe_fds.data()),
                                         ErrorHandling::ErrorType::FATAL_ERROR);
     pipe_fds_list.push_back({pipe_fds[0], pipe_fds[1]});
   }
@@ -255,7 +255,7 @@ void CommandExecutor::PipeRedirectFirst(
   close(pipe_fds_list[0][1]);
 }
 void CommandExecutor::LogCommandParseResultList(
-    const std::vector<CommandParseResult> &command_parse_result_list) {
+    const std::vector<CommandParseResult> &command_parse_result_list) const {
   spdlog::debug("Command parse result list, size: {}",
                 command_parse_result_list.size());
   for (int i = 0; i < command_parse_result_list.size(); i++) {

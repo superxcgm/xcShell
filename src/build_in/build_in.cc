@@ -3,8 +3,7 @@
 #include "xcshell/build_in/cd.h"
 #include "xcshell/build_in/j.h"
 
-BuildIn::BuildIn(std::string_view cd_history) :
-    alias_(std::make_shared<Alias>()) {
+BuildIn::BuildIn(std::string_view cd_history) {
   auto j = std::make_shared<J>(cd_history);
   auto cd = std::make_shared<Cd>(*j);
   commands_[cd->GetName()] = cd;

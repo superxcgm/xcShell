@@ -8,6 +8,7 @@
 #include <fstream>
 #include <random>
 #include <string>
+#include <array>
 
 #include "xcshell/error_handling.h"
 
