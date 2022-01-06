@@ -4,12 +4,12 @@
 #include <spdlog/spdlog.h>
 #include <unistd.h>
 
+#include <array>
 #include <cstdio>
+#include <filesystem>
 #include <fstream>
 #include <random>
 #include <string>
-#include <array>
-#include <filesystem>
 
 #include "xcshell/error_handling.h"
 
@@ -98,7 +98,8 @@ std::string utils::GetRandomString(int len) {
   static std::string charset =
       "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890";
   static std::default_random_engine e(time(nullptr));
-  static std::uniform_int_distribution<decltype(charset.size())> u(0, charset.size() - 1);
+  static std::uniform_int_distribution<decltype(charset.size())> u(
+      0, charset.size() - 1);
   std::string rand_string;
   rand_string.resize(len);
   for (int i = 0; i < len; i++) {
