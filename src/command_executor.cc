@@ -137,7 +137,7 @@ int CommandExecutor::Execute(const std::string &line) {
   LogCommandParseResultList(commands);
   int save_fd = ErrorHandling::ErrorDispatchHandler(
       dup(STDOUT_FILENO), ErrorHandling::ErrorType::FATAL_ERROR);
-  CommandParseResult *built_In_Command_ptr = nullptr;
+  const CommandParseResult * built_In_Command_ptr = nullptr;
   std::vector<std::array<int, 2>> pipe_fds_list;
   if (commands.size() > 1) {
     pipe_fds_list = CreatePipe(commands);
