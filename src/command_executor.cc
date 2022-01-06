@@ -66,7 +66,7 @@ int CommandExecutor::ProcessChild(
   RedirectSelector(command_parse_result, pipe_fds_list, cmd_number,
                    is_last_command);
   const int max_args = 60;
-  char * argv[max_args];
+  std::array<char *, max_args> argv{};
   argv[0] = command_parse_result.command.data();
   int i;
   for (i = 0; i < command_parse_result.args.size(); ++i) {
@@ -75,7 +75,7 @@ int CommandExecutor::ProcessChild(
   argv[i + 1] = nullptr;
 
   ErrorHandling::ErrorDispatchHandler(
-      execvp(command_parse_result.command.c_str(), argv),
+      execvp(command_parse_result.command.c_str(), argv.data()),
       ErrorHandling::ErrorType::NORMAL_ERROR);
   _exit(error_code_default);
 }
