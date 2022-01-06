@@ -55,9 +55,17 @@ std::string utils::GetHomeDir() {
     return home_dir;
   }
 
-  // todo: replace with getpwuid_r
-  auto pw = getpwuid(getuid());  // NOLINT
-  home_dir = pw->pw_dir;
+  uid_t uid = getuid();
+  struct passwd pwd {};
+  auto buf_size = sysconf(_SC_GETPW_R_SIZE_MAX);
+  std::unique_ptr<char[]> buf(new char[buf_size]());
+  struct passwd* result = nullptr;
+  getpwuid_r(uid, &pwd, buf.get(), buf_size, &result);
+  if (result == nullptr) {
+    std::cerr << "GetHomeDir failed." << std::endl;
+    exit(1);
+  }
+  home_dir = pwd.pw_dir;
   return home_dir;
 }
 
