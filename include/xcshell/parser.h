@@ -16,8 +16,13 @@ class Parser {
       const std::string &input_line);
 
  private:
+  struct CommandAndArgs {
+    std::string command;
+    std::vector<std::string> args;
+  };
+
   BuildIn &build_in_;
-  std::optional<std::tuple<std::string, std::vector<std::string>>> ParseCommand(
+  std::optional<CommandAndArgs> ParseCommand(
       const std::string &input_line);
   static CommandParseResult BuildParseResultWithRedirect(
       const std::vector<std::string> &origin_args, const std::string &command);
@@ -37,7 +42,12 @@ class Parser {
   static std::optional<std::pair<std::string, int>> ExtractQuoteString(
       int start, char quotation_mark, const std::string &str,
       std::ostream &os_err);
-  static std::optional<std::pair<std::string, int>> ExtractStringWithoutQuote(
+
+  struct ValueAndNext{
+    std::string value;
+    int next;
+  };
+  static std::optional<ValueAndNext> ExtractStringWithoutQuote(
       int start, const std::string &str);
   static int NextNonSpacePos(int start, const std::string &str);
 

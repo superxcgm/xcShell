@@ -106,14 +106,14 @@ std::optional<std::vector<CommandParseResult>> Parser::Parse(
     if (!maybeCommandAndArgs.has_value()) {
       return {};
     }
-    auto &[command_name, args] = maybeCommandAndArgs.value();
-    commands.push_back(BuildParseResultWithRedirect(args, command_name));
+    commands.push_back(BuildParseResultWithRedirect(
+        maybeCommandAndArgs.value().args, maybeCommandAndArgs.value().command));
   }
   return commands;
 }
 
-std::optional<std::tuple<std::string, std::vector<std::string>>>
-Parser::ParseCommand(const std::string &input_line) {
+std::optional<Parser::CommandAndArgs> Parser::ParseCommand(
+    const std::string &input_line) {
   auto [init_command_name, args_str] = SplitCommandNameAndArgs(input_line);
   auto alias_command = build_in_.GetAlias()->Replace(init_command_name);
   auto [command_name, extra_args_str] = SplitCommandNameAndArgs(alias_command);
@@ -121,8 +121,7 @@ Parser::ParseCommand(const std::string &input_line) {
   if (!maybe_args.has_value()) {
     return {};
   }
-  return std::tuple<std::string, std::vector<std::string>>(command_name,
-                                                           maybe_args.value());
+  return CommandAndArgs{command_name, maybe_args.value()};
 }
 
 int Parser::NextNonSpacePos(int start, const std::string &str) {
@@ -174,7 +173,7 @@ std::optional<std::pair<std::string, int>> Parser::ExtractQuoteString(
   return std::pair(ans, i + 1);
 }
 
-std::optional<std::pair<std::string, int>> Parser::ExtractStringWithoutQuote(
+std::optional<Parser::ValueAndNext> Parser::ExtractStringWithoutQuote(
     int start, const std::string &str) {
   int i = start;
   for (; i < str.length(); i++) {
@@ -189,10 +188,11 @@ std::optional<std::pair<std::string, int>> Parser::ExtractStringWithoutQuote(
         return {};
       }
       auto [value, next] = maybeValue.value();
-      return std::pair(str.substr(start, i - start + 1) + value + str[i], next);
+      return ValueAndNext{str.substr(start, i - start + 1) + value + str[i],
+                          next};
     }
   }
-  return std::pair(str.substr(start, i - start), i);
+  return ValueAndNext{str.substr(start, i - start), i};
 }
 
 std::optional<std::vector<std::string>> Parser::SplitArgs(
@@ -218,9 +218,8 @@ std::optional<std::vector<std::string>> Parser::SplitArgs(
       if (!maybe_value.has_value()) {
         return {};
       }
-      auto &[value, next] = maybe_value.value();
-      fragment = value;
-      i = next;
+      fragment = maybe_value.value().value;
+      i = maybe_value.value().next;
     }
     if (!complete_quote) {
       fragment = ReplaceVariable(fragment);

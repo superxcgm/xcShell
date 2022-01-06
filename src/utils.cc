@@ -34,7 +34,7 @@ std::string utils::ReadFileText(const std::string& file_name) {
 std::vector<std::string> utils::Split(const std::string& str) {
   return Split(str, " ");
 }
-std::string utils::GetCurrentWorkingDirectory(std::ostream& os_err) {
+std::string utils::GetCurrentWorkingDirectory() {
   return std::filesystem::current_path().string();
 }
 std::string utils::GetLastDir(const std::string& path) {
@@ -51,18 +51,7 @@ std::string utils::GetHomeDir() {
   if (!home_dir.empty()) {
     return home_dir;
   }
-
-  uid_t uid = getuid();
-  struct passwd pwd {};
-  auto buf_size = sysconf(_SC_GETPW_R_SIZE_MAX);
-  std::unique_ptr<char[]> buf(new char[buf_size]());
-  struct passwd* result = nullptr;
-  getpwuid_r(uid, &pwd, buf.get(), buf_size, &result);
-  if (result == nullptr) {
-    std::cerr << "GetHomeDir failed." << std::endl;
-    exit(1);
-  }
-  home_dir = pwd.pw_dir;
+  home_dir = getenv("HOME");
   return home_dir;
 }
 
@@ -149,7 +138,7 @@ std::string utils::LeftTrim(const std::string& str) {
 }
 
 std::string utils::RightTrim(const std::string& str) {
-  auto i = str.size() - 1;
+  int64_t i = str.size() - 1;
   while (i >= 0 && str[i] == ' ') {
     i--;
   }
