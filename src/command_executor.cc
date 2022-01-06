@@ -59,16 +59,23 @@ void CommandExecutor::InputRedirect(
 }
 
 int CommandExecutor::ProcessChild(
-    const CommandParseResult &command_parse_result,
+    CommandParseResult &command_parse_result,
     const std::vector<std::array<int, 2>> &pipe_fds_list, int cmd_number,
     bool is_last_command) {
   ResetSignalHandlerForInterrupt();
   RedirectSelector(command_parse_result, pipe_fds_list, cmd_number,
                    is_last_command);
-  auto argv =
-      BuildArgv(command_parse_result.command, command_parse_result.args);
+  const int max_args = 60;
+  char * argv[max_args];
+  argv[0] = command_parse_result.command.data();
+  int i;
+  for (i = 0; i < command_parse_result.args.size(); ++i) {
+    argv[i + 1] = command_parse_result.args[i].data();
+  }
+  argv[i + 1] = nullptr;
+
   ErrorHandling::ErrorDispatchHandler(
-      execvp(command_parse_result.command.c_str(), &argv[0]),
+      execvp(command_parse_result.command.c_str(), argv),
       ErrorHandling::ErrorType::NORMAL_ERROR);
   _exit(error_code_default);
 }
@@ -187,18 +194,6 @@ void CommandExecutor::CloseAllPipeAndWaitChildProcess(
   for (auto pid : child_pids) {
     WaitChildExit(pid);
   }
-}
-
-std::vector<char *> CommandExecutor::BuildArgv(
-    const std::string &command, const std::vector<std::string> &args) {
-  std::vector<char *> argv;
-  argv.reserve(args.size() + 2);
-  argv.push_back(const_cast<char *>(command.c_str()));
-  for (const auto &arg : args) {
-    argv.push_back(const_cast<char *>(arg.c_str()));
-  }
-  argv.push_back(nullptr);
-  return argv;
 }
 
 void CommandExecutor::PipeRedirect(
