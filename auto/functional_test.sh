@@ -9,7 +9,7 @@ run () {
   rm -rf $test_dir
   mkdir -p $test_dir
   cp auto/data/* $test_dir
-  cp build/xcShell $test_dir
+  cp build/src/xcShell $test_dir
 
   cd $test_dir
 
