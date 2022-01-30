@@ -3,7 +3,6 @@ project(xcShell)
 
 set(CMAKE_CXX_STANDARD 17)
 
-include_directories(include)
 include(${CMAKE_BINARY_DIR}/conan_paths.cmake)
 aux_source_directory(src EXE_SOURCES)
 aux_source_directory(src/build_in BUILD_IN_SOURCES)
@@ -21,6 +20,7 @@ find_package(readline REQUIRED)
 find_package(spdlog REQUIRED)
 find_package(CLI11 REQUIRED)
 target_link_libraries(${PROJECT_NAME} readline::readline spdlog::spdlog CLI11::CLI11)
+target_include_directories(${PROJECT_NAME} PRIVATE include)
 
 if (NOT "${TEST_SOURCES}" STREQUAL "")
     enable_testing()
@@ -28,6 +28,7 @@ if (NOT "${TEST_SOURCES}" STREQUAL "")
     add_executable(${PROJECT_NAME}_test ${EXE_SOURCES} ${TEST_SOURCES} test/test_main.cc)
     find_package(GTest REQUIRED)
     target_link_libraries(${PROJECT_NAME}_test GTest::GTest readline::readline spdlog::spdlog)
+    target_include_directories(${PROJECT_NAME}_test PRIVATE include)
     add_test(${PROJECT_NAME}_test ${PROJECT_NAME}_test --gtest_output=xml:${CMAKE_SOURCE_DIR}/unit_test.xml)
 endif ()
 
