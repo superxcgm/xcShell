@@ -4,7 +4,7 @@ set -e
 
 ./auto/build.sh
 
-sudo cp build/xcShell /usr/local/bin
+sudo make install
 
 if [ ! -f "/etc/xcshrc" ]; then
   echo "Global config do not exist, auto create from default config."

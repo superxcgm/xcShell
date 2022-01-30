@@ -17,3 +17,8 @@ target_include_directories(${LIB_NAME} PUBLIC ${PROJECT_SOURCE_DIR}/include)
 
 add_executable(${PROJECT_NAME} main.cc)
 target_link_libraries(${PROJECT_NAME} ${LIB_NAME})
+
+install(TARGETS ${PROJECT_NAME}
+        DESTINATION bin)
+
+# todo install config
