@@ -4,4 +4,4 @@ set -e
 
 ./auto/build.sh
 
-./build/xcShell
+./build/src/xcShell

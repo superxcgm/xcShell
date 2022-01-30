@@ -1,7 +1,7 @@
+#include <CLI/App.hpp>
+#include <CLI/Config.hpp>
+#include <CLI/Formatter.hpp>
 
-#include "CLI/App.hpp"
-#include "CLI/Config.hpp"
-#include "CLI/Formatter.hpp"
 #include "xcshell/shell.h"
 
 int main(int argc, char **argv) {

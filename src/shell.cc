@@ -112,6 +112,7 @@ void Shell::InitLog() {
 
 void Shell::CreateCdHistory(const std::string &path) {
   if (const std::string cd_history_path = utils::GetDirPath(path);
+      !path.empty() &&
       access(utils::GetAbsolutePath(cd_history_path).c_str(), F_OK) ==
       std::string::npos) {
     ErrorHandling::ErrorDispatchHandler(
