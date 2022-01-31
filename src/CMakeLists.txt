@@ -21,4 +21,7 @@ target_link_libraries(${PROJECT_NAME} ${LIB_NAME})
 install(TARGETS ${PROJECT_NAME}
         DESTINATION bin)
 
+install (FILES ${PROJECT_SOURCE_DIR}/tools/global_config_default.txt
+        DESTINATION etc RENAME xcshrc)
+
 # todo install config
