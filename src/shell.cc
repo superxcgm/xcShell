@@ -24,7 +24,7 @@ void Shell::Init() {
   spdlog::info("Try to init xcShell");
   if (!load_config_) {
     // Todo: extract config class
-    const std::string global_config_file = "/etc/xcshrc";
+    const std::string global_config_file = "../etc/xcshrc";
     const std::string user_config_file = "~/.xcshrc";
 
     auto global_config = utils::ReadFileText(global_config_file);

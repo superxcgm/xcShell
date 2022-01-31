@@ -9,7 +9,7 @@
 1. `git clone https://github.com/superxcgm/xcShell.git`
 2. `cd xcShell`
 3. `./auto/build.sh`
-4. `./auto/install.sh`
+4. `make install`
 5. `xcShell`
 
 ## Build
