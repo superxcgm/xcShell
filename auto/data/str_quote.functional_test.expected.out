@@ -44,4 +44,8 @@ xcShell_functional_test > echo '$EXIST_PATH_ENV
 quotation mark do not match
 xcShell_functional_test > echo "$EXIST_PATH_ENV
 quotation mark do not match
+xcShell_functional_test > echo ""test""
+test
+xcShell_functional_test > echo test""
+test 
 xcShell_functional_test > 

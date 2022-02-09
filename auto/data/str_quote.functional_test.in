@@ -21,3 +21,5 @@ echo "HOME""PATH"
 echo "$EXIST_PATH_ENV""$EXIST_PATH_ENV_TEST"
 echo '$EXIST_PATH_ENV
 echo "$EXIST_PATH_ENV
+echo ""test""
+echo test""
