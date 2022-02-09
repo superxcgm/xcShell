@@ -531,7 +531,7 @@ TEST(ParseTest, Parse_ParseStringSingleQuoteCorrectly) {
 }
 
 TEST(ParseTest, Parse_ParseStringCorrectlyWithDoubleQuotePrefixAndSuffix) {
-  BuildIn build_in;
+  BuildIn build_in("");
   Parser parser(build_in);
   std::string str = R"(echo ""s"")";
   std::vector<std::string> vec_first_command_args;
@@ -546,7 +546,7 @@ TEST(ParseTest, Parse_ParseStringCorrectlyWithDoubleQuotePrefixAndSuffix) {
 }
 
 TEST(ParseTest, Parse_ParseStringCorrectlyWithDoubleQuoteSuffix) {
-  BuildIn build_in;
+  BuildIn build_in("");
   Parser parser(build_in);
   std::string str = "echo s\"\"";
   std::vector<std::string> vec_first_command_args;
