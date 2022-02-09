@@ -180,8 +180,8 @@ std::optional<Parser::ValueAndNext> Parser::ExtractStringWithoutQuote(
   int i = start;
   for (; i < str.length(); i++) {
     if (str[i] == ' ' ||
-        (str[i - 1] != '=' && (str[i] == QUOTATION_MARK_SINGLE ||
-                               str[i] == QUOTATION_MARK_DOUBLE))) {
+        (str[i - 1] != '=' && (str[i] == quotation_mark_single_ ||
+                               str[i] == quotation_mark_double_))) {
       break;
     }
     if (str[i - 1] == '=' && (str[i] == quotation_mark_single_ ||
