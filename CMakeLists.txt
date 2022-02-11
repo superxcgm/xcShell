@@ -13,6 +13,13 @@ endif()
 
 include(${CMAKE_BINARY_DIR}/conan_paths.cmake)
 
+if(CMAKE_SYSTEM_NAME STREQUAL "Linux")
+    add_compile_definitions("IS_LINUX")
+endif()
+if(CMAKE_SYSTEM_NAME STREQUAL "Darwin")
+    add_compile_definitions("IS_MACOS")
+endif()
+
 add_subdirectory(src)
 enable_testing()
 add_subdirectory(test)
