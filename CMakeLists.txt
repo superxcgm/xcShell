@@ -1,5 +1,6 @@
-cmake_minimum_required(VERSION 3.10)
-project(xcShell)
+cmake_minimum_required(VERSION 3.10 FATAL_ERROR)
+
+project(xcShell LANGUAGES CXX)
 
 set(CMAKE_CXX_STANDARD 17)
 
@@ -11,14 +12,19 @@ if(NOT CMAKE_BUILD_TYPE AND NOT CMAKE_CONFIGURATION_TYPES)
             "MinSizeRel" "RelWithDebInfo")
 endif()
 
-include(${CMAKE_BINARY_DIR}/conan_paths.cmake)
-
 if(CMAKE_SYSTEM_NAME STREQUAL "Linux")
     add_compile_definitions("IS_LINUX")
+    execute_process(COMMAND "conan" "install" ".." "-s" "compiler.libcxx=libstdc++11"
+            WORKING_DIRECTORY ${CMAKE_BINARY_DIR})
 endif()
+
 if(CMAKE_SYSTEM_NAME STREQUAL "Darwin")
     add_compile_definitions("IS_MACOS")
+    execute_process(COMMAND "conan" "install" ".."
+            WORKING_DIRECTORY ${CMAKE_BINARY_DIR})
 endif()
+
+include(${CMAKE_BINARY_DIR}/conan_paths.cmake)
 
 add_subdirectory(src)
 enable_testing()
