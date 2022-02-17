@@ -1,12 +1,11 @@
 #!/bin/bash
 
-set -e
+set -ex
 
 mkdir build
 cd build
-conan install .. -s compiler.libcxx=libstdc++11
 cmake .. -DCMAKE_BUILD_TYPE=Debug -DCMAKE_CXX_FLAGS="--coverage"
-make
+cmake --build .
 ctest --output-on-failure || true
 cd ..
 ./auto/functional_test.sh run || true

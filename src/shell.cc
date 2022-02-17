@@ -1,9 +1,9 @@
 #include "xcshell/shell.h"
 
-#if defined(__linux__)
+#ifdef IS_LINUX
 #include <readline/history.h>
 #include <readline/readline.h>
-#elif defined(__APPLE__)
+#elif IS_MACOS
 #include <editline/readline.h>
 #endif
 
